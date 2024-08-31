@@ -1,0 +1,237 @@
+{
+  "units": {
+    "players": [
+      {
+        "code": 1,
+        "attack": 100.0,
+        "moveSpeed": 450.0,
+        "hp": 100
+      },
+      {
+        "code": 2,
+        "attack": 70.0,
+        "moveSpeed": 500.0,
+        "hp": 90
+      },
+      {
+        "code": 3,
+        "attack": 50.0,
+        "moveSpeed": 600.0,
+        "hp": 80
+      }
+    ],
+    "weapons": [
+      {
+        "code": 1,
+        "attackSpeed": 10.0
+      },
+      {
+        "code": 2,
+        "attackSpeed": 13.0
+      },
+      {
+        "code": 3,
+        "attackSpeed": 15.0
+      }
+    ],
+    "monsters": [
+      {
+        "code": 1,
+        "attack": 10.0,
+        "moveSpeed": 300.0,
+        "hp": 1000,
+        "exp": 5
+      },
+      {
+        "code": 2,
+        "attack": 7.0,
+        "moveSpeed": 300.0,
+        "hp": 1000,
+        "exp": 10
+      }
+    ],
+    "Skills": [
+      {
+        "type" : 0,
+        "value": 300.0,
+        "duration": 0.0,
+        "code": 101,
+        "coolTime": 3.0,
+        "weaponCode": 1
+      },
+      {
+        "type": 1,
+        "value": 100.0,
+        "duration": 0.0,
+        "code": 102,
+        "coolTime": 3.0,
+        "weaponCode": 1
+      },
+      {
+        "type" : 0,
+        "value": 200.0,
+        "duration": 0.0,
+        "code": 201,
+        "coolTime": 3.0,
+        "weaponCode": 2
+      },
+      {
+        "type" : 2,
+        "value": 150.0,
+        "duration": 3.0,
+        "code": 202,
+        "coolTime": 3.0,
+        "weaponCode": 2
+      },
+      {
+        "type" : 0,
+        "value": 150.0,
+        "duration": 0.0,
+        "code": 301,
+        "coolTime": 3.0,
+        "weaponCode": 3
+      },
+      {
+        "type" : 3,
+        "value": 150.0,
+        "duration": 0.0,
+        "code": 302,
+        "coolTime": 5.0,
+        "weaponCode": 3
+      }
+    ]
+  },
+  "lvs": [
+    {
+      "lv" : 1,
+      "exp" : 50
+    },
+    {
+      "lv" : 2,
+      "exp" : 75
+    },
+    {
+      "lv" : 3,
+      "exp" : 100
+    },
+    {
+      "lv" : 4,
+      "exp" : 125
+    },
+    {
+      "lv" : 5,
+      "exp" : 0
+    }
+  ],
+  "maps": [
+    {
+      "mapCode" : 0,
+      "x" : 16500,
+      "y" : 15000,
+      "centerX": 0,
+      "centerY": 0,
+      "monsterMap":
+      {
+        "x" : 2500,
+        "y" : 2000,
+        "centerX": 0,
+        "centerY": 0
+      },
+      "type" : 0
+    }
+  ],
+  "mapsUnit": [
+    {
+      "mapCode" : 0,
+      "monsterList": [
+        {
+          "code" : 1,
+          "count" : 10
+        },
+        {
+          "code" : 2,
+          "count" : 10
+        }
+      ]
+    }
+  ],
+  "itemEquip": [
+    {
+      "code": 11,
+      "type": 1,
+      "gold": 1000,
+      "attack": 100,
+      "speed": 0,
+      "name": "낡은검"
+    },
+    {
+      "code": 12,
+      "type": 2,
+      "gold": 1100,
+      "attack": 0,
+      "speed": 100,
+      "name": "낡은신발"
+    }
+  ],
+  "itemEtc": [
+    {
+      "code": 1,
+      "type": 1,
+      "gold": 10,
+      "maxCnt": 100,
+      "name": "부러진 뼈"
+    },
+    {
+      "code": 2,
+      "type": 1,
+      "gold": 15,
+      "maxCnt": 100,
+      "name": "낡은 가죽"
+    }
+  ],
+  "itemUse": [
+    {
+      "code": 21,
+      "type": 1,
+      "gold": 10,
+      "maxCnt": 100,
+      "hp": 30,
+      "name": "최하급 hp 포션"
+    }
+  ],
+  "dropJson": [
+    {
+      "monsterCode": 1,
+      "gold": 100,
+      "dropEquipList": [
+        {
+          "itemCode" : 11
+        }
+      ],
+      "dropList":
+      [
+        {
+          "itemCode" : 1,
+          "cnt" : 1
+        }
+      ]
+    },
+    {
+      "monsterCode": 2,
+      "gold": 200,
+      "dropEquipList": [
+        {
+          "itemCode" : 12
+        }
+      ],
+      "dropList":[
+        {
+          "itemCode" : 2,
+          "cnt" : 1
+        }
+      ]
+    }
+  ],
+  "questInfo": [
+  ]
+}
