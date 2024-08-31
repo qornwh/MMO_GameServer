@@ -39,7 +39,7 @@ int main()
     GDBPool->Init(connStr);
     
     // 게임 정보 초기화
-    uint16 port = 12129;
+    uint16 port = 12128;
     GameInit gInit;
     GameServiceRef service = std::make_shared<GameService>(port);
     

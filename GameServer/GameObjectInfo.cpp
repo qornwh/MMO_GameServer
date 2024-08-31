@@ -101,6 +101,7 @@ void GameMosterInfo::Spawn()
 void GameMosterInfo::DropInit()
 {
     _dropGold = 0;
+    _itemEquipList.clear();
     _itemList.clear();
     for (auto& dropItem : GDropItem->GetMonsterDropEquipList(GetCode()))
     {
