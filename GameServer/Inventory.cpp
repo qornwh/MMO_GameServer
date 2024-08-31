@@ -159,7 +159,9 @@ void Inventory::SaveDB()
             {
             case InventoryItemState::INSERT:
                 {
-                    inventoryDB.SaveInsertEquipDB(_playerCode, item.GetCode(), item.GetType());
+                    // 새로 추가되는게 개수가 0개일때 그냥 넘긴다.
+                    if (item.GetCode() > 0)
+                        inventoryDB.SaveInsertEquipDB(_playerCode, item.GetCode(), item.GetType());
                 }
                 break;
             case InventoryItemState::UPDATE:
