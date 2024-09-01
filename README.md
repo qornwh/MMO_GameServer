@@ -10,20 +10,20 @@
 
 ## 플레이 화면들
 
-![3번](https://github.com/qornwh/MMO_GameServer/blob/main/스크린샷-2024-09-01-150818.png)
-![3번](https://github.com/qornwh/MMO_GameServer/blob/main/스크린샷-2024-09-01-112807.png)
+![1번](https://github.com/qornwh/MMO_GameServer/blob/main/스크린샷-2024-09-01-150818.png)
+![2번](https://github.com/qornwh/MMO_GameServer/blob/main/스크린샷-2024-09-01-112807.png)
 ![3번](https://github.com/qornwh/MMO_GameServer/blob/main/스크린샷-2024-09-01-145811.png)
 
 ---
 
-![3번](https://github.com/qornwh/GameServerProject/blob/main/dump1.png)
+![4번](https://github.com/qornwh/GameServerProject/blob/main/dump1.png)
 
 _rider의 Debug Core Dump.. 실행_
 
-![4번](https://github.com/qornwh/GameServerProject/blob/main/dump2.png)
+![5번](https://github.com/qornwh/GameServerProject/blob/main/dump2.png)
 
 _Core dump path에 GameServer.dmp, Exe path에 GameServer.exe 셋팅 후 OK_
 
-![5번](https://github.com/qornwh/GameServerProject/blob/main/dump3.png)
+![6번](https://github.com/qornwh/GameServerProject/blob/main/dump3.png)
 
 _에러가 뜬 부분에 디버깅이 걸린다_
