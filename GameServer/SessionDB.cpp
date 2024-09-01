@@ -58,7 +58,6 @@ bool SessionDB::CreateAccount(const wchar_t* id, const wchar_t* pwd, int32 cash)
     _dbOrm.BindParamInt(&cash);
     result = conn->Execute();
     conn->EndTran();
-    conn->CloseCursor();
     conn->FreeStmt();
     _dbOrm.ReSetIdx();
 
@@ -78,7 +77,6 @@ bool SessionDB::CreateCharacter(const wchar_t* name, int32 jobCode, int32 accoun
     _dbOrm.BindParamInt(&accountCode);
     result = conn->Execute();
     conn->EndTran();
-    conn->CloseCursor();
     conn->FreeStmt();
     _dbOrm.ReSetIdx();
 
