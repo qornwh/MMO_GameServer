@@ -275,7 +275,7 @@ GameMapInfoRef GameRoom::CreateMapInfo(int32 type)
         // 일반 몹 맵
         _gameMapInfo = std::make_shared<GameMapInfo>(0, 0, 0, 0);
         _gameMapInfo->CreateMonsterMapInfo(0, 0, 0, 0, MapType::MONSTER);
-        _monsterCount = 1;
+        _monsterCount = 10;
     }
     else if (type == 1)
     {
