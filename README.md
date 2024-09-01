@@ -10,7 +10,7 @@
 
 ## 플레이 화면들
 
-![3번](https://github.com/qornwh/MMO_GameServer/blob/main/스크린샷-2024-09-01-102203.png)
+![3번](https://github.com/qornwh/MMO_GameServer/blob/main/스크린샷-2024-09-01-150818.png)
 ![3번](https://github.com/qornwh/MMO_GameServer/blob/main/스크린샷-2024-09-01-112807.png)
 ![3번](https://github.com/qornwh/MMO_GameServer/blob/main/스크린샷-2024-09-01-145811.png)
 
