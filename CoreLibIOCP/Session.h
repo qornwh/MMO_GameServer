@@ -17,6 +17,8 @@ public:
     virtual int32 OnRecv(BYTE* buffer, int32 len);
     void AsyncWrite(SendBufferRef sendBuffer);
     void OnWrite(int32 len);
+    virtual bool AsyncConnect();
+    virtual void OnConnect();
     void Disconnect();
     void AddWriteBuffer(SendBufferRef sendBuffer);
     static void ErrorCode(int32 errorCode);

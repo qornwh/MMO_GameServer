@@ -167,6 +167,15 @@ void Session::OnWrite(int32 len)
     _sendBuffers.clear();
 }
 
+bool Session::AsyncConnect()
+{
+    return false;
+}
+
+void Session::OnConnect()
+{
+}
+
 void Session::Disconnect()
 {
     _recvBuffer.Clean();

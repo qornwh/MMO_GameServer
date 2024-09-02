@@ -19,6 +19,7 @@ Service::Service(String host, uint16 port, int32 maxSessionCount) :
 
 Service::~Service()
 {
+    CloseHandle(_iocpHd);
 }
 
 void Service::Init()
@@ -44,6 +45,12 @@ void Service::Init()
     {
         WSACleanup();
         assert(-1);
+    }
+
+    if (SocketConfig::SetReuseAddress(_serverSocket, 1))
+    {
+        WSACleanup();
+        return;
     }
 
     // bind
@@ -136,13 +143,7 @@ void Service::task()
             SessionRef session = overlappedPtr->GetSession();
             if (session != nullptr)
             {
-            }
-        }
-        else if (type == OverlappedSocket::Type::DISC)
-        {
-            SessionRef session = overlappedPtr->GetSession();
-            if (session != nullptr)
-            {
+                session->OnConnect();
             }
         }
     }
@@ -220,10 +221,10 @@ void Service::SocketAcceptRegister(OverlappedSocket* overlappedPtr)
 
 void Service::ErrorCode(int32 errorCode)
 {
-    wchar_t *s = nullptr;
-    FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, 
-                   nullptr, errorCode, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-                   reinterpret_cast<LPWSTR>(&s), 0, nullptr);
+    wchar_t* s = nullptr;
+    FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+                  nullptr, errorCode, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                  reinterpret_cast<LPWSTR>(&s), 0, nullptr);
     wprintf(L"ErrorCode : %d - ErrorMessage : %s\n", errorCode, s);
     delete s;
 }

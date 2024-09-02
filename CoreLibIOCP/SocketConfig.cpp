@@ -74,15 +74,16 @@ bool SocketConfig::Init()
 
     SOCKET dummySocket = CreateSocket();
     DWORD dwBytes;
-    GUID guid = WSAID_ACCEPTEX;
-    if (WSAIoctl(dummySocket, SIO_GET_EXTENSION_FUNCTION_POINTER, &guid, sizeof(guid), &lpfnAcceptEx, sizeof(lpfnAcceptEx), &dwBytes, nullptr, nullptr) == SOCKET_ERROR)
+    GUID guidAccpetEx = WSAID_ACCEPTEX;
+    if (WSAIoctl(dummySocket, SIO_GET_EXTENSION_FUNCTION_POINTER, &guidAccpetEx, sizeof(guidAccpetEx), &lpfnAcceptEx, sizeof(lpfnAcceptEx), &dwBytes, nullptr, nullptr) == SOCKET_ERROR)
     {
         printf("AcceptEx 등록 실패 : %u\n", WSAGetLastError());
         closesocket(dummySocket);
         WSACleanup();
         return false;
     }
-    if (WSAIoctl(dummySocket, SIO_GET_EXTENSION_FUNCTION_POINTER, &guid, sizeof(guid), &lpfnConnectEx, sizeof(lpfnConnectEx), &dwBytes, nullptr, nullptr) == SOCKET_ERROR)
+    GUID guidConnectEx = WSAID_CONNECTEX;
+    if (WSAIoctl(dummySocket, SIO_GET_EXTENSION_FUNCTION_POINTER, &guidConnectEx, sizeof(guidConnectEx), &lpfnConnectEx, sizeof(lpfnConnectEx), &dwBytes, nullptr, nullptr) == SOCKET_ERROR)
     {
         printf("ConnectEx 등록 실패 : % u\n", WSAGetLastError());
         closesocket(dummySocket);

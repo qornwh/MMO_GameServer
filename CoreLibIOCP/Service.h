@@ -40,12 +40,12 @@ public:
 private:
     int32 _sessionCount = 0;
     int32 _maxSessionCount = 0;
-    HANDLE _iocpHd;
     SOCKET _serverSocket = INVALID_SOCKET;
     OVERLAPPED _overlapped;
     EndPointUtil _ep;
 
 protected:
+    HANDLE _iocpHd;
     std::set<SessionRef> _sessions;
     Lock lock;
 };
