@@ -10,9 +10,8 @@ public:
     ~Session();
 
     void Init();
-    void Connect();
-    void AsyncConnect(OverlappedSocket* overlappedPtr);
-    void OnConnect();
+    void AsyncAccept(OverlappedSocket* overlappedPtr);
+    void OnAccept();
     void AsyncRead();
     void OnRead(int32 len);
     virtual int32 OnRecv(BYTE* buffer, int32 len);
@@ -27,9 +26,13 @@ public:
 	bool IsConnected() { return _connected; }
     SessionRef getSharePtr() { return shared_from_this(); }
     SOCKET GetSocket() { return _socket; }
+    EndPointUtil& GetEndPointUtil() { return _ep; }
 
-private:
+protected:
     SOCKET _socket = INVALID_SOCKET;
+    SOCKADDR_IN _serverAddr;
+    
+private:
     RecvBuffer _recvBuffer;
     Vector<SendBufferRef> _waitBuffers; // 대기용 sendBuffer
     Vector<SendBufferRef> _sendBuffers; // 보내지고 있는 sendBuffer
@@ -37,7 +40,6 @@ private:
 
     Lock lock;
 	Atomic<bool> _connected{ false };
-    SOCKADDR_IN _serverAddr;
 
     OverlappedSocket _recvOLS;
     OverlappedSocket _sendOLS;

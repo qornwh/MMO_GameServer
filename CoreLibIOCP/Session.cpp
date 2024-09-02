@@ -21,12 +21,7 @@ void Session::Init()
     _sendOLS.SetType(3);
 }
 
-void Session::Connect()
-{
-    _connected.store(true);
-}
-
-void Session::AsyncConnect(OverlappedSocket* overlappedPtr)
+void Session::AsyncAccept(OverlappedSocket* overlappedPtr)
 {
     DWORD dwBytes;
     bool bRetVal = SocketConfig::lpfnAcceptEx(_serviceRef.lock()->GetServerSocket(), _socket, _recvBuffer.WritePos(), 0, sizeof(SOCKADDR_IN) + 16, sizeof(SOCKADDR_IN) + 16, &dwBytes, reinterpret_cast<LPOVERLAPPED>(overlappedPtr));
@@ -36,14 +31,14 @@ void Session::AsyncConnect(OverlappedSocket* overlappedPtr)
         if (errorCode != WSA_IO_PENDING)
         {
             ErrorCode(errorCode);
-            AsyncConnect(overlappedPtr);
+            AsyncAccept(overlappedPtr);
         }
     }
 }
 
-void Session::OnConnect()
+void Session::OnAccept()
 {
-    Connect();
+    _connected.store(true);
     _serviceRef.lock()->AddSessionRef(shared_from_this());
     AsyncRead();
 }

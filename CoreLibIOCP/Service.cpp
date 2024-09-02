@@ -100,45 +100,6 @@ void Service::BroadCast(SendBufferRef sendBuffer)
     }
 }
 
-void Service::run()
-{
-    while (true)
-    {
-        DWORD numOfBytes = 0;
-        ULONG_PTR key = 0;
-        OverlappedSocket* overlappedPtr = nullptr;
-
-        if (GetQueuedCompletionStatus(_iocpHd, &numOfBytes, &key, reinterpret_cast<LPOVERLAPPED*>(&overlappedPtr), 10))
-        {
-            if (overlappedPtr->GetType() == OverlappedSocket::Type::ACCP)
-            {
-                Accept(overlappedPtr);
-            }
-            else if (overlappedPtr->GetType() == OverlappedSocket::Type::READ)
-            {
-                std::shared_ptr<Session> session = overlappedPtr->GetSession();
-                CrashFunc(session != nullptr);
-                session->OnRead(numOfBytes);
-            }
-            else if (overlappedPtr->GetType() == OverlappedSocket::Type::SEND)
-            {
-                std::shared_ptr<Session> session = overlappedPtr->GetSession();
-                CrashFunc(session != nullptr);
-                session->OnWrite(numOfBytes);
-            }
-        }
-        else
-        {
-            int errorCode = WSAGetLastError();
-            if (errorCode != WAIT_TIMEOUT)
-            {
-                ErrorCode(errorCode);
-                assert(-1);
-            }
-        }
-    }
-}
-
 void Service::task()
 {
     DWORD numOfBytes = 0;
@@ -156,22 +117,33 @@ void Service::task()
         }
         else if (type == OverlappedSocket::Type::READ)
         {
-            std::shared_ptr<Session> session = overlappedPtr->GetSession();
-            if (session == nullptr)
+            SessionRef session = overlappedPtr->GetSession();
+            if (session != nullptr)
             {
-                assert(-1);
+                session->OnRead(numOfBytes);
             }
-            CrashFunc(session != nullptr);
-            session->OnRead(numOfBytes);
         }
         else if (type == OverlappedSocket::Type::SEND)
         {
-            std::shared_ptr<Session> session = overlappedPtr->GetSession();
-            if (session)
+            SessionRef session = overlappedPtr->GetSession();
+            if (session != nullptr)
             {
                 session->OnWrite(numOfBytes);
             }
-            // CrashFunc(session != nullptr);
+        }
+        else if (type == OverlappedSocket::Type::CONN)
+        {
+            SessionRef session = overlappedPtr->GetSession();
+            if (session != nullptr)
+            {
+            }
+        }
+        else if (type == OverlappedSocket::Type::DISC)
+        {
+            SessionRef session = overlappedPtr->GetSession();
+            if (session != nullptr)
+            {
+            }
         }
     }
     else
@@ -182,7 +154,7 @@ void Service::task()
             if (errorCode == ERROR_NETNAME_DELETED)
             {
                 // 이미 종료됨
-                std::shared_ptr<Session> session = overlappedPtr->GetSession();
+                SessionRef session = overlappedPtr->GetSession();
                 if (session != nullptr)
                 {
                     session->Disconnect();
@@ -224,7 +196,7 @@ void Service::Accept(OverlappedSocket* overlappedPtr)
         return;
     }
 
-    session->OnConnect();
+    session->OnAccept();
     RegistAccept(overlappedPtr);
 }
 
@@ -243,7 +215,7 @@ void Service::SocketAcceptRegister(OverlappedSocket* overlappedPtr)
 {
     std::shared_ptr<Session> session = overlappedPtr->GetSession();
     CrashFunc(session != nullptr);
-    session->AsyncConnect(overlappedPtr);
+    session->AsyncAccept(overlappedPtr);
 }
 
 void Service::ErrorCode(int32 errorCode)

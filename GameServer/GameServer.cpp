@@ -71,7 +71,6 @@ int main()
         service->task();
         GRoomManger->getRoom(0)->Tick();
     }
-    service->run();
     if (TLS_SendBufferManager != nullptr)
         delete TLS_SendBufferManager;
 
