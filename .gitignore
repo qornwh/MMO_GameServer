@@ -10,7 +10,7 @@ x64/
 .idea/
 
 ## 임시로 무시(더미 개발중)
-DummyClient/
+# DummyClient/
 
 ## 라이브러리 무시
 protobuf/
