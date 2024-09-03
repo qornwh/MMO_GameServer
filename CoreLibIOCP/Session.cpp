@@ -174,6 +174,7 @@ bool Session::AsyncConnect()
 
 void Session::OnConnect()
 {
+    _connected.store(true);
 }
 
 void Session::Disconnect()
@@ -197,5 +198,5 @@ void Session::ErrorCode(int32 errorCode)
                    nullptr, errorCode, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
                    reinterpret_cast<LPWSTR>(&s), 0, nullptr);
     wprintf(L"ErrorCode : %d - ErrorMessage : %s\n", errorCode, s);
-    delete s;
+    // delete s;
 }
