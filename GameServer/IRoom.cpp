@@ -173,8 +173,12 @@ void GameRoom::Work()
 
     for (auto& it : _playerMap)
     {
-        GamePlayerInfoRef info = it.second;
-        info->Update();
+        if (it.second != nullptr)
+        {
+            if (it.second->IsDummy()) continue;
+            GamePlayerInfoRef info = it.second;
+            info->Update();
+        }
     }
 
     for (auto& it : _monsterMap)
@@ -335,4 +339,33 @@ void GameRoom::BroadCastAnother(SendBufferRef sendBuffer, int32 uuid)
         }
     };
     PostQueuedCompletionStatus(_taskIo, dwNumberOfBytesTransferred, dwCompletionKey, reinterpret_cast<LPOVERLAPPED>(overlapped));
+}
+
+void GameRoom::EnterDummySession(SessionRef session)
+{
+    GameSessionRef gameSession = std::static_pointer_cast<GameSession>(session);
+    _playerMap.emplace(gameSession->GetPlayer()->GetUUid(), gameSession->GetPlayer());
+    gameSession->SetRoomId(_id);
+    
+    protocol::SInsertplayer sendPkt;
+    protocol::Unit* unit = new protocol::Unit();
+    unit->set_name(gameSession->GetPlayer()->GetName());
+    unit->set_code(gameSession->GetPlayer()->GetCode());
+    unit->set_uuid(gameSession->GetPlayer()->GetUUid());
+    unit->set_hp(gameSession->GetPlayer()->GetHp());
+    unit->set_lv(gameSession->GetPlayer()->GetLv());
+
+    protocol::Position* position = new protocol::Position;
+    position->set_x(gameSession->GetPlayer()->GetCollider().GetPosition().X);
+    position->set_y(gameSession->GetPlayer()->GetCollider().GetPosition().Y);
+    position->set_z(0);
+    position->set_yaw(gameSession->GetPlayer()->GetCollider().GetRotate());
+    unit->set_allocated_position(position);
+    sendPkt.set_allocated_player(unit);
+
+    SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::S_INSERTPLAYER);
+    BroadCastAnother(sendBuffer, gameSession->GetPlayer()->GetUUid());
+    
+    IRoom::EnterSession(session);
+    std::cout << "Enter SessionID: " << gameSession->GetPlayer()->GetUUid() << " Name: " << gameSession->GetPlayer()->GetName() << std::endl;
 }

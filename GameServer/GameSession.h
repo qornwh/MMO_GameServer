@@ -41,4 +41,12 @@ private:
     int32 _jobCode = -1;
     int32 _weaponCode = -1;
     String _logId = "";
+
+    // dummy 세션 관련
+    void D_LoadHandler(BYTE* buffer, PacketHeader* header, int32 offset);
+    
+private:
+    bool _dummy = false;
+    int32 _d_jobCode = 1;
+    int32 _d_weaponCode = 1;
 };

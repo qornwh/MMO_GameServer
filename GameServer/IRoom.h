@@ -145,4 +145,8 @@ private:
     Atomic<bool> _isTask{false};
     protocol::SUnitStates _unitPkt;
     std::mt19937_64 rng;
+
+    //더미용
+public:
+    void EnterDummySession(SessionRef session);
 };

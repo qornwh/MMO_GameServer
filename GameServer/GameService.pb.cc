@@ -167,8 +167,7 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT SLoadDefaultTypeInternal _SLoad
 constexpr CLoad::CLoad(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
   : position_(nullptr)
-  , code_(0)
-  , is_dummy_(false){}
+  , uuid_(0){}
 struct CLoadDefaultTypeInternal {
   constexpr CLoadDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -519,8 +518,20 @@ struct CSellItemsDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT CSellItemsDefaultTypeInternal _CSellItems_default_instance_;
+constexpr DLoad::DLoad(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : unit_(nullptr){}
+struct DLoadDefaultTypeInternal {
+  constexpr DLoadDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~DLoadDefaultTypeInternal() {}
+  union {
+    DLoad _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT DLoadDefaultTypeInternal _DLoad_default_instance_;
 }  // namespace protocol
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_GameService_2eproto[36];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_GameService_2eproto[37];
 static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_GameService_2eproto[1];
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_GameService_2eproto = nullptr;
 
@@ -627,9 +638,8 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_GameService_2eproto::offsets[]
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::protocol::CLoad, code_),
+  PROTOBUF_FIELD_OFFSET(::protocol::CLoad, uuid_),
   PROTOBUF_FIELD_OFFSET(::protocol::CLoad, position_),
-  PROTOBUF_FIELD_OFFSET(::protocol::CLoad, is_dummy_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::protocol::SInsertplayer, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -845,6 +855,13 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_GameService_2eproto::offsets[]
   PROTOBUF_FIELD_OFFSET(::protocol::CSellItems, itemequips_),
   PROTOBUF_FIELD_OFFSET(::protocol::CSellItems, itemetcs_),
   PROTOBUF_FIELD_OFFSET(::protocol::CSellItems, gold_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::protocol::DLoad, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::protocol::DLoad, unit_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::protocol::Login)},
@@ -858,31 +875,32 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 74, -1, -1, sizeof(::protocol::Unit)},
   { 88, -1, -1, sizeof(::protocol::SLoad)},
   { 96, -1, -1, sizeof(::protocol::CLoad)},
-  { 105, -1, -1, sizeof(::protocol::SInsertplayer)},
-  { 112, -1, -1, sizeof(::protocol::SMove)},
-  { 121, -1, -1, sizeof(::protocol::SChat)},
-  { 130, -1, -1, sizeof(::protocol::SPlayerData)},
-  { 138, -1, -1, sizeof(::protocol::SClosePlayer)},
-  { 145, -1, -1, sizeof(::protocol::UnitState)},
-  { 154, -1, -1, sizeof(::protocol::SUnitStates)},
-  { 161, -1, -1, sizeof(::protocol::Attack)},
-  { 170, -1, -1, sizeof(::protocol::CAttack)},
-  { 180, -1, -1, sizeof(::protocol::Demage)},
-  { 191, -1, -1, sizeof(::protocol::SUnitDemage)},
-  { 200, -1, -1, sizeof(::protocol::SRoomQuest)},
-  { 209, -1, -1, sizeof(::protocol::CMovePotal)},
-  { 217, -1, -1, sizeof(::protocol::SEndGame)},
-  { 224, -1, -1, sizeof(::protocol::CBuyCharater)},
-  { 233, -1, -1, sizeof(::protocol::CBuyWeapon)},
-  { 241, -1, -1, sizeof(::protocol::SBuyResult)},
-  { 253, -1, -1, sizeof(::protocol::CPlayerJump)},
-  { 261, -1, -1, sizeof(::protocol::CPlayerAim)},
-  { 269, -1, -1, sizeof(::protocol::SExpLv)},
-  { 278, -1, -1, sizeof(::protocol::ItemEquip)},
-  { 285, -1, -1, sizeof(::protocol::ItemEtc)},
-  { 293, -1, -1, sizeof(::protocol::DropMessage)},
-  { 302, -1, -1, sizeof(::protocol::SLoadInventory)},
-  { 311, -1, -1, sizeof(::protocol::CSellItems)},
+  { 104, -1, -1, sizeof(::protocol::SInsertplayer)},
+  { 111, -1, -1, sizeof(::protocol::SMove)},
+  { 120, -1, -1, sizeof(::protocol::SChat)},
+  { 129, -1, -1, sizeof(::protocol::SPlayerData)},
+  { 137, -1, -1, sizeof(::protocol::SClosePlayer)},
+  { 144, -1, -1, sizeof(::protocol::UnitState)},
+  { 153, -1, -1, sizeof(::protocol::SUnitStates)},
+  { 160, -1, -1, sizeof(::protocol::Attack)},
+  { 169, -1, -1, sizeof(::protocol::CAttack)},
+  { 179, -1, -1, sizeof(::protocol::Demage)},
+  { 190, -1, -1, sizeof(::protocol::SUnitDemage)},
+  { 199, -1, -1, sizeof(::protocol::SRoomQuest)},
+  { 208, -1, -1, sizeof(::protocol::CMovePotal)},
+  { 216, -1, -1, sizeof(::protocol::SEndGame)},
+  { 223, -1, -1, sizeof(::protocol::CBuyCharater)},
+  { 232, -1, -1, sizeof(::protocol::CBuyWeapon)},
+  { 240, -1, -1, sizeof(::protocol::SBuyResult)},
+  { 252, -1, -1, sizeof(::protocol::CPlayerJump)},
+  { 260, -1, -1, sizeof(::protocol::CPlayerAim)},
+  { 268, -1, -1, sizeof(::protocol::SExpLv)},
+  { 277, -1, -1, sizeof(::protocol::ItemEquip)},
+  { 284, -1, -1, sizeof(::protocol::ItemEtc)},
+  { 292, -1, -1, sizeof(::protocol::DropMessage)},
+  { 301, -1, -1, sizeof(::protocol::SLoadInventory)},
+  { 310, -1, -1, sizeof(::protocol::CSellItems)},
+  { 319, -1, -1, sizeof(::protocol::DLoad)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -922,6 +940,7 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::protocol::_DropMessage_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::protocol::_SLoadInventory_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::protocol::_CSellItems_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::protocol::_DLoad_default_instance_),
 };
 
 const char descriptor_table_protodef_GameService_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -946,70 +965,71 @@ const char descriptor_table_protodef_GameService_2eproto[] PROTOBUF_SECTION_VARI
   "\n\004name\030\005 \001(\t\022\n\n\002lv\030\006 \001(\005\022\r\n\005state\030\007 \001(\005\022"
   "\022\n\nweaponCode\030\010 \001(\005\";\n\005SLoad\022!\n\004unit\030\001 \003"
   "(\0132\023.protocol.UnitState\022\017\n\007room_id\030\003 \001(\005"
-  "\"M\n\005CLoad\022\014\n\004code\030\001 \001(\005\022$\n\010position\030d \001("
-  "\0132\022.protocol.Position\022\020\n\010is_dummy\030e \001(\010\""
-  "/\n\rSInsertplayer\022\036\n\006player\030\001 \001(\0132\016.proto"
-  "col.Unit\"O\n\005SMove\022\014\n\004uuid\030\001 \001(\005\022$\n\010posit"
-  "ion\030\002 \001(\0132\022.protocol.Position\022\022\n\nis_mons"
-  "ter\030\003 \001(\010\"1\n\005SChat\022\014\n\004type\030\001 \001(\r\022\014\n\004uuid"
-  "\030\002 \001(\005\022\014\n\004text\030\005 \001(\t\":\n\013SPlayerData\022\036\n\006p"
-  "layer\030\001 \001(\0132\016.protocol.Unit\022\013\n\003exp\030\002 \001(\005"
-  "\"\034\n\014SClosePlayer\022\014\n\004uuid\030\001 \001(\005\"_\n\tUnitSt"
-  "ate\022\034\n\004unit\030\001 \001(\0132\016.protocol.Unit\022\022\n\nis_"
-  "monster\030\n \001(\010\022 \n\006attack\030\013 \001(\0132\020.protocol"
-  ".Attack\"6\n\013SUnitStates\022\'\n\nunit_state\030\001 \003"
-  "(\0132\023.protocol.UnitState\"\?\n\006Attack\022\014\n\004uui"
-  "d\030\001 \001(\005\022\022\n\nskill_code\030\002 \001(\005\022\023\n\013target_uu"
-  "id\030\003 \001(\005\"f\n\007CAttack\022\014\n\004uuid\030\001 \001(\005\022\022\n\nski"
-  "ll_code\030\002 \001(\005\022\023\n\013target_uuid\030\003 \001(\005\022$\n\010po"
-  "sition\030\004 \001(\0132\022.protocol.Position\"q\n\006Dema"
-  "ge\022\014\n\004uuid\030\001 \001(\005\022\016\n\006demage\030\002 \001(\005\022$\n\010posi"
-  "tion\030\003 \001(\0132\022.protocol.Position\022\017\n\007is_hea"
-  "l\030\004 \001(\010\022\022\n\nis_monster\030\n \001(\010\"Q\n\013SUnitDema"
-  "ge\022\014\n\004uuid\030\001 \001(\005\022\022\n\nis_monster\030\002 \001(\010\022 \n\006"
-  "demage\030\003 \003(\0132\020.protocol.Demage\"D\n\nSRoomQ"
-  "uest\022\020\n\010is_clear\030\001 \001(\010\022\022\n\nkill_count\030\002 \001"
-  "(\005\022\020\n\010sum_kill\030\003 \001(\005\"7\n\nCMovePotal\022\023\n\013pr"
-  "e_room_id\030\001 \001(\005\022\024\n\014next_room_id\030\002 \001(\005\"\034\n"
-  "\010SEndGame\022\020\n\010end_game\030\001 \001(\010\"C\n\014CBuyChara"
-  "ter\022\024\n\014CharaterType\030\001 \001(\005\022\017\n\007useCash\030\002 \001"
-  "(\005\022\014\n\004name\030\003 \001(\t\"1\n\nCBuyWeapon\022\022\n\nweapon"
-  "Type\030\001 \001(\005\022\017\n\007useCash\030\002 \001(\005\"\224\001\n\nSBuyResu"
-  "lt\022\016\n\006result\030\001 \001(\005\022$\n\010charater\030\002 \003(\0132\022.p"
-  "rotocol.Charater\022\027\n\017curCharaterType\030\003 \001("
-  "\005\022\025\n\rcurWeaponType\030\004 \001(\005\022\014\n\004cash\030\005 \001(\005\022\022"
-  "\n\nweaponList\030\006 \003(\005\"+\n\013CPlayerJump\022\016\n\006isJ"
-  "ump\030\001 \001(\010\022\014\n\004uuid\030\002 \001(\005\")\n\nCPlayerAim\022\r\n"
-  "\005isAim\030\001 \001(\010\022\014\n\004uuid\030\002 \001(\005\"/\n\006SExpLv\022\014\n\004"
-  "uuid\030\001 \001(\005\022\n\n\002lv\030\002 \001(\005\022\013\n\003exp\030\003 \001(\005\"\036\n\tI"
-  "temEquip\022\021\n\titem_code\030\001 \001(\005\"0\n\007ItemEtc\022\021"
-  "\n\titem_code\030\001 \001(\005\022\022\n\nitem_count\030\002 \001(\005\"i\n"
-  "\013DropMessage\022\'\n\nitemEquips\030\001 \003(\0132\023.proto"
-  "col.ItemEquip\022#\n\010itemEtcs\030\002 \003(\0132\021.protoc"
-  "ol.ItemEtc\022\014\n\004gold\030\003 \001(\005\"l\n\016SLoadInvento"
-  "ry\022\'\n\nitemEquips\030\001 \003(\0132\023.protocol.ItemEq"
-  "uip\022#\n\010itemEtcs\030\002 \003(\0132\021.protocol.ItemEtc"
-  "\022\014\n\004gold\030\003 \001(\005\"h\n\nCSellItems\022\'\n\nitemEqui"
-  "ps\030\001 \003(\0132\023.protocol.ItemEquip\022#\n\010itemEtc"
-  "s\030\002 \003(\0132\021.protocol.ItemEtc\022\014\n\004gold\030\003 \001(\005"
-  "*\341\003\n\013MessageCode\022\t\n\005LOGIN\020\000\022\n\n\006S_LOAD\020\001\022"
-  "\022\n\016S_INSERTPLAYER\020\002\022\n\n\006S_MOVE\020\003\022\n\n\006S_CHA"
-  "T\020\004\022\020\n\014S_PLAYERDATA\020\005\022\021\n\rS_CLOSEPLAYER\020\006"
-  "\022\020\n\014S_UNITSTATES\020\007\022\014\n\010C_ATTACK\020\010\022\020\n\014S_UN"
-  "ITDEMAGE\020\n\022\017\n\013S_ROOMQUEST\020\014\022\017\n\013C_MOVEPOT"
-  "AL\020\r\022\r\n\tS_ENDGAME\020\016\022\017\n\013LOGINACCESS\020\017\022\021\n\r"
-  "CREATEACCOUNT\020\020\022\n\n\006C_LOAD\020\021\022\023\n\017CREATECHA"
-  "RACTER\020\022\022\017\n\013DROPMESSAGE\020\023\022\021\n\rC_BUYCHARAT"
-  "ER\020\024\022\017\n\013C_BUYWEAPON\020\025\022\023\n\017C_UPDATEACCOUNT"
-  "\020\026\022\021\n\rS_CURRENTINFO\020\027\022\017\n\013S_BUYRESULT\020\030\022\020"
-  "\n\014C_PLAYERJUMP\020\031\022\017\n\013C_PLAYERAIM\020\032\022\013\n\007S_E"
-  "XPLV\020\033\022\023\n\017S_LOADINVENTORY\020\036\022\017\n\013C_SELLITE"
-  "MS\020\037b\006proto3"
+  "\";\n\005CLoad\022\014\n\004uuid\030\001 \001(\005\022$\n\010position\030d \001("
+  "\0132\022.protocol.Position\"/\n\rSInsertplayer\022\036"
+  "\n\006player\030\001 \001(\0132\016.protocol.Unit\"O\n\005SMove\022"
+  "\014\n\004uuid\030\001 \001(\005\022$\n\010position\030\002 \001(\0132\022.protoc"
+  "ol.Position\022\022\n\nis_monster\030\003 \001(\010\"1\n\005SChat"
+  "\022\014\n\004type\030\001 \001(\r\022\014\n\004uuid\030\002 \001(\005\022\014\n\004text\030\005 \001"
+  "(\t\":\n\013SPlayerData\022\036\n\006player\030\001 \001(\0132\016.prot"
+  "ocol.Unit\022\013\n\003exp\030\002 \001(\005\"\034\n\014SClosePlayer\022\014"
+  "\n\004uuid\030\001 \001(\005\"_\n\tUnitState\022\034\n\004unit\030\001 \001(\0132"
+  "\016.protocol.Unit\022\022\n\nis_monster\030\n \001(\010\022 \n\006a"
+  "ttack\030\013 \001(\0132\020.protocol.Attack\"6\n\013SUnitSt"
+  "ates\022\'\n\nunit_state\030\001 \003(\0132\023.protocol.Unit"
+  "State\"\?\n\006Attack\022\014\n\004uuid\030\001 \001(\005\022\022\n\nskill_c"
+  "ode\030\002 \001(\005\022\023\n\013target_uuid\030\003 \001(\005\"f\n\007CAttac"
+  "k\022\014\n\004uuid\030\001 \001(\005\022\022\n\nskill_code\030\002 \001(\005\022\023\n\013t"
+  "arget_uuid\030\003 \001(\005\022$\n\010position\030\004 \001(\0132\022.pro"
+  "tocol.Position\"q\n\006Demage\022\014\n\004uuid\030\001 \001(\005\022\016"
+  "\n\006demage\030\002 \001(\005\022$\n\010position\030\003 \001(\0132\022.proto"
+  "col.Position\022\017\n\007is_heal\030\004 \001(\010\022\022\n\nis_mons"
+  "ter\030\n \001(\010\"Q\n\013SUnitDemage\022\014\n\004uuid\030\001 \001(\005\022\022"
+  "\n\nis_monster\030\002 \001(\010\022 \n\006demage\030\003 \003(\0132\020.pro"
+  "tocol.Demage\"D\n\nSRoomQuest\022\020\n\010is_clear\030\001"
+  " \001(\010\022\022\n\nkill_count\030\002 \001(\005\022\020\n\010sum_kill\030\003 \001"
+  "(\005\"7\n\nCMovePotal\022\023\n\013pre_room_id\030\001 \001(\005\022\024\n"
+  "\014next_room_id\030\002 \001(\005\"\034\n\010SEndGame\022\020\n\010end_g"
+  "ame\030\001 \001(\010\"C\n\014CBuyCharater\022\024\n\014CharaterTyp"
+  "e\030\001 \001(\005\022\017\n\007useCash\030\002 \001(\005\022\014\n\004name\030\003 \001(\t\"1"
+  "\n\nCBuyWeapon\022\022\n\nweaponType\030\001 \001(\005\022\017\n\007useC"
+  "ash\030\002 \001(\005\"\224\001\n\nSBuyResult\022\016\n\006result\030\001 \001(\005"
+  "\022$\n\010charater\030\002 \003(\0132\022.protocol.Charater\022\027"
+  "\n\017curCharaterType\030\003 \001(\005\022\025\n\rcurWeaponType"
+  "\030\004 \001(\005\022\014\n\004cash\030\005 \001(\005\022\022\n\nweaponList\030\006 \003(\005"
+  "\"+\n\013CPlayerJump\022\016\n\006isJump\030\001 \001(\010\022\014\n\004uuid\030"
+  "\002 \001(\005\")\n\nCPlayerAim\022\r\n\005isAim\030\001 \001(\010\022\014\n\004uu"
+  "id\030\002 \001(\005\"/\n\006SExpLv\022\014\n\004uuid\030\001 \001(\005\022\n\n\002lv\030\002"
+  " \001(\005\022\013\n\003exp\030\003 \001(\005\"\036\n\tItemEquip\022\021\n\titem_c"
+  "ode\030\001 \001(\005\"0\n\007ItemEtc\022\021\n\titem_code\030\001 \001(\005\022"
+  "\022\n\nitem_count\030\002 \001(\005\"i\n\013DropMessage\022\'\n\nit"
+  "emEquips\030\001 \003(\0132\023.protocol.ItemEquip\022#\n\010i"
+  "temEtcs\030\002 \003(\0132\021.protocol.ItemEtc\022\014\n\004gold"
+  "\030\003 \001(\005\"l\n\016SLoadInventory\022\'\n\nitemEquips\030\001"
+  " \003(\0132\023.protocol.ItemEquip\022#\n\010itemEtcs\030\002 "
+  "\003(\0132\021.protocol.ItemEtc\022\014\n\004gold\030\003 \001(\005\"h\n\n"
+  "CSellItems\022\'\n\nitemEquips\030\001 \003(\0132\023.protoco"
+  "l.ItemEquip\022#\n\010itemEtcs\030\002 \003(\0132\021.protocol"
+  ".ItemEtc\022\014\n\004gold\030\003 \001(\005\"%\n\005DLoad\022\034\n\004unit\030"
+  "e \001(\0132\016.protocol.Unit*\355\003\n\013MessageCode\022\t\n"
+  "\005LOGIN\020\000\022\n\n\006S_LOAD\020\001\022\022\n\016S_INSERTPLAYER\020\002"
+  "\022\n\n\006S_MOVE\020\003\022\n\n\006S_CHAT\020\004\022\020\n\014S_PLAYERDATA"
+  "\020\005\022\021\n\rS_CLOSEPLAYER\020\006\022\020\n\014S_UNITSTATES\020\007\022"
+  "\014\n\010C_ATTACK\020\010\022\020\n\014S_UNITDEMAGE\020\n\022\017\n\013S_ROO"
+  "MQUEST\020\014\022\017\n\013C_MOVEPOTAL\020\r\022\r\n\tS_ENDGAME\020\016"
+  "\022\017\n\013LOGINACCESS\020\017\022\021\n\rCREATEACCOUNT\020\020\022\n\n\006"
+  "C_LOAD\020\021\022\023\n\017CREATECHARACTER\020\022\022\017\n\013DROPMES"
+  "SAGE\020\023\022\021\n\rC_BUYCHARATER\020\024\022\017\n\013C_BUYWEAPON"
+  "\020\025\022\023\n\017C_UPDATEACCOUNT\020\026\022\021\n\rS_CURRENTINFO"
+  "\020\027\022\017\n\013S_BUYRESULT\020\030\022\020\n\014C_PLAYERJUMP\020\031\022\017\n"
+  "\013C_PLAYERAIM\020\032\022\013\n\007S_EXPLV\020\033\022\023\n\017S_LOADINV"
+  "ENTORY\020\036\022\017\n\013C_SELLITEMS\020\037\022\n\n\006D_LOAD\020eb\006p"
+  "roto3"
   ;
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_GameService_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_GameService_2eproto = {
-  false, false, 3172, descriptor_table_protodef_GameService_2eproto, "GameService.proto", 
-  &descriptor_table_GameService_2eproto_once, nullptr, 0, 36,
+  false, false, 3205, descriptor_table_protodef_GameService_2eproto, "GameService.proto", 
+  &descriptor_table_GameService_2eproto_once, nullptr, 0, 37,
   schemas, file_default_instances, TableStruct_GameService_2eproto::offsets,
   file_level_metadata_GameService_2eproto, file_level_enum_descriptors_GameService_2eproto, file_level_service_descriptors_GameService_2eproto,
 };
@@ -1054,6 +1074,7 @@ bool MessageCode_IsValid(int value) {
     case 27:
     case 30:
     case 31:
+    case 101:
       return true;
     default:
       return false;
@@ -3694,17 +3715,15 @@ CLoad::CLoad(const CLoad& from)
   } else {
     position_ = nullptr;
   }
-  ::memcpy(&code_, &from.code_,
-    static_cast<size_t>(reinterpret_cast<char*>(&is_dummy_) -
-    reinterpret_cast<char*>(&code_)) + sizeof(is_dummy_));
+  uuid_ = from.uuid_;
   // @@protoc_insertion_point(copy_constructor:protocol.CLoad)
 }
 
 void CLoad::SharedCtor() {
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&position_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&is_dummy_) -
-    reinterpret_cast<char*>(&position_)) + sizeof(is_dummy_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&uuid_) -
+    reinterpret_cast<char*>(&position_)) + sizeof(uuid_));
 }
 
 CLoad::~CLoad() {
@@ -3739,9 +3758,7 @@ void CLoad::Clear() {
     delete position_;
   }
   position_ = nullptr;
-  ::memset(&code_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&is_dummy_) -
-      reinterpret_cast<char*>(&code_)) + sizeof(is_dummy_));
+  uuid_ = 0;
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -3751,10 +3768,10 @@ const char* CLoad::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::inte
     ::PROTOBUF_NAMESPACE_ID::uint32 tag;
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // int32 code = 1;
+      // int32 uuid = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
-          code_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          uuid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -3763,14 +3780,6 @@ const char* CLoad::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::inte
       case 100:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 34)) {
           ptr = ctx->ParseMessage(_internal_mutable_position(), ptr);
-          CHK_(ptr);
-        } else
-          goto handle_unusual;
-        continue;
-      // bool is_dummy = 101;
-      case 101:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 40)) {
-          is_dummy_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -3804,10 +3813,10 @@ failure:
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // int32 code = 1;
-  if (this->_internal_code() != 0) {
+  // int32 uuid = 1;
+  if (this->_internal_uuid() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->_internal_code(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->_internal_uuid(), target);
   }
 
   // .protocol.Position position = 100;
@@ -3816,12 +3825,6 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
       InternalWriteMessage(
         100, _Internal::position(this), target, stream);
-  }
-
-  // bool is_dummy = 101;
-  if (this->_internal_is_dummy() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(101, this->_internal_is_dummy(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -3847,14 +3850,9 @@ size_t CLoad::ByteSizeLong() const {
         *position_);
   }
 
-  // int32 code = 1;
-  if (this->_internal_code() != 0) {
-    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_code());
-  }
-
-  // bool is_dummy = 101;
-  if (this->_internal_is_dummy() != 0) {
-    total_size += 2 + 1;
+  // int32 uuid = 1;
+  if (this->_internal_uuid() != 0) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_uuid());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
@@ -3882,11 +3880,8 @@ void CLoad::MergeFrom(const CLoad& from) {
   if (from._internal_has_position()) {
     _internal_mutable_position()->::protocol::Position::MergeFrom(from._internal_position());
   }
-  if (from._internal_code() != 0) {
-    _internal_set_code(from._internal_code());
-  }
-  if (from._internal_is_dummy() != 0) {
-    _internal_set_is_dummy(from._internal_is_dummy());
+  if (from._internal_uuid() != 0) {
+    _internal_set_uuid(from._internal_uuid());
   }
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -3906,8 +3901,8 @@ void CLoad::InternalSwap(CLoad* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(CLoad, is_dummy_)
-      + sizeof(CLoad::is_dummy_)
+      PROTOBUF_FIELD_OFFSET(CLoad, uuid_)
+      + sizeof(CLoad::uuid_)
       - PROTOBUF_FIELD_OFFSET(CLoad, position_)>(
           reinterpret_cast<char*>(&position_),
           reinterpret_cast<char*>(&other->position_));
@@ -9735,6 +9730,201 @@ void CSellItems::InternalSwap(CSellItems* other) {
       file_level_metadata_GameService_2eproto[35]);
 }
 
+// ===================================================================
+
+class DLoad::_Internal {
+ public:
+  static const ::protocol::Unit& unit(const DLoad* msg);
+};
+
+const ::protocol::Unit&
+DLoad::_Internal::unit(const DLoad* msg) {
+  return *msg->unit_;
+}
+DLoad::DLoad(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:protocol.DLoad)
+}
+DLoad::DLoad(const DLoad& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  if (from._internal_has_unit()) {
+    unit_ = new ::protocol::Unit(*from.unit_);
+  } else {
+    unit_ = nullptr;
+  }
+  // @@protoc_insertion_point(copy_constructor:protocol.DLoad)
+}
+
+void DLoad::SharedCtor() {
+unit_ = nullptr;
+}
+
+DLoad::~DLoad() {
+  // @@protoc_insertion_point(destructor:protocol.DLoad)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void DLoad::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  if (this != internal_default_instance()) delete unit_;
+}
+
+void DLoad::ArenaDtor(void* object) {
+  DLoad* _this = reinterpret_cast< DLoad* >(object);
+  (void)_this;
+}
+void DLoad::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void DLoad::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void DLoad::Clear() {
+// @@protoc_insertion_point(message_clear_start:protocol.DLoad)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  if (GetArenaForAllocation() == nullptr && unit_ != nullptr) {
+    delete unit_;
+  }
+  unit_ = nullptr;
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* DLoad::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // .protocol.Unit unit = 101;
+      case 101:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 42)) {
+          ptr = ctx->ParseMessage(_internal_mutable_unit(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* DLoad::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:protocol.DLoad)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // .protocol.Unit unit = 101;
+  if (this->_internal_has_unit()) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        101, _Internal::unit(this), target, stream);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:protocol.DLoad)
+  return target;
+}
+
+size_t DLoad::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:protocol.DLoad)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // .protocol.Unit unit = 101;
+  if (this->_internal_has_unit()) {
+    total_size += 2 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *unit_);
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData DLoad::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    DLoad::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*DLoad::GetClassData() const { return &_class_data_; }
+
+void DLoad::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<DLoad *>(to)->MergeFrom(
+      static_cast<const DLoad &>(from));
+}
+
+
+void DLoad::MergeFrom(const DLoad& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:protocol.DLoad)
+  GOOGLE_DCHECK_NE(&from, this);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from._internal_has_unit()) {
+    _internal_mutable_unit()->::protocol::Unit::MergeFrom(from._internal_unit());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void DLoad::CopyFrom(const DLoad& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:protocol.DLoad)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool DLoad::IsInitialized() const {
+  return true;
+}
+
+void DLoad::InternalSwap(DLoad* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(unit_, other->unit_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata DLoad::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_GameService_2eproto_getter, &descriptor_table_GameService_2eproto_once,
+      file_level_metadata_GameService_2eproto[36]);
+}
+
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace protocol
 PROTOBUF_NAMESPACE_OPEN
@@ -9845,6 +10035,9 @@ template<> PROTOBUF_NOINLINE ::protocol::SLoadInventory* Arena::CreateMaybeMessa
 }
 template<> PROTOBUF_NOINLINE ::protocol::CSellItems* Arena::CreateMaybeMessage< ::protocol::CSellItems >(Arena* arena) {
   return Arena::CreateMessageInternal< ::protocol::CSellItems >(arena);
+}
+template<> PROTOBUF_NOINLINE ::protocol::DLoad* Arena::CreateMaybeMessage< ::protocol::DLoad >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::protocol::DLoad >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

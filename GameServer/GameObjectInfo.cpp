@@ -271,7 +271,7 @@ void GameMosterInfo::Move()
             _targetUUid = -1;
         }
     }
-    
+
     if (_YawCounter.Add() == 0)
     {
         SetRotate(genYaw(rng));
@@ -380,6 +380,7 @@ GamePlayerInfo::GamePlayerInfo(GameSessionRef gameSession, int32 uuid, int32 cod
 
 GamePlayerInfo::~GamePlayerInfo()
 {
+    if (IsDummy()) return;
     _inventory.SaveDB();
     std::cout << "Close Player Name: " << _name << std::endl;
 }
@@ -421,10 +422,10 @@ bool GamePlayerInfo::AddExp(int32 exp)
 {
     auto it = GExpLv->GetExpLv().find(_lv);
     CrashFunc(it != GExpLv->GetExpLv().end());
-    
+
     if (it->second._exp <= 0)
         return false; // 만렙
-    
+
     _exp += exp;
     if (it->second._exp <= _exp)
     {
@@ -439,4 +440,9 @@ bool GamePlayerInfo::AddExp(int32 exp)
 void GamePlayerInfo::SetExp(int32 exp)
 {
     _exp = exp;
+}
+
+void GamePlayerInfo::SetDummy(bool flag)
+{
+    _dummy = flag;
 }

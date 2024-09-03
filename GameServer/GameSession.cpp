@@ -95,6 +95,26 @@ void GameSession::DropItem(std::shared_ptr<GameMosterInfo> monster)
     AsyncWrite(sendBuffer);
 }
 
+void GameSession::D_LoadHandler(BYTE* buffer, PacketHeader* header, int32 offset)
+{
+    protocol::DLoad pkt;
+    if (GamePacketHandler::ParsePacketHandler(pkt, buffer, header->size - offset, offset))
+    {
+        protocol::Unit unit = pkt.unit();
+        protocol::Position position = unit.position();
+
+        // 더미정보 셋팅
+        CreatePlayerInfo(unit.code(), unit.lv());
+        GetPlayer()->SetDummy(true);
+        GetPlayer()->SetName(unit.name());
+        GetPlayer()->SetPlayerCode(_sessionId, unit.weaponcode(), 0);
+        GetPlayer()->SetPosition(position.x(), position.y());
+        GetPlayer()->SetRotate(position.yaw());
+        GetPlayer()->SetExp(0);
+    }
+}
+
+
 void GameSession::HandlePacket(BYTE* buffer, PacketHeader* header)
 {
     uint16 id = header->id;
@@ -164,6 +184,15 @@ void GameSession::HandlePacket(BYTE* buffer, PacketHeader* header)
     case protocol::MessageCode::C_SELLITEMS:
         {
             SellItemsHandler(buffer, header, static_cast<int32>(sizeof(PacketHeader)));
+        }
+        break;
+    case protocol::MessageCode::D_LOAD:
+        {
+            D_LoadHandler(buffer, header, static_cast<int32>(sizeof(PacketHeader)));
+            if (GRoomManger->getRoom(0) != nullptr)
+            {
+                GRoomManger->getRoom(0)->EnterSession(std::static_pointer_cast<GameSession>(shared_from_this()));
+            }
         }
         break;
     }
@@ -531,12 +560,6 @@ void GameSession::LoadHandler(BYTE* buffer, PacketHeader* header, int32 offset)
                 SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::S_PLAYERDATA);
                 AsyncWrite(sendBuffer);
             }
-        }
-        else
-        {
-            // 더미 클라이언트만 !!!
-            GetPlayer()->SetPosition(position.z(), position.x());
-            GetPlayer()->SetRotate(position.yaw());
         }
     }
 }

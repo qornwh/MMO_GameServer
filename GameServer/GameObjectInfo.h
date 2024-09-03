@@ -145,7 +145,6 @@ public:
     bool AddExp(int32 exp);
     void SetExp(int32 exp);
     int32 GetExp() { return _exp; }
-
     Inventory& GetInventory() { return _inventory; }
 
 private:
@@ -155,4 +154,12 @@ private:
     int32 _exp;
     std::weak_ptr<GameSession> _gameSession;
     Inventory _inventory;
+
+    //더미용
+public:
+    void SetDummy(bool flag);
+    bool IsDummy() { return _dummy; }
+
+private:
+    bool _dummy = false;
 };
