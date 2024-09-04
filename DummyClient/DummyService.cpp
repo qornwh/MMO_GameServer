@@ -66,8 +66,8 @@ void DummyService::AsyncSession()
             protocol::SMove pkt;
             pkt.set_is_monster(false);
             protocol::Position *position = new protocol::Position();
-            position->set_x(info->GetPostion().Y);
-            position->set_z(info->GetPostion().X);
+            position->set_x(info->GetPostion().X);
+            position->set_y(info->GetPostion().Y);
             position->set_yaw(info->GetPostion().Yaw);
             pkt.set_allocated_position(position);
                 

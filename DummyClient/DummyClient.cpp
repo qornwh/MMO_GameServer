@@ -17,7 +17,7 @@ int main()
     // 일단 400까지는 연결이된다. 그러나 500부터는 안되는것 같다
     GThreadManager->CreateThread([&address, &port]()
         {
-            DummyServiceRef service = std::make_shared<DummyService>(address, port, 200);
+            DummyServiceRef service = std::make_shared<DummyService>(address, port, 100);
             if (!service->Start()) return;
             while (true)
             {
