@@ -10,3 +10,6 @@ extern std::shared_ptr<class GameExpLv> GExpLv;
 extern std::shared_ptr<class GameEquipItem> GEquipItem;
 extern std::shared_ptr<class GameEtcItem> GEtcItem;
 extern std::shared_ptr<class GameDrop> GDropItem;
+
+// 일단 유저접속정보도 여기서 관리한다.
+extern std::shared_ptr<class GameUserAccess> GUserAccess;

@@ -7,6 +7,7 @@
 #include "GamePacketHandler.h"
 #include "GameRoomManager.h"
 #include "GameObjectInfo.h"
+#include "GameUserAccess.h"
 #include "IRoom.h"
 #include "SessionDB.h"
 
@@ -19,7 +20,6 @@ GameSession::GameSession(EndPointUtil& ep) : Session(ep)
 
 GameSession::~GameSession()
 {
-    std::cout << "LogOut ID: " << _logId << std::endl;
 }
 
 int32 GameSession::OnRecv(BYTE* buffer, int32 len)
@@ -203,6 +203,7 @@ void GameSession::LoginHandler(BYTE* buffer, PacketHeader* header, int32 offset)
     protocol::Login readPkt;
     if (GamePacketHandler::ParsePacketHandler(readPkt, buffer, header->size - offset, offset))
     {
+        protocol::LoginAccess logPkt;
         WCHAR* wId = GameUtils::Utils::CharToWchar(readPkt.id().c_str());
         WCHAR* wPwd = GameUtils::Utils::CharToWchar(readPkt.pwd().c_str());
 
@@ -216,64 +217,74 @@ void GameSession::LoginHandler(BYTE* buffer, PacketHeader* header, int32 offset)
         bool isAccount = sdb.LoginDB(wId, _accountCode, curCharaterCode, curWeaponCode, cash);
         if (isAccount)
         {
-            bool loginCheck = sdb.LoginCheck(wPwd);
-
-            sdb.GetAccount(_accountCode, cash, curCharaterCode, curWeaponCode, weaponOne, weaponTwo, weaponThr);
-            protocol::LoginAccess logPkt;
-            logPkt.set_success(loginCheck);
-            logPkt.set_curcharatertype(curCharaterCode);
-            logPkt.set_curweapontype(curWeaponCode);
-            logPkt.set_cash(cash);
-
-            logPkt.add_weaponlist(weaponOne);
-            logPkt.add_weaponlist(weaponTwo);
-            logPkt.add_weaponlist(weaponThr);
-
-            _jobCode = curCharaterCode;
-            _weaponCode = curWeaponCode;
-
-            if (loginCheck)
+            if (GUserAccess->AccessUser(_accountCode, _sessionId))
             {
-                // 로그인 성공
-                if (sdb.PlayerDB(_accountCode))
+                bool loginCheck = sdb.LoginCheck(wPwd);
+                sdb.GetAccount(_accountCode, cash, curCharaterCode, curWeaponCode, weaponOne, weaponTwo, weaponThr);
+                logPkt.set_curcharatertype(curCharaterCode);
+                logPkt.set_curweapontype(curWeaponCode);
+                logPkt.set_cash(cash);
+                logPkt.add_weaponlist(weaponOne);
+                logPkt.add_weaponlist(weaponTwo);
+                logPkt.add_weaponlist(weaponThr);
+                _jobCode = curCharaterCode;
+                _weaponCode = curWeaponCode;
+                if (loginCheck)
                 {
-                    int32 playerCode = 0;
-                    int32 jobCode = 0;
-                    int32 mapCode = 0;
-                    int32 gold = 0;
-                    int32 lv = 0;
-                    int32 exp = 0;
-                    WCHAR name[10] = {0,};
-
-                    while (sdb.GetPlayerDBInfo(playerCode, name, jobCode, mapCode, gold, lv, exp) == true)
+                    // 로그인 성공
+                    if (sdb.PlayerDB(_accountCode))
                     {
-                        protocol::Charater* charater = logPkt.add_charater();
-                        charater->set_code(jobCode);
-                        charater->set_uuid(_sessionId);
-                        charater->set_lv(lv);
-                        char* nameByte = GameUtils::Utils::WcharToChar(name);
-                        charater->set_name(nameByte);
-                        memset(name, 0, 10);
+                        int32 playerCode = 0;
+                        int32 jobCode = 0;
+                        int32 mapCode = 0;
+                        int32 gold = 0;
+                        int32 lv = 0;
+                        int32 exp = 0;
+                        WCHAR name[10] = {0,};
+
+                        while (sdb.GetPlayerDBInfo(playerCode, name, jobCode, mapCode, gold, lv, exp) == true)
+                        {
+                            protocol::Charater* charater = logPkt.add_charater();
+                            charater->set_code(jobCode);
+                            charater->set_uuid(_sessionId);
+                            charater->set_lv(lv);
+                            char* nameByte = GameUtils::Utils::WcharToChar(name);
+                            charater->set_name(nameByte);
+                            memset(name, 0, 10);
+                        }
                     }
+                    logPkt.set_result(1);
+                    _logId.append(readPkt.id());
+                    std::cout << "Login Access ID: " << readPkt.id().c_str() << std::endl;
                 }
-                _logId.append(readPkt.id());
-                std::cout << "Login Access ID: " << readPkt.id().c_str() << std::endl;
+                else
+                {
+                    logPkt.set_result(0);
+                }
             }
-            SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(logPkt, protocol::MessageCode::LOGINACCESS);
-            AsyncWrite(sendBuffer);
+            else
+            {
+                logPkt.set_result(3);
+                std::cout << "Already connected to this Account : " << _accountCode << std::endl;
+            }
         }
         else
         {
             // 계정 생성
             bool result = sdb.CreateAccount(wId, wPwd, 10000);
             if (result)
+            {
                 std::cout << "Create Account ID: " << readPkt.id().c_str() << std::endl;
-
-            protocol::CreateAccount sendPkt;
-            sendPkt.set_success(result);
-            SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::CREATEACCOUNT);
-            AsyncWrite(sendBuffer);
+                logPkt.set_result(2);
+            }
+            else
+            {
+                std::cout << "Create Failed Account ID: " << readPkt.id().c_str() << std::endl;
+                logPkt.set_result(4);
+            }
         }
+        SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(logPkt, protocol::MessageCode::LOGINACCESS);
+        AsyncWrite(sendBuffer);
         delete wId;
         delete wPwd;
     }
@@ -534,8 +545,9 @@ void GameSession::LoadHandler(BYTE* buffer, PacketHeader* header, int32 offset)
             WCHAR name[10] = {0,};
             sdb.GetPlayerDBInfo(_playerCode, name, jobCode, mapCode, gold, lv, exp);
             sdb.ResetDBOrm();
-            String nameStr(GameUtils::Utils::WcharToChar(name));
 
+            char* nameCStr = GameUtils::Utils::WcharToChar(name);
+            String nameStr = nameCStr;
             CreatePlayerInfo(jobCode, lv);
             GetPlayer()->SetName(nameStr);
             GetPlayer()->SetPlayerCode(_playerCode, _weaponCode, gold);
@@ -560,6 +572,7 @@ void GameSession::LoadHandler(BYTE* buffer, PacketHeader* header, int32 offset)
                 SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::S_PLAYERDATA);
                 AsyncWrite(sendBuffer);
             }
+            delete nameCStr;
         }
     }
 }

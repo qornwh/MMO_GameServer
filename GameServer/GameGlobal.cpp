@@ -6,6 +6,7 @@
 #include "GameRoomManager.h"
 #include "GameSkill.h"
 #include "GameItem.h"
+#include "GameUserAccess.h"
 #include "GameWeapon.h"
 
 std::shared_ptr<GameRoomManager> GRoomManger = std::make_shared<GameRoomManager>();
@@ -17,6 +18,8 @@ std::shared_ptr<GameExpLv> GExpLv = std::make_shared<GameExpLv>();
 std::shared_ptr<GameEquipItem> GEquipItem = std::make_shared<GameEquipItem>();
 std::shared_ptr<GameEtcItem> GEtcItem = std::make_shared<GameEtcItem>();
 std::shared_ptr<GameDrop> GDropItem = std::make_shared<GameDrop>();
+
+std::shared_ptr<GameUserAccess> GUserAccess = std::make_shared<GameUserAccess>();
 
 class GameGlobal
 {
@@ -35,6 +38,7 @@ public:
         GEquipItem->ClearItem();
         GEtcItem->ClearItem();
         GDropItem->ClearItem();
+        GUserAccess->ClearUser();
     }
     
 }GGameGlobal;

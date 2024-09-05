@@ -17,7 +17,6 @@ enum MessageCode {
     C_MOVEPOTAL = 13; // 포탈 이동
     S_ENDGAME = 14; // 게임 종료
     LOGINACCESS = 15; // 로그인 성공 여부
-    CREATEACCOUNT = 16; // 계정 생성
     C_LOAD = 17; // 클라이언트 인게임 요청
     CREATECHARACTER = 18; // 캐릭터 생성 요청
     DROPMESSAGE = 19; // 드롭 흭득 메시지
@@ -45,10 +44,6 @@ message Login {
     string pwd = 2;
 }
 
-message CreateAccount {
-    bool success = 1; // 계정 생성 여부
-}
-
 message CreateCharacter {
     Charater charater = 1; // 캐릭터 생성
 }
@@ -68,7 +63,14 @@ message SCurrentInfo {
 }
 
 message LoginAccess {
-    bool success = 1; // 로그인 성공 여부
+    int32 result = 1;
+    /*
+    0 = 로그인 실패
+    1 = 로그인 성공
+    2 = 계정 생성 성공
+    3 = 이미 로그인된 계정
+    4 = 계정 생성 실패
+     */
     repeated Charater charater = 2;
     int32 curCharaterType = 3;
     int32 curWeaponType = 4;

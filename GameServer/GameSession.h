@@ -31,6 +31,7 @@ public:
     int32 GetRoomId() { return _roomId; }
     void AddExp(int32 exp);
     void DropItem(std::shared_ptr<GameMosterInfo> monster);
+    int32 GetAccountCode() { return _accountCode; }
 
 private:
     std::shared_ptr<class GamePlayerInfo> _player;

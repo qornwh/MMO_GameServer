@@ -47,7 +47,7 @@ struct TableStruct_GameService_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[37]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[36]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -88,9 +88,6 @@ extern CUpdateAccountDefaultTypeInternal _CUpdateAccount_default_instance_;
 class Charater;
 struct CharaterDefaultTypeInternal;
 extern CharaterDefaultTypeInternal _Charater_default_instance_;
-class CreateAccount;
-struct CreateAccountDefaultTypeInternal;
-extern CreateAccountDefaultTypeInternal _CreateAccount_default_instance_;
 class CreateCharacter;
 struct CreateCharacterDefaultTypeInternal;
 extern CreateCharacterDefaultTypeInternal _CreateCharacter_default_instance_;
@@ -179,7 +176,6 @@ template<> ::protocol::CPlayerJump* Arena::CreateMaybeMessage<::protocol::CPlaye
 template<> ::protocol::CSellItems* Arena::CreateMaybeMessage<::protocol::CSellItems>(Arena*);
 template<> ::protocol::CUpdateAccount* Arena::CreateMaybeMessage<::protocol::CUpdateAccount>(Arena*);
 template<> ::protocol::Charater* Arena::CreateMaybeMessage<::protocol::Charater>(Arena*);
-template<> ::protocol::CreateAccount* Arena::CreateMaybeMessage<::protocol::CreateAccount>(Arena*);
 template<> ::protocol::CreateCharacter* Arena::CreateMaybeMessage<::protocol::CreateCharacter>(Arena*);
 template<> ::protocol::DLoad* Arena::CreateMaybeMessage<::protocol::DLoad>(Arena*);
 template<> ::protocol::Demage* Arena::CreateMaybeMessage<::protocol::Demage>(Arena*);
@@ -223,7 +219,6 @@ enum MessageCode : int {
   C_MOVEPOTAL = 13,
   S_ENDGAME = 14,
   LOGINACCESS = 15,
-  CREATEACCOUNT = 16,
   C_LOAD = 17,
   CREATECHARACTER = 18,
   DROPMESSAGE = 19,
@@ -426,149 +421,6 @@ class Login final :
 };
 // -------------------------------------------------------------------
 
-class CreateAccount final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:protocol.CreateAccount) */ {
- public:
-  inline CreateAccount() : CreateAccount(nullptr) {}
-  ~CreateAccount() override;
-  explicit constexpr CreateAccount(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
-
-  CreateAccount(const CreateAccount& from);
-  CreateAccount(CreateAccount&& from) noexcept
-    : CreateAccount() {
-    *this = ::std::move(from);
-  }
-
-  inline CreateAccount& operator=(const CreateAccount& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline CreateAccount& operator=(CreateAccount&& from) noexcept {
-    if (this == &from) return *this;
-    if (GetOwningArena() == from.GetOwningArena()
-  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
-        && GetOwningArena() != nullptr
-  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
-    ) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  static const CreateAccount& default_instance() {
-    return *internal_default_instance();
-  }
-  static inline const CreateAccount* internal_default_instance() {
-    return reinterpret_cast<const CreateAccount*>(
-               &_CreateAccount_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    1;
-
-  friend void swap(CreateAccount& a, CreateAccount& b) {
-    a.Swap(&b);
-  }
-  inline void Swap(CreateAccount* other) {
-    if (other == this) return;
-    if (GetOwningArena() == other->GetOwningArena()) {
-      InternalSwap(other);
-    } else {
-      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(CreateAccount* other) {
-    if (other == this) return;
-    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  inline CreateAccount* New() const final {
-    return new CreateAccount();
-  }
-
-  CreateAccount* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<CreateAccount>(arena);
-  }
-  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const CreateAccount& from);
-  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom(const CreateAccount& from);
-  private:
-  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
-  public:
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
-      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
-
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(CreateAccount* other);
-  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "protocol.CreateAccount";
-  }
-  protected:
-  explicit CreateAccount(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                       bool is_message_owned = false);
-  private:
-  static void ArenaDtor(void* object);
-  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  public:
-
-  static const ClassData _class_data_;
-  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
-
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  enum : int {
-    kSuccessFieldNumber = 1,
-  };
-  // bool success = 1;
-  void clear_success();
-  bool success() const;
-  void set_success(bool value);
-  private:
-  bool _internal_success() const;
-  void _internal_set_success(bool value);
-  public:
-
-  // @@protoc_insertion_point(class_scope:protocol.CreateAccount)
- private:
-  class _Internal;
-
-  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
-  bool success_;
-  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-  friend struct ::TableStruct_GameService_2eproto;
-};
-// -------------------------------------------------------------------
-
 class CreateCharacter final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:protocol.CreateCharacter) */ {
  public:
@@ -617,7 +469,7 @@ class CreateCharacter final :
                &_CreateCharacter_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    2;
+    1;
 
   friend void swap(CreateCharacter& a, CreateCharacter& b) {
     a.Swap(&b);
@@ -769,7 +621,7 @@ class CUpdateAccount final :
                &_CUpdateAccount_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    2;
 
   friend void swap(CUpdateAccount& a, CUpdateAccount& b) {
     a.Swap(&b);
@@ -934,7 +786,7 @@ class SCurrentInfo final :
                &_SCurrentInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    3;
 
   friend void swap(SCurrentInfo& a, SCurrentInfo& b) {
     a.Swap(&b);
@@ -1130,7 +982,7 @@ class LoginAccess final :
                &_LoginAccess_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    4;
 
   friend void swap(LoginAccess& a, LoginAccess& b) {
     a.Swap(&b);
@@ -1203,7 +1055,7 @@ class LoginAccess final :
   enum : int {
     kCharaterFieldNumber = 2,
     kWeaponListFieldNumber = 6,
-    kSuccessFieldNumber = 1,
+    kResultFieldNumber = 1,
     kCurCharaterTypeFieldNumber = 3,
     kCurWeaponTypeFieldNumber = 4,
     kCashFieldNumber = 5,
@@ -1248,13 +1100,13 @@ class LoginAccess final :
   ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >*
       mutable_weaponlist();
 
-  // bool success = 1;
-  void clear_success();
-  bool success() const;
-  void set_success(bool value);
+  // int32 result = 1;
+  void clear_result();
+  ::PROTOBUF_NAMESPACE_ID::int32 result() const;
+  void set_result(::PROTOBUF_NAMESPACE_ID::int32 value);
   private:
-  bool _internal_success() const;
-  void _internal_set_success(bool value);
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_result() const;
+  void _internal_set_result(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
   // int32 curCharaterType = 3;
@@ -1294,7 +1146,7 @@ class LoginAccess final :
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::protocol::Charater > charater_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 > weaponlist_;
   mutable std::atomic<int> _weaponlist_cached_byte_size_;
-  bool success_;
+  ::PROTOBUF_NAMESPACE_ID::int32 result_;
   ::PROTOBUF_NAMESPACE_ID::int32 curcharatertype_;
   ::PROTOBUF_NAMESPACE_ID::int32 curweapontype_;
   ::PROTOBUF_NAMESPACE_ID::int32 cash_;
@@ -1351,7 +1203,7 @@ class Charater final :
                &_Charater_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    5;
 
   friend void swap(Charater& a, Charater& b) {
     a.Swap(&b);
@@ -1532,7 +1384,7 @@ class Position final :
                &_Position_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    6;
 
   friend void swap(Position& a, Position& b) {
     a.Swap(&b);
@@ -1708,7 +1560,7 @@ class Unit final :
                &_Unit_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    8;
+    7;
 
   friend void swap(Unit& a, Unit& b) {
     a.Swap(&b);
@@ -1942,7 +1794,7 @@ class SLoad final :
                &_SLoad_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    9;
+    8;
 
   friend void swap(SLoad& a, SLoad& b) {
     a.Swap(&b);
@@ -2105,7 +1957,7 @@ class CLoad final :
                &_CLoad_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    10;
+    9;
 
   friend void swap(CLoad& a, CLoad& b) {
     a.Swap(&b);
@@ -2268,7 +2120,7 @@ class SInsertplayer final :
                &_SInsertplayer_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    11;
+    10;
 
   friend void swap(SInsertplayer& a, SInsertplayer& b) {
     a.Swap(&b);
@@ -2420,7 +2272,7 @@ class SMove final :
                &_SMove_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    12;
+    11;
 
   friend void swap(SMove& a, SMove& b) {
     a.Swap(&b);
@@ -2594,7 +2446,7 @@ class SChat final :
                &_SChat_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    13;
+    12;
 
   friend void swap(SChat& a, SChat& b) {
     a.Swap(&b);
@@ -2764,7 +2616,7 @@ class SPlayerData final :
                &_SPlayerData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    14;
+    13;
 
   friend void swap(SPlayerData& a, SPlayerData& b) {
     a.Swap(&b);
@@ -2927,7 +2779,7 @@ class SClosePlayer final :
                &_SClosePlayer_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    15;
+    14;
 
   friend void swap(SClosePlayer& a, SClosePlayer& b) {
     a.Swap(&b);
@@ -3070,7 +2922,7 @@ class UnitState final :
                &_UnitState_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    16;
+    15;
 
   friend void swap(UnitState& a, UnitState& b) {
     a.Swap(&b);
@@ -3253,7 +3105,7 @@ class SUnitStates final :
                &_SUnitStates_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    17;
+    16;
 
   friend void swap(SUnitStates& a, SUnitStates& b) {
     a.Swap(&b);
@@ -3405,7 +3257,7 @@ class Attack final :
                &_Attack_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    18;
+    17;
 
   friend void swap(Attack& a, Attack& b) {
     a.Swap(&b);
@@ -3570,7 +3422,7 @@ class CAttack final :
                &_CAttack_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    19;
+    18;
 
   friend void swap(CAttack& a, CAttack& b) {
     a.Swap(&b);
@@ -3755,7 +3607,7 @@ class Demage final :
                &_Demage_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    20;
+    19;
 
   friend void swap(Demage& a, Demage& b) {
     a.Swap(&b);
@@ -3951,7 +3803,7 @@ class SUnitDemage final :
                &_SUnitDemage_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    21;
+    20;
 
   friend void swap(SUnitDemage& a, SUnitDemage& b) {
     a.Swap(&b);
@@ -4125,7 +3977,7 @@ class SRoomQuest final :
                &_SRoomQuest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    22;
+    21;
 
   friend void swap(SRoomQuest& a, SRoomQuest& b) {
     a.Swap(&b);
@@ -4290,7 +4142,7 @@ class CMovePotal final :
                &_CMovePotal_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    23;
+    22;
 
   friend void swap(CMovePotal& a, CMovePotal& b) {
     a.Swap(&b);
@@ -4444,7 +4296,7 @@ class SEndGame final :
                &_SEndGame_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    24;
+    23;
 
   friend void swap(SEndGame& a, SEndGame& b) {
     a.Swap(&b);
@@ -4587,7 +4439,7 @@ class CBuyCharater final :
                &_CBuyCharater_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    25;
+    24;
 
   friend void swap(CBuyCharater& a, CBuyCharater& b) {
     a.Swap(&b);
@@ -4757,7 +4609,7 @@ class CBuyWeapon final :
                &_CBuyWeapon_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    26;
+    25;
 
   friend void swap(CBuyWeapon& a, CBuyWeapon& b) {
     a.Swap(&b);
@@ -4911,7 +4763,7 @@ class SBuyResult final :
                &_SBuyResult_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    27;
+    26;
 
   friend void swap(SBuyResult& a, SBuyResult& b) {
     a.Swap(&b);
@@ -5132,7 +4984,7 @@ class CPlayerJump final :
                &_CPlayerJump_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    28;
+    27;
 
   friend void swap(CPlayerJump& a, CPlayerJump& b) {
     a.Swap(&b);
@@ -5286,7 +5138,7 @@ class CPlayerAim final :
                &_CPlayerAim_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    29;
+    28;
 
   friend void swap(CPlayerAim& a, CPlayerAim& b) {
     a.Swap(&b);
@@ -5440,7 +5292,7 @@ class SExpLv final :
                &_SExpLv_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    30;
+    29;
 
   friend void swap(SExpLv& a, SExpLv& b) {
     a.Swap(&b);
@@ -5605,7 +5457,7 @@ class ItemEquip final :
                &_ItemEquip_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    31;
+    30;
 
   friend void swap(ItemEquip& a, ItemEquip& b) {
     a.Swap(&b);
@@ -5748,7 +5600,7 @@ class ItemEtc final :
                &_ItemEtc_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    32;
+    31;
 
   friend void swap(ItemEtc& a, ItemEtc& b) {
     a.Swap(&b);
@@ -5902,7 +5754,7 @@ class DropMessage final :
                &_DropMessage_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    33;
+    32;
 
   friend void swap(DropMessage& a, DropMessage& b) {
     a.Swap(&b);
@@ -6085,7 +5937,7 @@ class SLoadInventory final :
                &_SLoadInventory_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    34;
+    33;
 
   friend void swap(SLoadInventory& a, SLoadInventory& b) {
     a.Swap(&b);
@@ -6268,7 +6120,7 @@ class CSellItems final :
                &_CSellItems_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    35;
+    34;
 
   friend void swap(CSellItems& a, CSellItems& b) {
     a.Swap(&b);
@@ -6451,7 +6303,7 @@ class DLoad final :
                &_DLoad_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    36;
+    35;
 
   friend void swap(DLoad& a, DLoad& b) {
     a.Swap(&b);
@@ -6654,30 +6506,6 @@ inline void Login::set_allocated_pwd(std::string* pwd) {
   pwd_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), pwd,
       GetArenaForAllocation());
   // @@protoc_insertion_point(field_set_allocated:protocol.Login.pwd)
-}
-
-// -------------------------------------------------------------------
-
-// CreateAccount
-
-// bool success = 1;
-inline void CreateAccount::clear_success() {
-  success_ = false;
-}
-inline bool CreateAccount::_internal_success() const {
-  return success_;
-}
-inline bool CreateAccount::success() const {
-  // @@protoc_insertion_point(field_get:protocol.CreateAccount.success)
-  return _internal_success();
-}
-inline void CreateAccount::_internal_set_success(bool value) {
-  
-  success_ = value;
-}
-inline void CreateAccount::set_success(bool value) {
-  _internal_set_success(value);
-  // @@protoc_insertion_point(field_set:protocol.CreateAccount.success)
 }
 
 // -------------------------------------------------------------------
@@ -7016,24 +6844,24 @@ inline void SCurrentInfo::set_exp(::PROTOBUF_NAMESPACE_ID::int32 value) {
 
 // LoginAccess
 
-// bool success = 1;
-inline void LoginAccess::clear_success() {
-  success_ = false;
+// int32 result = 1;
+inline void LoginAccess::clear_result() {
+  result_ = 0;
 }
-inline bool LoginAccess::_internal_success() const {
-  return success_;
+inline ::PROTOBUF_NAMESPACE_ID::int32 LoginAccess::_internal_result() const {
+  return result_;
 }
-inline bool LoginAccess::success() const {
-  // @@protoc_insertion_point(field_get:protocol.LoginAccess.success)
-  return _internal_success();
+inline ::PROTOBUF_NAMESPACE_ID::int32 LoginAccess::result() const {
+  // @@protoc_insertion_point(field_get:protocol.LoginAccess.result)
+  return _internal_result();
 }
-inline void LoginAccess::_internal_set_success(bool value) {
+inline void LoginAccess::_internal_set_result(::PROTOBUF_NAMESPACE_ID::int32 value) {
   
-  success_ = value;
+  result_ = value;
 }
-inline void LoginAccess::set_success(bool value) {
-  _internal_set_success(value);
-  // @@protoc_insertion_point(field_set:protocol.LoginAccess.success)
+inline void LoginAccess::set_result(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_result(value);
+  // @@protoc_insertion_point(field_set:protocol.LoginAccess.result)
 }
 
 // repeated .protocol.Charater charater = 2;
@@ -10061,8 +9889,6 @@ inline void DLoad::set_allocated_unit(::protocol::Unit* unit) {
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
-// -------------------------------------------------------------------
-
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

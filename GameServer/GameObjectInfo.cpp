@@ -7,6 +7,7 @@
 #include "GameMapInfo.h"
 #include "GamePacketHandler.h"
 #include "GameSession.h"
+#include "GameUserAccess.h"
 #include "IRoom.h"
 
 GameObjectInfo::GameObjectInfo(GameRoomRef gameRoom, int32 uuid, int32 code): _gameRoomRef(gameRoom), _uuid(uuid), _hp(0), _maxHp(0), _damage(0), _code(code),
@@ -382,7 +383,7 @@ GamePlayerInfo::~GamePlayerInfo()
 {
     if (IsDummy()) return;
     _inventory.SaveDB();
-    std::cout << "Close Player Name: " << _name << std::endl;
+    GUserAccess->ReleasePlayer(_playerCode);
 }
 
 void GamePlayerInfo::Update()

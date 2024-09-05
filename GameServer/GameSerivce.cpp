@@ -3,6 +3,7 @@
 #include "GameGlobal.h"
 #include "GameRoomManager.h"
 #include "GameSession.h"
+#include "GameUserAccess.h"
 #include "IRoom.h"
 
 #include "SocketConfig.h"
@@ -70,4 +71,5 @@ void GameService::ReleaseSessionMesssage(SessionRef session)
     {
         GRoomManger->getRoom(gameSession->GetRoomId())->OutSession(gameSession);
     }
+    GUserAccess->ReleaseUser(gameSession->GetAccountCode());
 }

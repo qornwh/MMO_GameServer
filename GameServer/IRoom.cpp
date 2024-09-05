@@ -3,6 +3,7 @@
 #include "GameMapInfo.h"
 #include "GamePacketHandler.h"
 #include "GameService.pb.h"
+#include "GameUserAccess.h"
 
 void GameRoom::EnterSession(SessionRef session)
 {
@@ -12,22 +13,24 @@ void GameRoom::EnterSession(SessionRef session)
     {
         protocol::SInsertplayer sendPkt;
         protocol::Unit* unit = new protocol::Unit();
-        unit->set_name(gameSession->GetPlayer()->GetName());
-        unit->set_code(gameSession->GetPlayer()->GetCode());
-        unit->set_uuid(gameSession->GetPlayer()->GetUUid());
-        unit->set_hp(gameSession->GetPlayer()->GetHp());
-        unit->set_lv(gameSession->GetPlayer()->GetLv());
+        auto player = gameSession->GetPlayer();
+        unit->set_name(player->GetName());
+        unit->set_code(player->GetCode());
+        unit->set_uuid(player->GetUUid());
+        unit->set_hp(player->GetHp());
+        unit->set_lv(player->GetLv());
 
         protocol::Position* position = new protocol::Position;
-        position->set_x(gameSession->GetPlayer()->GetCollider().GetPosition().X);
-        position->set_y(gameSession->GetPlayer()->GetCollider().GetPosition().Y);
+        position->set_x(player->GetCollider().GetPosition().X);
+        position->set_y(player->GetCollider().GetPosition().Y);
         position->set_z(0);
-        position->set_yaw(gameSession->GetPlayer()->GetCollider().GetRotate());
+        position->set_yaw(player->GetCollider().GetRotate());
         unit->set_allocated_position(position);
         sendPkt.set_allocated_player(unit);
 
         SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::S_INSERTPLAYER);
-        BroadCastAnother(sendBuffer, gameSession->GetPlayer()->GetUUid());
+        BroadCastAnother(sendBuffer, player->GetUUid());
+        GUserAccess->AccessPlayer(player->GetPlayerCode(), player->GetUUid());
     }
 
     {
@@ -137,6 +140,8 @@ void GameRoom::OutSession(SessionRef session)
     SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::S_CLOSEPLAYER);
     BroadCastAnother(sendBuffer, gameSession->GetPlayer()->GetUUid());
     IRoom::OutSession(session);
+    
+    GUserAccess->ReleasePlayer(gameSession->GetPlayer()->GetPlayerCode());
     std::cout << "Out SessionID: " << gameSession->GetPlayer()->GetUUid() << " Name: " << gameSession->GetPlayer()->GetName() << std::endl;
 }
 

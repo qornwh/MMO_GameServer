@@ -139,6 +139,7 @@ public:
     int32 GetTarget() { return _targetCode; }
     GameSessionRef GetGameSession() { return _gameSession.lock(); }
     void SetPlayerCode(int32 playerCode, int32 weaponCode, int32 gold);
+    const int32 GetPlayerCode() { return _playerCode; }
     int32 GetWeapon() { return _weaponCode; }
     void ReSpawn();
 

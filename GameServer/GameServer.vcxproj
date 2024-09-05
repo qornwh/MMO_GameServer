@@ -187,6 +187,7 @@
     <ClInclude Include="GameRoomManager.h" />
     <ClInclude Include="GameRoomQuest.h" />
     <ClInclude Include="GameSkill.h" />
+    <ClInclude Include="GameUserAccess.h" />
     <ClInclude Include="GameUtils.h" />
     <ClInclude Include="GameWeapon.h" />
     <ClInclude Include="Inventory.h" />
@@ -215,6 +216,7 @@
     <ClCompile Include="GameRoomQuest.cpp" />
     <ClCompile Include="GameServer.cpp" />
     <ClCompile Include="GameSkill.cpp" />
+    <ClCompile Include="GameUserAccess.cpp" />
     <ClCompile Include="GameUtils.cpp" />
     <ClCompile Include="GameWeapon.cpp" />
     <ClCompile Include="Inventory.cpp" />
