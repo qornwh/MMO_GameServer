@@ -107,7 +107,7 @@ void GameRoom::EnterSession(SessionRef session)
                 itemEquip->set_item_code(itemCode);
             }
         }
-        
+
         for (auto& entry : inventory.GetEtcItemInfo())
         {
             int32 itemCode = entry.second.GetCode();
@@ -121,7 +121,7 @@ void GameRoom::EnterSession(SessionRef session)
         SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::S_LOADINVENTORY);
         session->AsyncWrite(sendBuffer);
     }
-    
+
     IRoom::EnterSession(session);
     std::cout << "Enter SessionID: " << gameSession->GetPlayer()->GetUUid() << " Name: " << gameSession->GetPlayer()->GetName() << std::endl;
 }
@@ -166,7 +166,6 @@ void GameRoom::Tick()
 void GameRoom::Work()
 {
 #pragma region Work
-    _isTask.exchange(true);
     const MapType mapType = _gameMapInfo->GetMonsterMapInfo()->GetMapType();
     const MapInfoRef monsterMap = _gameMapInfo->GetMonsterMapInfo();
 #pragma endregion
@@ -189,14 +188,10 @@ void GameRoom::Work()
 
     if (_unitPkt.unit_state_size() > 0)
     {
-        SendBufferRef sendBuffer =
-            GamePacketHandler::MakePacketHandler(_unitPkt,
-                                                 protocol::MessageCode::S_UNITSTATES);
+        SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(_unitPkt, protocol::MessageCode::S_UNITSTATES);
         BroadCast(sendBuffer);
         _unitPkt.clear_unit_state();
     }
-    _isTask.exchange(false);
-    Tick();
 }
 
 void GameRoom::Attack(GameSessionRef session, bool isMonster, int32 demage, int32 uuid, float x, float y, float yaw)
@@ -346,7 +341,7 @@ void GameRoom::EnterDummySession(SessionRef session)
     GameSessionRef gameSession = std::static_pointer_cast<GameSession>(session);
     _playerMap.emplace(gameSession->GetPlayer()->GetUUid(), gameSession->GetPlayer());
     gameSession->SetRoomId(_id);
-    
+
     protocol::SInsertplayer sendPkt;
     protocol::Unit* unit = new protocol::Unit();
     unit->set_name(gameSession->GetPlayer()->GetName());
@@ -365,7 +360,7 @@ void GameRoom::EnterDummySession(SessionRef session)
 
     SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::S_INSERTPLAYER);
     BroadCastAnother(sendBuffer, gameSession->GetPlayer()->GetUUid());
-    
+
     IRoom::EnterSession(session);
     std::cout << "Enter SessionID: " << gameSession->GetPlayer()->GetUUid() << " Name: " << gameSession->GetPlayer()->GetName() << std::endl;
 }

@@ -645,7 +645,7 @@ void GameSession::ChangeRoomHandler(BYTE* buffer, PacketHeader* header, int32 of
 
         if (currentRoomId == 1)
         {
-            Disconnect();
+            OnDisconnect();
         }
         else if (GRoomManger->getRoom(nextRoomId) != nullptr)
         {

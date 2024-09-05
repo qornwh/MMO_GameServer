@@ -142,7 +142,6 @@ private:
     GameMapInfoRef _gameMapInfo;
     Map<int32, GameMosterInfoRef> _monsterMap;
     Map<int32, GamePlayerInfoRef> _playerMap;
-    Atomic<bool> _isTask{false};
     protocol::SUnitStates _unitPkt;
     std::mt19937_64 rng;
 
