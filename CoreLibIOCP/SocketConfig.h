@@ -19,5 +19,6 @@ public:
 
     static LPFN_ACCEPTEX lpfnAcceptEx;
     static LPFN_CONNECTEX lpfnConnectEx;
+    static LPFN_DISCONNECTEX lpfnDisconnectEx;
 };
 

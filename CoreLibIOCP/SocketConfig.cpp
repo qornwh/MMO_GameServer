@@ -3,6 +3,7 @@
 
 LPFN_ACCEPTEX SocketConfig::lpfnAcceptEx = nullptr;
 LPFN_CONNECTEX SocketConfig::lpfnConnectEx = nullptr;
+LPFN_DISCONNECTEX SocketConfig::lpfnDisconnectEx = nullptr;
 
 SOCKET SocketConfig::CreateSocket()
 {
@@ -86,6 +87,14 @@ bool SocketConfig::Init()
     if (WSAIoctl(dummySocket, SIO_GET_EXTENSION_FUNCTION_POINTER, &guidConnectEx, sizeof(guidConnectEx), &lpfnConnectEx, sizeof(lpfnConnectEx), &dwBytes, nullptr, nullptr) == SOCKET_ERROR)
     {
         printf("ConnectEx 등록 실패 : % u\n", WSAGetLastError());
+        closesocket(dummySocket);
+        WSACleanup();
+        return false;
+    }
+    GUID guidDisconnectEx = WSAID_DISCONNECTEX;
+    if (WSAIoctl(dummySocket, SIO_GET_EXTENSION_FUNCTION_POINTER, &guidDisconnectEx, sizeof(guidDisconnectEx), &lpfnDisconnectEx, sizeof(lpfnDisconnectEx), &dwBytes, nullptr, nullptr) == SOCKET_ERROR)
+    {
+        printf("DisconnectEx 등록 실패 : % u\n", WSAGetLastError());
         closesocket(dummySocket);
         WSACleanup();
         return false;

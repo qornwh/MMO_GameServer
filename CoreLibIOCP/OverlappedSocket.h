@@ -19,7 +19,12 @@ public:
     void SetType(int32 type);
     void SetSession(SessionRef session);
     int GetType() { return _type; }
-    SessionRef GetSession() { return _session; }
+    SessionRef GetSession()
+    {
+        if (!_session)
+            return nullptr;
+        return _session;
+    }
 
 private:
     WSAOVERLAPPED _overlapped;

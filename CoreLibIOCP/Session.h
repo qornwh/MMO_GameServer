@@ -19,7 +19,8 @@ public:
     void OnWrite(int32 len);
     virtual bool AsyncConnect();
     virtual void OnConnect();
-    void Disconnect();
+    void AsyncDisconnect();
+    void OnDisconnect();
     void AddWriteBuffer(SendBufferRef sendBuffer);
     static void ErrorCode(int32 errorCode);
 
@@ -45,5 +46,6 @@ private:
 
     OverlappedSocket _recvOLS;
     OverlappedSocket _sendOLS;
+    OverlappedSocket _discOLS;
     EndPointUtil _ep;
 };

@@ -146,23 +146,31 @@ void Service::task()
                 session->OnConnect();
             }
         }
+        else if (type == OverlappedSocket::Type::DISC)
+        {
+            SessionRef session = overlappedPtr->GetSession();
+            if (session != nullptr)
+            {
+                session->OnDisconnect();
+            }
+        }
     }
     else
     {
         int errorCode = WSAGetLastError();
         if (errorCode != WAIT_TIMEOUT)
         {
+            ErrorCode(errorCode);
             if (errorCode == ERROR_NETNAME_DELETED)
             {
                 // 이미 종료됨
                 SessionRef session = overlappedPtr->GetSession();
                 if (session != nullptr)
                 {
-                    session->Disconnect();
+                    session->OnDisconnect();
                 }
                 return;
             }
-            ErrorCode(errorCode);
             assert(-1);
         }
     }
@@ -225,6 +233,5 @@ void Service::ErrorCode(int32 errorCode)
     FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
                   nullptr, errorCode, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
                   reinterpret_cast<LPWSTR>(&s), 0, nullptr);
-    wprintf(L"ErrorCode : %d - ErrorMessage : %s\n", errorCode, s);
-    // delete s;
+    wprintf(L"ErrorCode Service : %d - ErrorMessage : %s", errorCode, s);
 }
