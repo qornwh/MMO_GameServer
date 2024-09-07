@@ -410,8 +410,7 @@ void GameSession::BuyCharaterHandler(BYTE* buffer, PacketHeader* header, int32 o
 
                 if (flag)
                 {
-                    int32 playerCode = 0;
-                    if (sdb.InsertCharater(_accountCode, buyCharaterType, newName, playerCode))
+                    if (sdb.InsertCharater(_accountCode, buyCharaterType, newName))
                         pkt.set_result(1);
                 }
                 else

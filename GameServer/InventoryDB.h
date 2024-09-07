@@ -18,8 +18,6 @@ public:
     void SaveUpdateEtcDB(int32 playerCode, int32 itemCode, int32 count);
     void SaveDeleteEtcDB(int32 playerCode, int32 itemCode);
 
-    void ResetDBOrm();
-
 private:
     DBOrm _dbOrm;
     int32 _itemCode = -1;

@@ -35,7 +35,8 @@ bool InventoryDB::GetEquipItem(int32& itemCode, int32& type, int32& use)
     }
     else
     {
-        ResetDBOrm();
+        conn->CloseCursor();
+        _dbOrm.ReSetIdx();
         return false;
     }
 }
@@ -63,7 +64,8 @@ bool InventoryDB::GetEtcItem(int32& itemCode, int32& type, int32& count)
     }
     else
     {
-        ResetDBOrm();
+        conn->CloseCursor();
+        _dbOrm.ReSetIdx();
         return false;
     }
 }
@@ -119,13 +121,5 @@ void InventoryDB::SaveDeleteEtcDB(int32 playerCode, int32 itemCode)
     _dbOrm.BindParamInt(&itemCode);
     result = conn->Exec(deletEtcQuery);
     
-    _dbOrm.ReSetIdx();
-}
-
-void InventoryDB::ResetDBOrm()
-{
-    conn->CloseCursor();
-    conn->EndTran();
-    conn->FreeStmt();
     _dbOrm.ReSetIdx();
 }
