@@ -1,5 +1,21 @@
 ﻿#include "GameDrop.h"
 
+DropItem::DropItem(int32 itemCode, int32 cnt) : _itemCode(itemCode), _cnt(cnt)
+{
+}
+
+DropItem::~DropItem()
+{
+}
+
+DropEquipItem::DropEquipItem(int32 itemCode) : _itemCode(itemCode), _cnt(1)
+{
+}
+
+DropEquipItem::~DropEquipItem()
+{
+}
+
 void GameDrop::AddDropItem(int32 monsterCode, int32 itemCode, int32 cnt)
 {
     if (_monsterDropList.find(monsterCode) == _monsterDropList.end())

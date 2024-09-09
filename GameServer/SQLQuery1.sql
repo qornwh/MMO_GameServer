@@ -2,11 +2,9 @@ DROP TABLE IF EXISTS Account
 DROP TABLE IF EXISTS Player
 DROP TABLE IF EXISTS InventoryEquip
 DROP TABLE IF EXISTS InventoryEtc
--- DROP TABLE IF EXISTS IpLog
--- DROP TABLE IF EXISTS QuestInfo
--- DROP TABLE IF EXISTS QuestState
--- DROP TABLE IF EXISTS QuestKillState
+DROP TABLE IF EXISTS IpLog
 
+-- 계정 생성
 CREATE TABLE Account
 (
 	accountCode int IDENTITY(1,1) NOT NULL,
@@ -20,6 +18,7 @@ CREATE TABLE Account
 	curWeaponType int NOT NULL DEFAULT 0,
 )
 
+-- 플레이어
 CREATE TABLE Player
 (
 	playerCode int IDENTITY(1,1) NOT NULL,
@@ -32,6 +31,13 @@ CREATE TABLE Player
 	accountCode int NOT NULL,
 )
 
+-- 플레이어 장착아이템
+CREATE TABLE PlayerEquip
+(
+    
+)
+
+-- 장비아이템
 CREATE TABLE InventoryEquip
 (
 	playerCode int NOT NULL,
@@ -40,6 +46,7 @@ CREATE TABLE InventoryEquip
     itemUse int Not NULL DEFAULT 0,
 )
 
+-- 기타아이템
 CREATE TABLE InventoryEtc
 (
     playerCode int NOT NULL,
@@ -92,35 +99,13 @@ CREATE TABLE RemoveMail
     message varchar(50),
 )
 
--- CREATE TABLE IpLog
--- (
--- 	accountCode int NOT NULL,
--- 	ip varchar(10) NOT NULL,
--- 	currentTime smalldatetime NOT NULL default getdate()
--- )
--- 
--- CREATE TABLE QuestInfo
--- (
--- 	questCode int NOT NULL PRIMARY KEY,
--- 	name varchar(20) NOT NULL,
--- 	type int NOT NULL,
--- )
--- 
--- CREATE TABLE QuestState
--- (
--- 	questStateId int NOT NULL PRIMARY KEY,
--- 	questState int NOT NULL,
--- 	questCode int NOT NULL,
--- 	playerCode int NOT NULL,
--- )
--- 
--- CREATE TABLE QuestKillState
--- (
--- 	questStateId int NOT NULL,
--- 	playerCode int NOT NULL,
--- 	monsterCode int NOT NULL,
--- 	monsterKill int NOT NULL
--- )
+-- 로그 기록
+CREATE TABLE IpLog
+(
+	accountCode int NOT NULL,
+	ip varchar(10) NOT NULL,
+	currentTime smalldatetime NOT NULL default getdate()
+)
 
 INSERT INTO Account (id, pwd, cash, weaponOne, weaponTwo, weaponThr, curPlayerType, curWeaponType) VALUES
 ('Gm', '1234', 10000, 1, 1, 1, 1, 1)
@@ -142,7 +127,3 @@ INSERT INTO Friend (playerCode, friendCode) VALUES
 (1, 2),
 (2, 1)
 
--- INSERT INTO QuestInfo (questCode, name, type) VALUES
--- (1, '병사 처치', 2),
--- (2, '재료 수급', 2)
--- 
