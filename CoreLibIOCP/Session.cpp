@@ -209,6 +209,7 @@ void Session::OnDisconnect()
 
     _recvOLS.SetSession(nullptr);
     _sendOLS.SetSession(nullptr);
+    _discOLS.SetSession(nullptr);
     if (_serviceRef.lock() != nullptr)
     {
         _serviceRef.lock()->ReleaseSession(shared_from_this());
