@@ -34,7 +34,9 @@ CREATE TABLE Player
 -- 플레이어 장착아이템
 CREATE TABLE PlayerEquip
 (
-    
+    playerCode int IDENTITY(1,1) NOT NULL,
+    attackEquip int NOT NULL,
+    speedEquip int NOT NULL,
 )
 
 -- 장비아이템

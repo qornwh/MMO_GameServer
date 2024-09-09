@@ -1,5 +1,5 @@
 #pragma once
-#include "Item.h"
+#include "pch.h"
 
 class ItemEquip : public std::enable_shared_from_this<ItemEquip>
 {

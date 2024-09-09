@@ -2,7 +2,7 @@
 #include <random>
 #include "GameUtils.h"
 #include "Collider.h"
-#include "DropItem.h"
+#include "GameDrop.h"
 #include "FriendSystem.h"
 #include "GameCharater.h"
 #include "GameService.pb.h"
