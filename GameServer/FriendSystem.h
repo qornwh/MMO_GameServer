@@ -1,8 +1,6 @@
 ﻿#pragma once
 #include "pch.h"
 
-// TODO : 친구 리스트 만들기
-
 class FriendSystem
 {
 public:
