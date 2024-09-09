@@ -24,7 +24,7 @@ public:
     
     void HandlePacket(BYTE* buffer, PacketHeader* header);
     int32 OnRecv(BYTE* buffer, int32 len) override;
-    void CreatePlayerInfo(int32 type, int32 lv);
+    void CreatePlayerInfo(int32 jobCode, int32 weaponCode, int32 lv);
     std::shared_ptr<class GamePlayerInfo> GetPlayer();
     uint16 GetSessionId() { return _sessionId; }
     void SetRoomId(uint32 id) { _roomId = id; }

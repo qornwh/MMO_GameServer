@@ -71,5 +71,4 @@ void GameService::ReleaseSessionMesssage(SessionRef session)
     {
         GRoomManger->getRoom(gameSession->GetRoomId())->OutSession(gameSession);
     }
-    GUserAccess->ReleaseUser(gameSession->GetAccountCode());
 }

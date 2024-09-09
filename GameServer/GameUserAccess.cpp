@@ -1,43 +1,89 @@
 ﻿#include "GameUserAccess.h"
 
+#include "GameSession.h"
+#include "Session.h"
+
 void GameUserAccess::ClearUser()
 {
     _userAccess.clear();
     _playerAccess.clear();
 }
 
-bool GameUserAccess::AccessUser(int32 userCode, int32 sessionId)
+void GameUserAccess::LoadUserList()
+{
+    UserDB userDB;
+    userDB.LoadAccountDB();
+
+    User user;
+    while (userDB.GetAccount(user))
+    {
+        int32 accountCode = user.accountCode;
+        _userList.emplace(accountCode, user);
+    }
+    
+    userDB.LoadPlayerDB();
+    Player player;
+    while (userDB.GetPlayer(player))
+    {
+        int32 playerCode = player.playerCode;
+        _playerList.emplace(playerCode, player);
+    }
+}
+
+void GameUserAccess::AddUserList(User& user)
+{
+    int32 accountCode = user.accountCode;
+    _userList.emplace(accountCode, user);
+}
+
+void GameUserAccess::AddPlayerList(Player& player)
+{
+    int32 playerCode = player.playerCode;
+    _playerList.emplace(playerCode, player);
+}
+
+bool GameUserAccess::AccessUser(int32 userCode, SessionRef session)
 {
     // sessionId : 들어온 세션 아이디
     // userCode : db상 unique 계정 번호
     if (_userAccess.find(userCode) != _userAccess.end())
     {
-        if (_userAccess[userCode] > 0)
+        if (_userAccess[userCode].lock() != nullptr)
             return false;
     }
-    _userAccess[userCode] = sessionId;
+    _userAccess[userCode] = std::static_pointer_cast<GameSession>(session);
     return true;
 }
 
-void GameUserAccess::ReleaseUser(int32 userCode)
-{
-    _userAccess[userCode] = -1;
-}
-
-bool GameUserAccess::AccessPlayer(int32 playerCode, int32 sessionId)
+bool GameUserAccess::AccessPlayer(int32 playerCode, SessionRef session)
 {
     // sessionId : 들어온 세션 아이디
     // playerCode : db상 unique 캐릭터 번호
     if (_playerAccess.find(playerCode) != _playerAccess.end())
     {
-        if (_playerAccess[playerCode] > 0)
+        if (_playerAccess[playerCode].lock() != nullptr)
             return false;
     }
-    _playerAccess[playerCode] = sessionId;
+    _playerAccess[playerCode] = std::static_pointer_cast<GameSession>(session);
     return true;
 }
 
-void GameUserAccess::ReleasePlayer(int32 playerCode)
+Map<int32, User>& GameUserAccess::GetUserList()
 {
-    _playerAccess[playerCode] = -1;
+    return _userList;
+}
+
+Map<int32, Player>& GameUserAccess::GetPlayerList()
+{
+    return _playerList;
+}
+
+Map<int32, std::weak_ptr<class GameSession>>& GameUserAccess::GetUserAccess()
+{
+    return _userAccess;
+}
+
+Map<int32, std::weak_ptr<class GameSession>>& GameUserAccess::GetPlayerAccess()
+{
+    return _playerAccess;
 }

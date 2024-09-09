@@ -30,7 +30,7 @@ void GameRoom::EnterSession(SessionRef session)
 
         SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::S_INSERTPLAYER);
         BroadCastAnother(sendBuffer, player->GetUUid());
-        GUserAccess->AccessPlayer(player->GetPlayerCode(), player->GetUUid());
+        GUserAccess->AccessPlayer(player->GetPlayerCode(), session);
     }
 
     {
@@ -141,7 +141,6 @@ void GameRoom::OutSession(SessionRef session)
     BroadCastAnother(sendBuffer, gameSession->GetPlayer()->GetUUid());
     IRoom::OutSession(session);
     
-    GUserAccess->ReleasePlayer(gameSession->GetPlayer()->GetPlayerCode());
     std::cout << "Out SessionID: " << gameSession->GetPlayer()->GetUUid() << " Name: " << gameSession->GetPlayer()->GetName() << std::endl;
 }
 
@@ -175,15 +174,15 @@ void GameRoom::Work()
     const MapInfoRef monsterMap = _gameMapInfo->GetMonsterMapInfo();
 #pragma endregion
 
-    for (auto& it : _playerMap)
-    {
-        if (it.second != nullptr)
-        {
-            if (it.second->IsDummy()) continue;
-            GamePlayerInfoRef info = it.second;
-            info->Update();
-        }
-    }
+    // for (auto& it : _playerMap)
+    // {
+    //     if (it.second != nullptr)
+    //     {
+    //         if (it.second->IsDummy()) continue;
+    //         GamePlayerInfoRef info = it.second;
+    //         info->Update();
+    //     }
+    // }
 
     for (auto& it : _monsterMap)
     {

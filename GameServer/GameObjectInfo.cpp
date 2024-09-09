@@ -369,21 +369,23 @@ int32 GameMosterInfo::AddDieCounter(int32 count)
     return value;
 }
 
-GamePlayerInfo::GamePlayerInfo(GameSessionRef gameSession, int32 uuid, int32 code, int32 lv) :
-    GameObjectInfo(GRoomManger->getRoom(gameSession->GetRoomId()), uuid, code), _targetCode(-1), _playerCode(-1), _gameSession(gameSession), _exp(0)
+GamePlayerInfo::GamePlayerInfo(GameSessionRef gameSession, int32 playerCode, int32 uuid, int32 jobCode, int32 weaponCode, int32 lv) :
+    GameObjectInfo(GRoomManger->getRoom(gameSession->GetRoomId()), uuid, jobCode), _targetCode(-1), _playerCode(-1), _gameSession(gameSession), _exp(0), _friendSystem(playerCode)
 {
-    _lv = lv;
-    auto it = GPlayer->GetCharater().find(code);
+    auto it = GPlayer->GetCharater().find(jobCode);
     CrashFunc(it != GPlayer->GetCharater().end());
     _maxHp = it->second._hp;
     _hp = _maxHp;
+    _weaponCode = weaponCode;
+    _playerCode = playerCode;
+    _lv = lv;
 }
 
 GamePlayerInfo::~GamePlayerInfo()
 {
     if (IsDummy()) return;
     _inventory.SaveDB();
-    GUserAccess->ReleasePlayer(_playerCode);
+    _friendSystem.NotifyFriend(false);
 }
 
 void GamePlayerInfo::Update()
@@ -406,12 +408,15 @@ void GamePlayerInfo::SetTarget(int32 uuid)
     _targetCode = uuid;
 }
 
-void GamePlayerInfo::SetPlayerCode(int32 playerCode, int32 weaponCode, int32 gold)
+void GamePlayerInfo::SetInventory(int32 gold)
 {
-    // playerCode = db 고유값
-    _playerCode = playerCode;
-    _weaponCode = weaponCode;
     _inventory.Init(_playerCode, gold);
+}
+
+void GamePlayerInfo::SetFriend()
+{
+    _friendSystem.LoadFriend();
+    _friendSystem.NotifyFriend(true);
 }
 
 void GamePlayerInfo::ReSpawn()

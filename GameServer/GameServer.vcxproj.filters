@@ -22,9 +22,6 @@
     <ClCompile Include="GameInit.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
-    <ClCompile Include="Inventory.cpp">
-      <Filter>Item</Filter>
-    </ClCompile>
     <ClCompile Include="GameRoomManager.cpp">
       <Filter>Service</Filter>
     </ClCompile>
@@ -32,9 +29,6 @@
       <Filter>Service</Filter>
     </ClCompile>
     <ClCompile Include="GameSerivce.cpp">
-      <Filter>Service</Filter>
-    </ClCompile>
-    <ClCompile Include="GameService.pb.cc">
       <Filter>Service</Filter>
     </ClCompile>
     <ClCompile Include="IRoom.cpp">
@@ -47,14 +41,56 @@
       <Filter>Service\global</Filter>
     </ClCompile>
     <ClCompile Include="GameServer.cpp" />
-    <ClCompile Include="GameItem.cpp">
-      <Filter>Item</Filter>
-    </ClCompile>
-    <ClCompile Include="ItemDB.cpp">
-      <Filter>DB</Filter>
-    </ClCompile>
     <ClCompile Include="SessionDB.cpp">
       <Filter>DB</Filter>
+    </ClCompile>
+    <ClCompile Include="FriendDB.cpp">
+      <Filter>DB</Filter>
+    </ClCompile>
+    <ClCompile Include="UserDB.cpp">
+      <Filter>DB</Filter>
+    </ClCompile>
+    <ClCompile Include="InventoryDB.cpp">
+      <Filter>DB</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>Item</Filter>
+    </ClCompile>
+    <ClCompile Include="InventoryItem.cpp">
+      <Filter>Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="Inventory.cpp">
+      <Filter>Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="DropItem.cpp">
+      <Filter>Item</Filter>
+    </ClCompile>
+    <ClCompile Include="FriendSystem.cpp">
+      <Filter>Contents\Friend</Filter>
+    </ClCompile>
+    <ClCompile Include="GameUserAccess.cpp">
+      <Filter>Contents\User</Filter>
+    </ClCompile>
+    <ClCompile Include="MailSystem.cpp">
+      <Filter>Contents\Mail</Filter>
+    </ClCompile>
+    <ClCompile Include="GameService.pb.cc">
+      <Filter>proto</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCharater.cpp">
+      <Filter>GameInfo</Filter>
+    </ClCompile>
+    <ClCompile Include="GameWeapon.cpp">
+      <Filter>GameInfo</Filter>
+    </ClCompile>
+    <ClCompile Include="GameItem.cpp">
+      <Filter>GameInfo</Filter>
+    </ClCompile>
+    <ClCompile Include="GameExpLv.cpp">
+      <Filter>GameInfo</Filter>
+    </ClCompile>
+    <ClCompile Include="GameDrop.cpp">
+      <Filter>GameInfo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -79,9 +115,6 @@
     <ClInclude Include="GameInit.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Inventory.h">
-      <Filter>Item</Filter>
-    </ClInclude>
     <ClInclude Include="GameRoomManager.h">
       <Filter>Service</Filter>
     </ClInclude>
@@ -89,9 +122,6 @@
       <Filter>Service</Filter>
     </ClInclude>
     <ClInclude Include="GameSerivce.h">
-      <Filter>Service</Filter>
-    </ClInclude>
-    <ClInclude Include="GameService.pb.h">
       <Filter>Service</Filter>
     </ClInclude>
     <ClInclude Include="IRoom.h">
@@ -106,14 +136,56 @@
     <ClInclude Include="GamePacketHandler.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="GameItem.h">
-      <Filter>Item</Filter>
-    </ClInclude>
-    <ClInclude Include="ItemDB.h">
-      <Filter>DB</Filter>
-    </ClInclude>
     <ClInclude Include="SessionDB.h">
       <Filter>DB</Filter>
+    </ClInclude>
+    <ClInclude Include="FriendDB.h">
+      <Filter>DB</Filter>
+    </ClInclude>
+    <ClInclude Include="UserDB.h">
+      <Filter>DB</Filter>
+    </ClInclude>
+    <ClInclude Include="InventoryDB.h">
+      <Filter>DB</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>Item</Filter>
+    </ClInclude>
+    <ClInclude Include="InventoryItem.h">
+      <Filter>Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="Inventory.h">
+      <Filter>Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="DropItem.h">
+      <Filter>Item</Filter>
+    </ClInclude>
+    <ClInclude Include="FriendSystem.h">
+      <Filter>Contents\Friend</Filter>
+    </ClInclude>
+    <ClInclude Include="GameUserAccess.h">
+      <Filter>Contents\User</Filter>
+    </ClInclude>
+    <ClInclude Include="MailSystem.h">
+      <Filter>Contents\Mail</Filter>
+    </ClInclude>
+    <ClInclude Include="GameService.pb.h">
+      <Filter>proto</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCharater.h">
+      <Filter>GameInfo</Filter>
+    </ClInclude>
+    <ClInclude Include="GameWeapon.h">
+      <Filter>GameInfo</Filter>
+    </ClInclude>
+    <ClInclude Include="GameItem.h">
+      <Filter>GameInfo</Filter>
+    </ClInclude>
+    <ClInclude Include="GameExpLv.h">
+      <Filter>GameInfo</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDrop.h">
+      <Filter>GameInfo</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -144,9 +216,32 @@
     <Filter Include="Skill">
       <UniqueIdentifier>{6b1da8a7-21d1-4dc2-be96-fd0374bd2db5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Inventory">
+      <UniqueIdentifier>{c81b26c2-3875-475a-868c-10c2520c0738}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contents">
+      <UniqueIdentifier>{657d8de2-539c-4a07-a15f-2c1cc44413d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contents\Friend">
+      <UniqueIdentifier>{4e9c8950-353a-48ee-8406-89eb8b78a7fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contents\User">
+      <UniqueIdentifier>{e7b72a3a-f7ad-442d-8a9a-5527fd97d49e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contents\Mail">
+      <UniqueIdentifier>{d87f2d4d-9bc6-4df8-844d-2f8d0c1ec22a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="proto">
+      <UniqueIdentifier>{4a7e6a4c-4087-46c9-8ebc-debf15f8e697}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameInfo">
+      <UniqueIdentifier>{1b2a6611-219d-4e19-a831-20f168eb1fed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="config.json" />
-    <None Include="GameService.proto" />
+    <None Include="GameService.proto">
+      <Filter>proto</Filter>
+    </None>
   </ItemGroup>
 </Project>

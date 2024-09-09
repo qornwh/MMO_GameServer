@@ -48,6 +48,50 @@ CREATE TABLE InventoryEtc
     itemCount int NOT NULL,
 )
 
+--  친구 시스템
+CREATE TABLE Friend
+(
+    playerCode int NOT NULL,
+    friendCode int NOT NULL 
+)
+
+-- 읽지 않은 메일
+CREATE TABLE Mail
+(
+    MailCode int  IDENTITY(1,1) NOT NULL,
+    title varchar(50),
+    message varchar(50),
+    gold int NOT NULL DEFAULT 0,
+    readCheck int NOT NULL DEFAULT 1,
+    itemCode1 int NOT NULL ,
+    itemCode2 int NOT NULL
+)
+
+CREATE TABLE MailEquipItem
+(
+    MailCode int  IDENTITY(1,1) NOT NULL,
+    useCheck int NOT NULL DEFAULT 1,
+    itemCode int NOT NULL,
+    itemType int NOT NULL
+)
+
+CREATE TABLE MailEtcItem
+(
+    MailCode int  IDENTITY(1,1) NOT NULL,
+    useCheck int NOT NULL DEFAULT 1,
+    itemCode int NOT NULL,
+    itemType int NOT NULL,
+    itemCount int NOT NULL
+)
+
+-- 삭제된 메일들
+CREATE TABLE RemoveMail
+(
+    MailCode int NOT NULL,
+    title varchar(50),
+    message varchar(50),
+)
+
 -- CREATE TABLE IpLog
 -- (
 -- 	accountCode int NOT NULL,
@@ -80,9 +124,11 @@ CREATE TABLE InventoryEtc
 
 INSERT INTO Account (id, pwd, cash, weaponOne, weaponTwo, weaponThr, curPlayerType, curWeaponType) VALUES
 ('Gm', '1234', 10000, 1, 1, 1, 1, 1)
+('Gm2', '1234', 10000, 1, 1, 1, 1, 1)
 
 INSERT INTO Player (name, jobCode, mapCode, accountCode, gold, lv) VALUES
 ('GmPlayer1', 1, 1, 1, 1000, 1)
+('GmPlayer2', 1, 1, 2, 1000, 1)
 
 INSERT INTO InventoryEquip (playerCode, itemCode, itemType) VALUES
 (1, 11, 1),
@@ -91,6 +137,10 @@ INSERT INTO InventoryEquip (playerCode, itemCode, itemType) VALUES
 INSERT INTO InventoryEtc (playerCode, itemCode, itemType, itemCount) VALUES
 (1, 1, 1, 10),
 (1, 1, 1, 10)
+
+INSERT INTO Friend (playerCode, friendCode) VALUES
+(1, 2),
+(2, 1)
 
 -- INSERT INTO QuestInfo (questCode, name, type) VALUES
 -- (1, '병사 처치', 2),

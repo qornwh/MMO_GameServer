@@ -38,10 +38,6 @@ GameInit::GameInit()
 	boost::json::value itemEtcJson = GameUtils::JsonParser::Parser("itemEtc", json);
 	boost::json::value dropJsonJson = GameUtils::JsonParser::Parser("dropJson", json);
 	
-	// DB item, dropItem 설정
-	// SetItem();
-	// SetDropItem();
-	
 	SetPlayer(playerJson);
 	SetMonster(monsterJson);
 	SetWeapon(weaponJson);
@@ -50,7 +46,6 @@ GameInit::GameInit()
 	SetItemEquip(itemEqiupJson);
 	SetItemEtc(itemEtcJson);
 	SetDropItem(dropJsonJson);
-	
 	SetMap(mapJson);
 }
 

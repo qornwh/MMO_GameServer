@@ -7,6 +7,8 @@
 #include "GameInit.h"
 #include <Windows.h>
 #include <DbgHelp.h>
+
+#include "GameUserAccess.h"
 #include "SocketConfig.h"
 #pragma comment(lib, "Dbghelp.lib")
 
@@ -42,6 +44,7 @@ int main()
     uint16 port = 12128;
     GameInit gInit;
     GameServiceRef service = std::make_shared<GameService>(port);
+    GUserAccess->LoadUserList();
     
     if (!SocketConfig::Init())
     {

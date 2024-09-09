@@ -36,9 +36,9 @@ int32 GameSession::OnRecv(BYTE* buffer, int32 len)
     return offset;
 }
 
-void GameSession::CreatePlayerInfo(int32 type, int32 lv)
+void GameSession::CreatePlayerInfo(int32 jobCode, int32 weaponCode, int32 lv)
 {
-    _player = std::make_shared<GamePlayerInfo>(std::reinterpret_pointer_cast<GameSession>(shared_from_this()), _sessionId, type, lv);
+    _player = std::make_shared<GamePlayerInfo>(std::reinterpret_pointer_cast<GameSession>(shared_from_this()), _playerCode, _sessionId, jobCode, weaponCode, lv);
 }
 
 std::shared_ptr<GamePlayerInfo> GameSession::GetPlayer()
@@ -104,10 +104,10 @@ void GameSession::D_LoadHandler(BYTE* buffer, PacketHeader* header, int32 offset
         protocol::Position position = unit.position();
 
         // 더미정보 셋팅
-        CreatePlayerInfo(unit.code(), unit.lv());
+        _playerCode = -1;
+        CreatePlayerInfo(unit.code(), unit.weaponcode(), unit.lv());
         GetPlayer()->SetDummy(true);
         GetPlayer()->SetName(unit.name());
-        GetPlayer()->SetPlayerCode(_sessionId, unit.weaponcode(), 0);
         GetPlayer()->SetPosition(position.x(), position.y());
         GetPlayer()->SetRotate(position.yaw());
         GetPlayer()->SetExp(0);
@@ -217,7 +217,7 @@ void GameSession::LoginHandler(BYTE* buffer, PacketHeader* header, int32 offset)
         bool isAccount = sdb.LoginDB(wId, _accountCode, curCharaterCode, curWeaponCode, cash);
         if (isAccount)
         {
-            if (GUserAccess->AccessUser(_accountCode, _sessionId))
+            if (GUserAccess->AccessUser(_accountCode, shared_from_this()))
             {
                 bool loginCheck = sdb.LoginCheck(wPwd);
                 sdb.GetAccount(_accountCode, cash, curCharaterCode, curWeaponCode, weaponOne, weaponTwo, weaponThr);
@@ -276,6 +276,9 @@ void GameSession::LoginHandler(BYTE* buffer, PacketHeader* header, int32 offset)
             {
                 std::cout << "Create Account ID: " << readPkt.id().c_str() << std::endl;
                 logPkt.set_result(2);
+                // 여기에 유저 추가 넣어야됨
+                User user(_accountCode, wId);
+                GUserAccess->AddUserList(user);
             }
             else
             {
@@ -411,7 +414,11 @@ void GameSession::BuyCharaterHandler(BYTE* buffer, PacketHeader* header, int32 o
                 if (flag)
                 {
                     if (sdb.InsertCharater(_accountCode, buyCharaterType, newName))
+                    {
                         pkt.set_result(1);
+                        Player player(playerCode, jobCode, _accountCode, newName);
+                        GUserAccess->AddPlayerList(player);
+                    }
                 }
                 else
                 {
@@ -511,6 +518,7 @@ void GameSession::BuyWeaponHandler(BYTE* buffer, PacketHeader* header, int32 off
                         char* nameByte = GameUtils::Utils::WcharToChar(name);
                         charater->set_name(nameByte);
                         memset(name, 0, 10);
+                        delete nameByte;
                     }
                 }
             }
@@ -547,12 +555,13 @@ void GameSession::LoadHandler(BYTE* buffer, PacketHeader* header, int32 offset)
 
             char* nameCStr = GameUtils::Utils::WcharToChar(name);
             String nameStr = nameCStr;
-            CreatePlayerInfo(jobCode, lv);
+            CreatePlayerInfo(jobCode, _weaponCode, lv);
             GetPlayer()->SetName(nameStr);
-            GetPlayer()->SetPlayerCode(_playerCode, _weaponCode, gold);
             GetPlayer()->SetPosition(position.x(), position.y());
             GetPlayer()->SetRotate(position.yaw());
             GetPlayer()->SetExp(exp);
+            GetPlayer()->SetInventory(gold);
+            GetPlayer()->SetFriend();
 
             // 나를 확인용 메시지 전달.
             if (GetService() != nullptr)
@@ -569,6 +578,31 @@ void GameSession::LoadHandler(BYTE* buffer, PacketHeader* header, int32 offset)
                 sendPkt.set_exp(exp);
 
                 SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::S_PLAYERDATA);
+                AsyncWrite(sendBuffer);
+            }
+            
+            // 친구 전달
+            {
+                protocol::SFriendSystem sendPkt;
+
+                for (auto myFriend : GetPlayer()->GetFriend().GetFriendList())
+                {
+                    auto it = GUserAccess->GetPlayerList().find(myFriend.first);
+                    if (it != GUserAccess->GetPlayerList().end())
+                    {
+                        char* friendNameCStr = GameUtils::Utils::WcharToChar(it->second.name);
+                        int32 friendCode = myFriend.first;
+                        int32 friendAccess = myFriend.second;
+
+                        protocol::Friend *addFriend = sendPkt.add_friend_();
+                        addFriend->set_playercode(friendCode);
+                        addFriend->set_playername(friendNameCStr);
+                        addFriend->set_access(friendAccess);
+                        addFriend->set_add(true);
+                        delete friendNameCStr;
+                    }
+                }
+                SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::S_FRIENDSYSTEM);
                 AsyncWrite(sendBuffer);
             }
             delete nameCStr;

@@ -3,6 +3,7 @@
 #include "GameUtils.h"
 #include "Collider.h"
 #include "DropItem.h"
+#include "FriendSystem.h"
 #include "GameCharater.h"
 #include "GameService.pb.h"
 #include "Inventory.h"
@@ -131,14 +132,15 @@ protected:
 class GamePlayerInfo : public GameObjectInfo
 {
 public:
-    GamePlayerInfo(GameSessionRef gameSession, int32 uuid, int32 code, int32 lv);
+    GamePlayerInfo(GameSessionRef gameSession, int32 playerCode, int32 uuid, int32 jobCode, int32 weaponCode, int32 lv);
     ~GamePlayerInfo() override;
     void Update() override;
     void Attack(GameObjectInfoRef target, Vector<int32>& attackList);
     void SetTarget(int32 uuid);
     int32 GetTarget() { return _targetCode; }
     GameSessionRef GetGameSession() { return _gameSession.lock(); }
-    void SetPlayerCode(int32 playerCode, int32 weaponCode, int32 gold);
+    void SetInventory(int32 gold);
+    void SetFriend();
     const int32 GetPlayerCode() { return _playerCode; }
     int32 GetWeapon() { return _weaponCode; }
     void ReSpawn();
@@ -147,6 +149,7 @@ public:
     void SetExp(int32 exp);
     int32 GetExp() { return _exp; }
     Inventory& GetInventory() { return _inventory; }
+    FriendSystem& GetFriend() { return _friendSystem; }
 
 private:
     int32 _targetCode;
@@ -155,6 +158,7 @@ private:
     int32 _exp;
     std::weak_ptr<GameSession> _gameSession;
     Inventory _inventory;
+    FriendSystem _friendSystem;
 
     //더미용
 public:
