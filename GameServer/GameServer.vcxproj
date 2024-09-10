@@ -174,10 +174,10 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="DropGenerater.h" />
     <ClInclude Include="FriendDB.h" />
     <ClInclude Include="FriendSystem.h" />
     <ClInclude Include="GameExpLv.h" />
-    <ClInclude Include="GameBossInfo.h" />
     <ClInclude Include="GameCharater.h" />
     <ClInclude Include="GameDrop.h" />
     <ClInclude Include="GameGlobal.h" />
@@ -193,7 +193,6 @@
     <ClInclude Include="GameWeapon.h" />
     <ClInclude Include="Inventory.h" />
     <ClInclude Include="InventoryDB.h" />
-    <ClInclude Include="InventoryItem.h" />
     <ClInclude Include="IRoom.h" />
     <ClInclude Include="GamePacketHandler.h" />
     <ClInclude Include="pch.h" />
@@ -203,10 +202,10 @@
     <ClInclude Include="UserDB.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DropGenerater.cpp" />
     <ClCompile Include="FriendDB.cpp" />
     <ClCompile Include="FriendSystem.cpp" />
     <ClCompile Include="GameExpLv.cpp" />
-    <ClCompile Include="GameBossInfo.cpp" />
     <ClCompile Include="GameCharater.cpp" />
     <ClCompile Include="GameDrop.cpp" />
     <ClCompile Include="GameGlobal.cpp" />
@@ -223,7 +222,6 @@
     <ClCompile Include="GameWeapon.cpp" />
     <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="InventoryDB.cpp" />
-    <ClCompile Include="InventoryItem.cpp" />
     <ClCompile Include="IRoom.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="GameSerivce.cpp" />

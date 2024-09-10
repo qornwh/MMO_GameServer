@@ -1,9 +1,61 @@
 ﻿#include "Inventory.h"
 #include "DBConnectPool.h"
-#include "GameGlobal.h"
-#include "GameItem.h"
 #include "InventoryDB.h"
 #include "SessionDB.h"
+
+EquipItem::EquipItem(int32 uniqueId, int32 itemCode, int32 equipType, int32 attack, int32 speed, int32 isEquip, int32 use):
+    _uniqueId(uniqueId),
+    _itemCode(itemCode),
+    _equipType(equipType),
+    _attack(attack),
+    _speed(speed),
+    _isEquip(isEquip),
+    _use(use)
+{
+}
+
+EquipItem::~EquipItem()
+{
+}
+
+EquipItem& EquipItem::operator=(const EquipItem& other)
+{
+    _uniqueId = other._uniqueId;
+    _itemCode = other._itemCode;
+    _equipType = other._equipType;
+    _attack = other._attack;
+    _speed = other._speed;
+    _isEquip = other._isEquip;
+    _use = other._use;
+    return *this;
+}
+
+void EquipItem::UpdateItem(int32 use)
+{
+    _use = use;
+}
+
+EtcItem::EtcItem(int32 itemCode, int32 type, int32 count, bool isNew): _itemCode(itemCode), _count(count), _type(type), _isNew(isNew)
+{
+}
+
+EtcItem::~EtcItem()
+{
+}
+
+EtcItem& EtcItem::operator=(const EtcItem& other)
+{
+    _itemCode = other._itemCode;
+    _count = other._count;
+    _type = other._type;
+    _isNew = other._isNew;
+    return *this;
+}
+
+void EtcItem::UpdateItem(int32 count)
+{
+    _count = count;
+}
 
 Inventory::Inventory()
 {
@@ -16,83 +68,61 @@ Inventory::~Inventory()
 void Inventory::Init(int32 playerCode, int32 gold)
 {
     _playerCode = playerCode;
+    
     InventoryDB inventoryDB;
     inventoryDB.LoadEquipDB(_playerCode);
-    
-    int32 itemCode = 0;
-    int32 itemType = 0;
-    int32 itemCount = 0;
-    int32 use = 0;
-
-    while(inventoryDB.GetEquipItem(itemCode, itemType, use))
+    EquipItem equip(0,0,0,0,0,0,0);
+    while(inventoryDB.GetEquipItem(equip))
     {
-        if (use == 1) // 이미 사용됬으면 그냥 넘긴다.
-            continue;
-        if (_inventoryEquipItemList.find(itemCode) == _inventoryEquipItemList.end())
-            _inventoryEquipItemList.emplace(itemCode, Vector<InventoryEquipItem>());
-        _inventoryEquipItemList[itemCode].emplace_back(InventoryEquipItem(itemCode, itemType, false, InventoryItemState::NONE));
+        AddItemEquip(equip);
     }
-
+    
     inventoryDB.LoadEtcDB(_playerCode);
-    while(inventoryDB.GetEtcItem(itemCode, itemType, itemCount))
+    EtcItem etc(0,0,0);
+    while(inventoryDB.GetEtcItem(etc))
     {
-        _inventoryEtcItemList.emplace(itemCode, InventoryEtcItem(itemCode, itemType, itemCount, InventoryItemState::NONE));
+        AddItemEtc(etc);
     }
     _gold = gold;
 }
 
-Map<int32, Vector<InventoryEquipItem>>& Inventory::GetEquipItemInfo()
+bool Inventory::CheckItemEquip(int32 uniqueId)
 {
-    return _inventoryEquipItemList;
-}
-
-Map<int32, InventoryEtcItem>& Inventory::GetEtcItemInfo()
-{
-    return _inventoryEtcItemList;
-}
-
-bool Inventory::CheckItemEquip(int32 code)
-{
-    if (_inventoryEquipItemList.find(code) != _inventoryEquipItemList.end())
+    auto it = _inventoryEquipItemList.find(uniqueId);
+    if (it != _inventoryEquipItemList.end())
     {
-        if (!_inventoryEquipItemList[code].empty())
-            return true;
+        return true;
     }
     return false;
 }
 
-bool Inventory::UseItemEquip(int32 itemCode)
+bool Inventory::UseItemEquip(int32 uniqueId)
 {
     WriteLockGuard writeLock(lock, "inventory");
-    if (CheckItemEquip(itemCode))
+    auto it = _inventoryEquipItemList.find(uniqueId);
+    if (it != _inventoryEquipItemList.end())
     {
-        for (auto& item : _inventoryEquipItemList[itemCode])
-        {
-            if (!item.IsUse())
-            {
-                item.UpdateItem(true);
-                return true;
-            }
-        }
+        // it->second.UpdateItem();
+        _inventoryEquipItemList.erase(uniqueId);
+        return true;
     }
     return false;
 }
 
-void Inventory::AddItemEquip(int32 itemCode)
+EquipItem& Inventory::AddItemEquip(EquipItem& equip)
 {
-    if (_inventoryEquipItemList.find(itemCode) == _inventoryEquipItemList.end())
-    {
-        _inventoryEquipItemList.emplace(itemCode, Vector<InventoryEquipItem>());
-    }
-    int32 type = GEquipItem->GetItem(itemCode)->GetType();
-    _inventoryEquipItemList[itemCode].emplace_back(InventoryEquipItem(itemCode, type, false, InventoryItemState::INSERT));
+    _uniqueNum.fetch_add(1);
+    equip._uniqueId = _uniqueNum.load();
+    _inventoryEquipItemList.emplace(equip._uniqueId, equip);
+    return equip;
 }
 
 bool Inventory::CheckItemEtc(int32 code, int32 count)
 {
-    if (_inventoryEtcItemList.find(code) != _inventoryEtcItemList.end())
+    auto it = _inventoryEtcItemList.find(code);
+    if (it != _inventoryEtcItemList.end())
     {
-        if (_inventoryEtcItemList[code].GetCount() >= count)
+        if (it->second._count >= count)
             return true;
     }
     return false;
@@ -103,25 +133,27 @@ bool Inventory::UseItemEtc(int32 itemCode, int32 count)
     WriteLockGuard writeLock(lock, "inventory");
     if (CheckItemEtc(itemCode, count))
     {
-        int curCount = _inventoryEtcItemList[itemCode].GetCount();
-        _inventoryEtcItemList[itemCode].UpdateItem(curCount - count);
+        auto it = _inventoryEtcItemList.find(itemCode);
+        it->second._count = it->second._count - count;
         return true;
     }
     return false;
 }
 
-void Inventory::AddItemEtc(int32 itemCode, int32 count)
+EtcItem& Inventory::AddItemEtc(EtcItem& etc)
 {
-    if (_inventoryEtcItemList.find(itemCode) != _inventoryEtcItemList.end())
+    int32 itemCode = etc._itemCode;
+    auto it = _inventoryEtcItemList.find(itemCode);
+    if (it != _inventoryEtcItemList.end())
     {
-        int curCount = _inventoryEtcItemList[itemCode].GetCount();
-        _inventoryEtcItemList[itemCode].UpdateItem(curCount + count);
+        int curCount = it->second._count;
+        it->second.UpdateItem(curCount + etc._count);
     }
     else
     {
-        int32 type = GEtcItem->GetItem(itemCode)->GetType();
-        _inventoryEtcItemList.emplace(itemCode, InventoryEtcItem(itemCode, type, count, InventoryItemState::INSERT));
+        _inventoryEtcItemList.emplace(itemCode, etc);
     }
+    return it->second;
 }
 
 bool Inventory::CheckGold(int32 gold)
@@ -135,7 +167,7 @@ bool Inventory::UseGold(int32 gold)
 {
     if (CheckGold(gold))
     {
-        gold += gold;
+        _gold -= gold;
         return true;
     }
     return false;
@@ -150,60 +182,41 @@ void Inventory::SaveDB()
 {
     InventoryDB inventoryDB;
 
+    inventoryDB.SaveDeleteEquipDB(_playerCode);
     for (auto& inventoryItem : _inventoryEquipItemList)
     {
-        int32 code = inventoryItem.first;
-        for (auto& item : inventoryItem.second)
+        if (inventoryItem.second._use == 0)
         {
-            switch (item.GetState())
-            {
-            case InventoryItemState::INSERT:
-                {
-                    // 새로 추가되는게 개수가 0개일때 그냥 넘긴다.
-                    if (item.GetCode() > 0)
-                        inventoryDB.SaveInsertEquipDB(_playerCode, item.GetCode(), item.GetType());
-                }
-                break;
-            case InventoryItemState::UPDATE:
-                {
-                    inventoryDB.SaveUpdateEquipDB(_playerCode, item.GetCode());
-                }
-                break;
-            default:
-                break;
-            }
+            inventoryDB.SaveInsertEquipDB(_playerCode, inventoryItem.second);
         }
     }
     
     for (auto& inventoryItem : _inventoryEtcItemList)
     {
-        InventoryEtcItem& item = inventoryItem.second;
+        EtcItem& item = inventoryItem.second;
 
-        switch (item.GetState())
+        if (item._isNew)
         {
-        case InventoryItemState::INSERT:
+            // 신규추가
+            if (item._count == 0)
             {
-                inventoryDB.SaveInsertEtcDB(_playerCode, item.GetCode(), item.GetType(), item.GetCount());
+                inventoryDB.SaveInsertEtcDB(_playerCode, item._itemCode, item._type, item._count);
             }
-            break;
-        case InventoryItemState::UPDATE:
+        }
+        else
+        {
+            // 기존 업데이트
+            if (item._count == 0)
             {
-                if (item.GetCount() == 0)
-                {
-                    inventoryDB.SaveDeleteEtcDB(_playerCode, item.GetCode());
-                }
-                else
-                {
-                    inventoryDB.SaveUpdateEtcDB(_playerCode, item.GetCode(), item.GetCount());
-                }
+                inventoryDB.SaveDeleteEtcDB(_playerCode, item._count);
             }
-            break;
-        default:
-            break;
+            else
+            {
+                inventoryDB.SaveUpdateEtcDB(_playerCode, item._itemCode, item._count);
+            }
         }
     }
-
-    // 골드 DB기록
+    
     SessionDB sessionDB;
     sessionDB.SavePlayerDB(_playerCode, _gold);
 }

@@ -72,22 +72,30 @@ void GameSession::DropItem(std::shared_ptr<GameMosterInfo> monster)
 
     protocol::DropMessage pkt;
     auto& inventory = GetPlayer()->GetInventory();
-    for (auto& item : monster->GetDropList())
+
+    auto& monsterDrop = monster->GetDropSystem(); 
+    for (auto& dropItem : monsterDrop.GetDropEtcList())
     {
         protocol::ItemEtc* itemEtc = pkt.add_itemetcs();
-        itemEtc->set_item_code(item.first);
-        itemEtc->set_item_count(item.second);
-
-        inventory.AddItemEtc(item.first, item.second);
+        EtcItem& item = inventory.AddItemEtc(dropItem.second);
+        
+        itemEtc->set_item_code(item._itemCode);
+        itemEtc->set_item_count(item._count);
+        itemEtc->set_item_type(item._type);
     }
-    for (auto& item : monster->GetDropEquipList())
+    for (auto& dropItem : monsterDrop.GetDropEquipList())
     {
         protocol::ItemEquip* itemEquip = pkt.add_itemequips();
-        itemEquip->set_item_code(item);
-
-        inventory.AddItemEquip(item);
+        EquipItem& item = inventory.AddItemEquip(dropItem.second);
+        
+        itemEquip->set_item_code(item._itemCode);
+        itemEquip->set_item_type(item._equipType);
+        itemEquip->set_unipeid(item._uniqueId);
+        itemEquip->set_attack(item._attack);
+        itemEquip->set_speed(item._speed);
+        itemEquip->set_is_equip(item._isEquip);
     }
-    int32 dropGold = monster->GetDropGold();
+    int32 dropGold = monsterDrop.GetDropGold();
     inventory.AddGold(dropGold);
     pkt.set_gold(dropGold);
     
@@ -776,20 +784,19 @@ void GameSession::PlayerJumpHandler(BYTE* buffer, PacketHeader* header, int32 of
 void GameSession::SellItemsHandler(BYTE* buffer, PacketHeader* header, int32 offset)
 {
     protocol::CSellItems pkt;
-    protocol::CSellItems sendPkt;
     
     if (GamePacketHandler::ParsePacketHandler(pkt, buffer, header->size - offset, offset))
     {
         // 판매성공만 보낸다.
         int32 useGold = 0;
-        
+        protocol::CSellItems sendPkt;
         for (auto& item : pkt.itemequips())
         {
-            if (GetPlayer()->GetInventory().UseItemEquip(item.item_code()))
+            if (GetPlayer()->GetInventory().UseItemEquip(item.unipeid()))
             {
                 useGold += GEquipItem->GetItem(item.item_code())->GetGold();
                 auto accessItem = sendPkt.add_itemequips();
-                accessItem->set_item_code(item.item_code());
+                accessItem->set_unipeid(item.unipeid());
             }
         }
 
@@ -803,11 +810,10 @@ void GameSession::SellItemsHandler(BYTE* buffer, PacketHeader* header, int32 off
                 accessItem->set_item_count(item.item_count());
             }
         }
-        
         GetPlayer()->GetInventory().AddGold(useGold);
         sendPkt.set_gold(GetPlayer()->GetInventory().GetGold());
-
-        std::cout << "use Gold : " << useGold << "\n";
+        sendPkt.set_result(true);
+        
         SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::C_SELLITEMS);
         AsyncWrite(sendBuffer);
     }

@@ -2,13 +2,14 @@
 #include <random>
 #include "GameUtils.h"
 #include "Collider.h"
+#include "DropGenerater.h"
 #include "GameDrop.h"
 #include "FriendSystem.h"
 #include "GameCharater.h"
 #include "GameService.pb.h"
 #include "Inventory.h"
 
-static std::mt19937_64 rng;
+static std::mt19937_64 rng{};
 
 enum ObjectState
 {
@@ -44,7 +45,7 @@ public:
     virtual void TakeHeal(int32 heal);
 
     void SetName(const std::string& name);
-    std::string& GetName() { return _name; };
+    std::string& GetName() { return _name; }
     int32 GetUUid() { return _uuid; }
     int32 GetMaxHp() { return _maxHp; }
     void SetHp(int32 hp);
@@ -84,19 +85,15 @@ public:
     void Update() override;
     void Move() override;
     void Spawn();
-    void DropInit();
-    const Vector<std::pair<int32, int32>>& GetDropList() { return _itemList; }
-    const Vector<int32>& GetDropEquipList() { return _itemEquipList; }
-    const int32& GetDropGold() { return _dropGold; }
     virtual void MoveTarget(GamePlayerInfoRef target);
     bool CheckAttackTarget(GamePlayerInfoRef target);
     void TakeDamage(int32 Damage) override;
-    
     void SetObjecteState(ObjectState state) override;
     void GetStartPosition(int32& x, int32& y);
     void SetTarget(int32 uuid);
     int32 GetTarget() { return _targetUUid; }
     int32 GetExp() { return _exp; }
+    DropGenSystem& GetDropSystem() { return _dropGenSystem; }
     
     virtual int32 AddAttackCounter(int32 count = 1);
     virtual int32 AddIdleCounter(int32 count = 1);
@@ -110,23 +107,17 @@ private:
     float _moveSpeed = 0.f;
     int32 _targetUUid = -1;
     int32 _exp = 0;
-
-    std::uniform_int_distribution<> genYaw;
-    std::uniform_int_distribution<> genEquip;
-    std::uniform_int_distribution<> genItem;
+    std::uniform_int_distribution<> _genYaw;
+    DropGenSystem _dropGenSystem;
 
 protected:
-    GameUtils::TickCounter _YawCounter{4};
-    GameUtils::TickCounter _MoveCounter{10};
-    GameUtils::TickCounter _IdleCounter{3};
-    GameUtils::TickCounter _HitCounter{3};
-    GameUtils::TickCounter _DieCounter{30};
-    GameUtils::TickCounter _AttackCounter{10};
-    GameUtils::TickCounter _ReadyAttackCounter{10};
-    
-    Vector<std::pair<int32, int32>> _itemList; // 드롭 리스트
-    Vector<int32> _itemEquipList; // 드롭 장비 리스트
-    int32 _dropGold; // 드롭 골드
+    GameUtils::TickCounter _yawCounter{4};
+    GameUtils::TickCounter _moveCounter{10};
+    GameUtils::TickCounter _idleCounter{3};
+    GameUtils::TickCounter _hitCounter{3};
+    GameUtils::TickCounter _dieCounter{30};
+    GameUtils::TickCounter _attackCounter{10};
+    GameUtils::TickCounter _readyAttackCounter{10};
 };
 
 class GamePlayerInfo : public GameObjectInfo

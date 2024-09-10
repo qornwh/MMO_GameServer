@@ -1,5 +1,4 @@
 ﻿#include "IRoom.h"
-#include "GameBossInfo.h"
 #include "GameMapInfo.h"
 #include "GamePacketHandler.h"
 #include "GameService.pb.h"
@@ -11,7 +10,7 @@ void GameRoom::EnterSession(SessionRef session)
     _playerMap.emplace(gameSession->GetPlayer()->GetUUid(), gameSession->GetPlayer());
     gameSession->SetRoomId(_id);
     {
-        protocol::SInsertplayer sendPkt;
+        protocol::SInsertplayer sendPktPlayer;
         protocol::Unit* unit = new protocol::Unit();
         auto player = gameSession->GetPlayer();
         unit->set_name(player->GetName());
@@ -26,16 +25,16 @@ void GameRoom::EnterSession(SessionRef session)
         position->set_z(0);
         position->set_yaw(player->GetCollider().GetRotate());
         unit->set_allocated_position(position);
-        sendPkt.set_allocated_player(unit);
+        sendPktPlayer.set_allocated_player(unit);
 
-        SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::S_INSERTPLAYER);
+        SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPktPlayer, protocol::MessageCode::S_INSERTPLAYER);
         BroadCastAnother(sendBuffer, player->GetUUid());
         GUserAccess->AccessPlayer(player->GetPlayerCode(), session);
     }
 
     {
-        protocol::SLoad sendPkt;
-        sendPkt.set_room_id(_id);
+        protocol::SLoad sendPktLoad;
+        sendPktLoad.set_room_id(_id);
         for (auto it : _sessionList)
         {
             if (it != nullptr)
@@ -48,7 +47,7 @@ void GameRoom::EnterSession(SessionRef session)
                 if (anthorGameSession->GetPlayer() != nullptr)
                 {
                     std::shared_ptr<GamePlayerInfo> info = anthorGameSession->GetPlayer();
-                    protocol::UnitState* unitState = sendPkt.add_unit();
+                    protocol::UnitState* unitState = sendPktLoad.add_unit();
                     protocol::Unit* unit = new protocol::Unit();
                     unit->set_name(info->GetName());
                     unit->set_code(info->GetCode());
@@ -72,7 +71,7 @@ void GameRoom::EnterSession(SessionRef session)
         {
             int32 uuid = it.first;
             GameMosterInfoRef info = it.second;
-            protocol::UnitState* unitState = sendPkt.add_unit();
+            protocol::UnitState* unitState = sendPktLoad.add_unit();
             protocol::Unit* unit = new protocol::Unit();
             // unit->set_name(info->GetName()); // 몬스터는 이름 필요 x
             unit->set_code(info->GetCode());
@@ -90,38 +89,39 @@ void GameRoom::EnterSession(SessionRef session)
             unitState->set_is_monster(true);
         }
 
-        SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::S_LOAD);
+        SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPktLoad, protocol::MessageCode::S_LOAD);
         session->AsyncWrite(sendBuffer);
     }
 
     {
-        protocol::SLoadInventory sendPkt;
+        protocol::SLoadInventory sendPktInven;
         Inventory& inventory = gameSession->GetPlayer()->GetInventory();
-        int32 gold = inventory.GetGold();
+        sendPktInven.set_gold(inventory.GetGold());
 
         // TODO : 인벤토리 장비, 기타템
         for (auto& entry : inventory.GetEquipItemInfo())
         {
-            for (auto& item : entry.second)
-            {
-                if (item.IsUse()) continue;
-                int32 itemCode = item.GetCode();
-                protocol::ItemEquip* itemEquip = sendPkt.add_itemequips();
-                itemEquip->set_item_code(itemCode);
-            }
+            auto& item = entry.second;
+            if (item._use == 1) continue;
+            protocol::ItemEquip* itemEquip = sendPktInven.add_itemequips();
+            itemEquip->set_unipeid(item._uniqueId);
+            itemEquip->set_is_equip(item._isEquip);
+            itemEquip->set_item_type(item._equipType);
+            itemEquip->set_attack(item._attack);
+            itemEquip->set_speed(item._speed);
+            itemEquip->set_item_code(item._itemCode);
         }
 
         for (auto& entry : inventory.GetEtcItemInfo())
         {
-            int32 itemCode = entry.second.GetCode();
-            int32 itemCount = entry.second.GetCount();
-            protocol::ItemEtc* itemEtc = sendPkt.add_itemetcs();
-            itemEtc->set_item_code(itemCode);
-            itemEtc->set_item_count(itemCount);
+            auto& item = entry.second;
+            if (item._count == 0) continue;
+            protocol::ItemEtc* itemEtc = sendPktInven.add_itemetcs();
+            itemEtc->set_item_code(item._itemCode);
+            itemEtc->set_item_count(item._count);
+            itemEtc->set_item_type(item._type);
         }
-        sendPkt.set_gold(gold);
-
-        SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::S_LOADINVENTORY);
+        SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPktInven, protocol::MessageCode::S_LOADINVENTORY);
         session->AsyncWrite(sendBuffer);
     }
 
@@ -306,15 +306,6 @@ void GameRoom::InitMonsters()
             int32 startX = genX(rng);
             int32 startZ = genY(rng);
             GameMosterInfoRef info = std::make_shared<GameMosterInfo>(std::static_pointer_cast<GameRoom>(shared_from_this()), i, 1, 1, startX, startZ);
-            info->Spawn();
-            _monsterMap[i] = info;
-        }
-    }
-    else if (mapType == MapType::BOS)
-    {
-        for (int32 i = 0; i < _bosMonsterCount; i++)
-        {
-            GameBossInfoRef info = std::make_shared<GameBossInfo>(std::static_pointer_cast<GameRoom>(shared_from_this()), i, 2, 300, 0, 0);
             info->Spawn();
             _monsterMap[i] = info;
         }

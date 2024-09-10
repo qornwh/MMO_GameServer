@@ -7,7 +7,6 @@
 #include "GameMapInfo.h"
 #include "GamePacketHandler.h"
 #include "GameSession.h"
-#include "GameUserAccess.h"
 #include "IRoom.h"
 
 GameObjectInfo::GameObjectInfo(GameRoomRef gameRoom, int32 uuid, int32 code): _gameRoomRef(gameRoom), _uuid(uuid), _hp(0), _maxHp(0), _damage(0), _code(code),
@@ -76,7 +75,7 @@ void GameObjectInfo::SetGameRoom(GameRoomRef gameRoom)
 }
 
 GameMosterInfo::GameMosterInfo(GameRoomRef gameRoom, int32 uuid, int32 code, int32 lv, int32 startX, int32 startY): GameObjectInfo(gameRoom, uuid, code),
-    _startX(startX), _startY(startY), genYaw(0, 360)
+    _startX(startX), _startY(startY), _genYaw(0, 360), _dropGenSystem(code)
 {
     _lv = lv;
 }
@@ -89,7 +88,7 @@ void GameMosterInfo::Spawn()
 {
     SetPosition(static_cast<float>(_startX), static_cast<float>(_startY));
     SetObjecteState(ObjectState::IDLE);
-    DropInit();
+    _dropGenSystem.InitGen();
 
     auto it = GMonster->GetCharater().find(_code);
     CrashFunc(it != GMonster->GetCharater().end());
@@ -97,22 +96,6 @@ void GameMosterInfo::Spawn()
     _hp = _maxHp;
     _moveSpeed = it->second._moveSpeed;
     _exp = it->second._exp;
-}
-
-void GameMosterInfo::DropInit()
-{
-    _dropGold = 0;
-    _itemEquipList.clear();
-    _itemList.clear();
-    for (auto& dropItem : GDropItem->GetMonsterDropEquipList(GetCode()))
-    {
-        _itemEquipList.emplace_back(dropItem.GetItemCode());
-    }
-    for (auto& dropItem : GDropItem->GetMonsterDropList(GetCode()))
-    {
-        _itemList.emplace_back(dropItem.GetItemCode(), dropItem.GetCnt());
-    }
-    _dropGold = GDropItem->GetMonsterGold(GetCode());
 }
 
 void GameMosterInfo::Update()
@@ -227,19 +210,21 @@ void GameMosterInfo::SetObjecteState(ObjectState state)
     switch (_state)
     {
     case ObjectState::IDLE:
-        _IdleCounter.ResetTic();
+        _idleCounter.ResetTic();
         break;
     case ObjectState::DIE:
-        _DieCounter.ResetTic();
+        _dieCounter.ResetTic();
         break;
     case ObjectState::HITED:
-        _HitCounter.ResetTic();
+        _hitCounter.ResetTic();
         break;
     case ObjectState::MOVE:
-        _MoveCounter.ResetTic();
+        _moveCounter.ResetTic();
         break;
     case ObjectState::ATTACK:
-        _AttackCounter.ResetTic();
+        _attackCounter.ResetTic();
+        break;
+    default:
         break;
     }
 }
@@ -273,9 +258,9 @@ void GameMosterInfo::Move()
         }
     }
 
-    if (_YawCounter.Add() == 0)
+    if (_yawCounter.Add() == 0)
     {
-        SetRotate(genYaw(rng));
+        SetRotate(_genYaw(rng));
     }
 
     float moveX = GetCollider().GetPosition().X + GameEngine::MathUtils::GetSin(GetCollider().GetRotate()) * _moveSpeed;
@@ -332,37 +317,37 @@ void GameMosterInfo::TakeDamage(int32 Damage)
 
 int32 GameMosterInfo::AddAttackCounter(int32 count)
 {
-    int32 value = _AttackCounter.Add(count);
-    if (value == _AttackCounter.GetTickValue() - 1)
+    int32 value = _attackCounter.Add(count);
+    if (value == _attackCounter.GetTickValue() - 1)
         SetObjecteState(ObjectState::MOVE);
     return value;
 }
 
 int32 GameMosterInfo::AddIdleCounter(int32 count)
 {
-    int32 value = _IdleCounter.Add(count);
-    if (value == _IdleCounter.GetTickValue() - 1)
+    int32 value = _idleCounter.Add(count);
+    if (value == _idleCounter.GetTickValue() - 1)
         SetObjecteState(ObjectState::MOVE);
     return value;
 }
 
 int32 GameMosterInfo::AddHitCounter(int32 count)
 {
-    int32 value = _HitCounter.Add(count);
-    if (value == _HitCounter.GetTickValue() - 1)
+    int32 value = _hitCounter.Add(count);
+    if (value == _hitCounter.GetTickValue() - 1)
         SetObjecteState(ObjectState::MOVE);
     return value;
 }
 
 int32 GameMosterInfo::AddMoveCounter(int32 count)
 {
-    return _MoveCounter.Add(count);
+    return _moveCounter.Add(count);
 }
 
 int32 GameMosterInfo::AddDieCounter(int32 count)
 {
-    int32 value = _DieCounter.Add(count);
-    if (value == _DieCounter.GetTickValue() - 1)
+    int32 value = _dieCounter.Add(count);
+    if (value == _dieCounter.GetTickValue() - 1)
     {
         Spawn();
     }

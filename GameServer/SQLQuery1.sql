@@ -120,11 +120,15 @@ INSERT INTO Player (name, jobCode, mapCode, accountCode, gold, lv) VALUES
 
 INSERT INTO InventoryEquip (playerCode, itemCode, equipType, attack, speed, isEquip) VALUES
 (1, 11, 1, 100, 0, 1),
-(1, 12, 2, 0, 100, 1)
+(1, 12, 2, 0, 100, 1),
+(2, 11, 1, 100, 0, 1),
+(2, 12, 2, 0, 100, 1)
     
 INSERT INTO InventoryEtc (playerCode, itemCode, itemType, itemCount) VALUES
 (1, 1, 1, 10),
-(1, 1, 1, 10)
+(1, 2, 1, 11),
+(2, 1, 1, 10),
+(2, 2, 1, 11)
 
 INSERT INTO Friend (playerCode, friendCode) VALUES
 (1, 2),
