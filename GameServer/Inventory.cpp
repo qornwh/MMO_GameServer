@@ -152,6 +152,7 @@ EtcItem& Inventory::AddItemEtc(EtcItem& etc)
     else
     {
         _inventoryEtcItemList.emplace(itemCode, etc);
+        it = _inventoryEtcItemList.find(itemCode);
     }
     return it->second;
 }
@@ -198,7 +199,7 @@ void Inventory::SaveDB()
         if (item._isNew)
         {
             // 신규추가
-            if (item._count == 0)
+            if (item._count > 0)
             {
                 inventoryDB.SaveInsertEtcDB(_playerCode, item._itemCode, item._type, item._count);
             }
