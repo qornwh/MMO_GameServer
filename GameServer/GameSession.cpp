@@ -194,6 +194,11 @@ void GameSession::HandlePacket(BYTE* buffer, PacketHeader* header)
             SellItemsHandler(buffer, header, static_cast<int32>(sizeof(PacketHeader)));
         }
         break;
+    case protocol::MessageCode::C_UPDATEITEMS:
+        {
+            UpdateItemsHandler(buffer, header, static_cast<int32>(sizeof(PacketHeader)));
+        }
+        break;
     case protocol::MessageCode::D_LOAD:
         {
             D_LoadHandler(buffer, header, static_cast<int32>(sizeof(PacketHeader)));
@@ -815,6 +820,44 @@ void GameSession::SellItemsHandler(BYTE* buffer, PacketHeader* header, int32 off
         sendPkt.set_result(true);
         
         SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::C_SELLITEMS);
+        AsyncWrite(sendBuffer);
+    }
+}
+
+void GameSession::UpdateItemsHandler(BYTE* buffer, PacketHeader* header, int32 offset)
+{
+    protocol::CUpdateItems pkt;
+    
+    if (GamePacketHandler::ParsePacketHandler(pkt, buffer, header->size - offset, offset))
+    {
+        protocol::CUpdateItems sendPkt;
+        for (auto& item : pkt.itemequips())
+        {
+            EquipItem& unequipItem = GetPlayer()->GetInventory().ItemEquipped(item.unipeid(), item.is_equip());
+            if (GetPlayer()->GetInventory().CheckEquipped(item.unipeid(), item.is_equip()))
+            {
+                auto accessItem = sendPkt.add_itemequips();
+                accessItem->set_unipeid(item.unipeid());
+                accessItem->set_is_equip(item.is_equip());
+                accessItem->set_attack(item.attack());
+                accessItem->set_speed(item.speed());
+                accessItem->set_item_type(item.item_type());
+                accessItem->set_item_code(item.item_code());
+
+                if (unequipItem._uniqueId > 0)
+                {
+                    auto otherItem = sendPkt.add_itemequips();
+                    otherItem->set_unipeid(unequipItem._uniqueId);
+                    otherItem->set_is_equip(unequipItem._isEquip);
+                    otherItem->set_attack(unequipItem._attack);
+                    otherItem->set_speed(unequipItem._speed);
+                    otherItem->set_item_type(unequipItem._equipType);
+                    otherItem->set_item_code(unequipItem._itemCode);
+                }
+            }
+        }
+        
+        SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::C_UPDATEITEMS);
         AsyncWrite(sendBuffer);
     }
 }

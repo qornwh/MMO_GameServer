@@ -109,11 +109,63 @@ bool Inventory::UseItemEquip(int32 uniqueId)
     return false;
 }
 
+EquipItem& Inventory::ItemEquipped(int32 uniqueId, int32 equipped)
+{
+    WriteLockGuard writeLock(lock, "inventory");
+    auto it = _inventoryEquipItemList.find(uniqueId);
+    if (it != _inventoryEquipItemList.end())
+    {
+        it->second._isEquip = equipped;
+        if (equipped == 1)
+        {
+            // 장착
+            int32 weaponSocket = _weaponSocket;
+            _weaponSocket = it->second._uniqueId;
+            if (weaponSocket > 0)
+            {
+                auto Equippedit = _inventoryEquipItemList.find(weaponSocket);
+                if (Equippedit != _inventoryEquipItemList.end())
+                {
+                    if (Equippedit->second._equipType == it->second._equipType)
+                    {
+                        Equippedit->second._isEquip = 0;
+                        return Equippedit->second;
+                    }
+                }
+            }
+        }
+        else if (equipped == 0)
+        {
+            // 장착 해제
+            _weaponSocket = -1;
+        }
+    }
+    return _emptyEquip;
+}
+
+bool Inventory::CheckEquipped(int32 uniqueId, int32 equipped)
+{
+    ReadLockGuard writeLock(lock, "inventory");
+    auto it = _inventoryEquipItemList.find(uniqueId);
+    if (it != _inventoryEquipItemList.end())
+    {
+        if (it->second._isEquip == equipped)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 EquipItem& Inventory::AddItemEquip(EquipItem& equip)
 {
     _uniqueNum.fetch_add(1);
     equip._uniqueId = _uniqueNum.load();
     _inventoryEquipItemList.emplace(equip._uniqueId, equip);
+    if (equip._isEquip == 1)
+    {
+        _weaponSocket = equip._uniqueId;
+    }
     return equip;
 }
 

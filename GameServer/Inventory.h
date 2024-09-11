@@ -42,6 +42,8 @@ public:
     void Init(int32 playerCode, int32 gold);
     bool CheckItemEquip(int32 uniqueId);
     bool UseItemEquip(int32 uniqueId);
+    EquipItem& ItemEquipped(int32 uniqueId, int32 equipped);
+    bool CheckEquipped(int32 uniqueId, int32 equipped);
     EquipItem& AddItemEquip(EquipItem& equip);
     bool CheckItemEtc(int32 code, int32 count = 1);
     bool UseItemEtc(int32 itemCode, int32 count = 1);
@@ -61,6 +63,12 @@ private:
     std::weak_ptr<GamePlayerInfo> _playerInfo;
     Map<int32, EquipItem> _inventoryEquipItemList;
     Map<int32, EtcItem> _inventoryEtcItemList;
+
+    int32 _weaponSocket = -1;
+    int32 _shoseSocket = -1;
+
+    // 빈 아이템 사용용도!
+    EquipItem _emptyEquip {-1,-1,-1,-1,-1,-1,-1};
 
     Atomic<int32> _uniqueNum{0};
 };
