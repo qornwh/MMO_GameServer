@@ -136,7 +136,11 @@ bool Inventory::UseItemEquip(int32 uniqueId)
     auto it = _inventoryEquipItemList.find(uniqueId);
     if (it != _inventoryEquipItemList.end())
     {
-        // it->second.UpdateItem();
+        int32 invenPosition = it->second._position;
+        if (invenPosition >= 0)
+        {
+            _emptyEquipInvenList.emplace(invenPosition);
+        }
         _inventoryEquipItemList.erase(uniqueId);
         return true;
     }
