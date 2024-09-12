@@ -38,7 +38,8 @@ int32 GameSession::OnRecv(BYTE* buffer, int32 len)
 
 void GameSession::CreatePlayerInfo(int32 jobCode, int32 weaponCode, int32 lv)
 {
-    _player = std::make_shared<GamePlayerInfo>(std::reinterpret_pointer_cast<GameSession>(shared_from_this()), _playerCode, _sessionId, jobCode, weaponCode, lv);
+    _player = std::make_shared<GamePlayerInfo>(std::reinterpret_pointer_cast<GameSession>(shared_from_this()), _playerCode, _sessionId, jobCode, weaponCode,
+                                               lv);
 }
 
 std::shared_ptr<GamePlayerInfo> GameSession::GetPlayer()
@@ -73,32 +74,42 @@ void GameSession::DropItem(std::shared_ptr<GameMosterInfo> monster)
     protocol::DropMessage pkt;
     auto& inventory = GetPlayer()->GetInventory();
 
-    auto& monsterDrop = monster->GetDropSystem(); 
-    for (auto& dropItem : monsterDrop.GetDropEtcList())
-    {
-        protocol::ItemEtc* itemEtc = pkt.add_itemetcs();
-        EtcItem& item = inventory.AddItemEtc(dropItem.second);
-        
-        itemEtc->set_item_code(item._itemCode);
-        itemEtc->set_item_count(item._count);
-        itemEtc->set_item_type(item._type);
-    }
+    auto& monsterDrop = monster->GetDropSystem();
     for (auto& dropItem : monsterDrop.GetDropEquipList())
     {
         protocol::ItemEquip* itemEquip = pkt.add_itemequips();
         EquipItem& item = inventory.AddItemEquip(dropItem.second);
-        
-        itemEquip->set_item_code(item._itemCode);
-        itemEquip->set_item_type(item._equipType);
-        itemEquip->set_unipeid(item._uniqueId);
-        itemEquip->set_attack(item._attack);
-        itemEquip->set_speed(item._speed);
-        itemEquip->set_is_equip(item._isEquip);
+
+        if (item._position >= 0)
+        {
+            // 인벤토리 빈공간 있는경우, 없으면 메일행
+            itemEquip->set_item_code(item._itemCode);
+            itemEquip->set_item_type(item._equipType);
+            itemEquip->set_unipeid(item._uniqueId);
+            itemEquip->set_attack(item._attack);
+            itemEquip->set_speed(item._speed);
+            itemEquip->set_is_equip(item._isEquip);
+            itemEquip->set_position(item._position);
+        }
+    }
+    for (auto& dropItem : monsterDrop.GetDropEtcList())
+    {
+        protocol::ItemEtc* itemEtc = pkt.add_itemetcs();
+        EtcItem& item = inventory.AddItemEtc(dropItem.second);
+
+        if (item._position >= 0)
+        {
+            // 인벤토리 빈공간 있는경우, 없으면 메일행
+            itemEtc->set_item_code(item._itemCode);
+            itemEtc->set_item_count(item._count);
+            itemEtc->set_item_type(item._type);
+            itemEtc->set_position(item._position);
+        }
     }
     int32 dropGold = monsterDrop.GetDropGold();
     inventory.AddGold(dropGold);
     pkt.set_gold(dropGold);
-    
+
     SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(pkt, protocol::DROPMESSAGE);
     AsyncWrite(sendBuffer);
 }
@@ -230,20 +241,20 @@ void GameSession::LoginHandler(BYTE* buffer, PacketHeader* header, int32 offset)
         bool isAccount = sdb.LoginDB(wId, _accountCode, curCharaterCode, curWeaponCode, cash);
         if (isAccount)
         {
-            if (GUserAccess->AccessUser(_accountCode, shared_from_this()))
+            bool loginCheck = sdb.LoginCheck(wPwd);
+            if (loginCheck)
             {
-                bool loginCheck = sdb.LoginCheck(wPwd);
-                sdb.GetAccount(_accountCode, cash, curCharaterCode, curWeaponCode, weaponOne, weaponTwo, weaponThr);
-                logPkt.set_curcharatertype(curCharaterCode);
-                logPkt.set_curweapontype(curWeaponCode);
-                logPkt.set_cash(cash);
-                logPkt.add_weaponlist(weaponOne);
-                logPkt.add_weaponlist(weaponTwo);
-                logPkt.add_weaponlist(weaponThr);
-                _jobCode = curCharaterCode;
-                _weaponCode = curWeaponCode;
-                if (loginCheck)
+                if (GUserAccess->AccessUser(_accountCode, shared_from_this()))
                 {
+                    sdb.GetAccount(_accountCode, cash, curCharaterCode, curWeaponCode, weaponOne, weaponTwo, weaponThr);
+                    logPkt.set_curcharatertype(curCharaterCode);
+                    logPkt.set_curweapontype(curWeaponCode);
+                    logPkt.set_cash(cash);
+                    logPkt.add_weaponlist(weaponOne);
+                    logPkt.add_weaponlist(weaponTwo);
+                    logPkt.add_weaponlist(weaponThr);
+                    _jobCode = curCharaterCode;
+                    _weaponCode = curWeaponCode;
                     // 로그인 성공
                     if (sdb.PlayerDB(_accountCode))
                     {
@@ -272,13 +283,13 @@ void GameSession::LoginHandler(BYTE* buffer, PacketHeader* header, int32 offset)
                 }
                 else
                 {
-                    logPkt.set_result(0);
+                    logPkt.set_result(3);
+                    std::cout << "Already connected to this Account : " << _accountCode << std::endl;
                 }
             }
             else
             {
-                logPkt.set_result(3);
-                std::cout << "Already connected to this Account : " << _accountCode << std::endl;
+                logPkt.set_result(0);
             }
         }
         else
@@ -593,7 +604,7 @@ void GameSession::LoadHandler(BYTE* buffer, PacketHeader* header, int32 offset)
                 SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::S_PLAYERDATA);
                 AsyncWrite(sendBuffer);
             }
-            
+
             // 친구 전달
             {
                 protocol::SFriendSystem sendPkt;
@@ -607,7 +618,7 @@ void GameSession::LoadHandler(BYTE* buffer, PacketHeader* header, int32 offset)
                         int32 friendCode = myFriend.first;
                         int32 friendAccess = myFriend.second;
 
-                        protocol::Friend *addFriend = sendPkt.add_friend_();
+                        protocol::Friend* addFriend = sendPkt.add_friend_();
                         addFriend->set_playercode(friendCode);
                         addFriend->set_playername(friendNameCStr);
                         addFriend->set_access(friendAccess);
@@ -719,7 +730,7 @@ void GameSession::ChangeRoomHandler(BYTE* buffer, PacketHeader* header, int32 of
 void GameSession::DamegaHandler(BYTE* buffer, PacketHeader* header, int32 offset)
 {
     protocol::SUnitDemage pkt;
-    
+
     if (GamePacketHandler::ParsePacketHandler(pkt, buffer, header->size - offset, offset))
     {
         // 피격시 일단 룸에서 데미지 패킷을 보내는게 아니라 여기서 일단 바로 보낸다.
@@ -740,21 +751,21 @@ void GameSession::DamegaHandler(BYTE* buffer, PacketHeader* header, int32 offset
                 if (!isMonster)
                 {
                     GRoomManger->getRoom(_roomId)->Attack(std::static_pointer_cast<GameSession>(
-                        shared_from_this()),
-                        isMonster,
-                        demageVal,
-                        uuid);
+                                                              shared_from_this()),
+                                                          isMonster,
+                                                          demageVal,
+                                                          uuid);
                 }
                 else
                 {
                     GRoomManger->getRoom(_roomId)->Attack(std::static_pointer_cast<GameSession>(
-                        shared_from_this()),
-                        isMonster,
-                        demageVal,
-                        uuid,
-                        demage.position().x(),
-                        demage.position().y(),
-                        demage.position().yaw());
+                                                              shared_from_this()),
+                                                          isMonster,
+                                                          demageVal,
+                                                          uuid,
+                                                          demage.position().x(),
+                                                          demage.position().y(),
+                                                          demage.position().yaw());
                 }
             }
             SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(pkt, protocol::MessageCode::S_UNITDEMAGE);
@@ -767,7 +778,7 @@ void GameSession::DamegaHandler(BYTE* buffer, PacketHeader* header, int32 offset
 void GameSession::PlayerAimHandler(BYTE* buffer, PacketHeader* header, int32 offset)
 {
     protocol::CPlayerAim pkt;
-    
+
     if (GamePacketHandler::ParsePacketHandler(pkt, buffer, header->size - offset, offset))
     {
         SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(pkt, protocol::MessageCode::C_PLAYERAIM);
@@ -778,7 +789,7 @@ void GameSession::PlayerAimHandler(BYTE* buffer, PacketHeader* header, int32 off
 void GameSession::PlayerJumpHandler(BYTE* buffer, PacketHeader* header, int32 offset)
 {
     protocol::CPlayerJump pkt;
-    
+
     if (GamePacketHandler::ParsePacketHandler(pkt, buffer, header->size - offset, offset))
     {
         SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(pkt, protocol::MessageCode::C_PLAYERJUMP);
@@ -789,7 +800,7 @@ void GameSession::PlayerJumpHandler(BYTE* buffer, PacketHeader* header, int32 of
 void GameSession::SellItemsHandler(BYTE* buffer, PacketHeader* header, int32 offset)
 {
     protocol::CSellItems pkt;
-    
+
     if (GamePacketHandler::ParsePacketHandler(pkt, buffer, header->size - offset, offset))
     {
         // 판매성공만 보낸다.
@@ -818,7 +829,7 @@ void GameSession::SellItemsHandler(BYTE* buffer, PacketHeader* header, int32 off
         GetPlayer()->GetInventory().AddGold(useGold);
         sendPkt.set_gold(GetPlayer()->GetInventory().GetGold());
         sendPkt.set_result(true);
-        
+
         SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::C_SELLITEMS);
         AsyncWrite(sendBuffer);
     }
@@ -827,7 +838,7 @@ void GameSession::SellItemsHandler(BYTE* buffer, PacketHeader* header, int32 off
 void GameSession::UpdateItemsHandler(BYTE* buffer, PacketHeader* header, int32 offset)
 {
     protocol::CUpdateItems pkt;
-    
+
     if (GamePacketHandler::ParsePacketHandler(pkt, buffer, header->size - offset, offset))
     {
         protocol::CUpdateItems sendPkt;
@@ -836,13 +847,15 @@ void GameSession::UpdateItemsHandler(BYTE* buffer, PacketHeader* header, int32 o
             EquipItem& unequipItem = GetPlayer()->GetInventory().ItemEquipped(item.unipeid(), item.is_equip());
             if (GetPlayer()->GetInventory().CheckEquipped(item.unipeid(), item.is_equip()))
             {
+                auto& targetItem = GetPlayer()->GetInventory().GetEquipItemInfo().find(item.unipeid())->second;
                 auto accessItem = sendPkt.add_itemequips();
-                accessItem->set_unipeid(item.unipeid());
-                accessItem->set_is_equip(item.is_equip());
-                accessItem->set_attack(item.attack());
-                accessItem->set_speed(item.speed());
-                accessItem->set_item_type(item.item_type());
-                accessItem->set_item_code(item.item_code());
+                accessItem->set_unipeid(targetItem._uniqueId);
+                accessItem->set_is_equip(targetItem._isEquip);
+                accessItem->set_attack(targetItem._attack);
+                accessItem->set_speed(targetItem._speed);
+                accessItem->set_item_type(targetItem._equipType);
+                accessItem->set_item_code(targetItem._itemCode);
+                accessItem->set_position(targetItem._position);
 
                 if (unequipItem._uniqueId > 0)
                 {
@@ -853,10 +866,11 @@ void GameSession::UpdateItemsHandler(BYTE* buffer, PacketHeader* header, int32 o
                     otherItem->set_speed(unequipItem._speed);
                     otherItem->set_item_type(unequipItem._equipType);
                     otherItem->set_item_code(unequipItem._itemCode);
+                    otherItem->set_position(unequipItem._position);
                 }
             }
         }
-        
+
         SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::C_UPDATEITEMS);
         AsyncWrite(sendBuffer);
     }

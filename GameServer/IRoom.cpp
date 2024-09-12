@@ -110,6 +110,7 @@ void GameRoom::EnterSession(SessionRef session)
             itemEquip->set_attack(item._attack);
             itemEquip->set_speed(item._speed);
             itemEquip->set_item_code(item._itemCode);
+            itemEquip->set_position(item._position);
         }
 
         for (auto& entry : inventory.GetEtcItemInfo())
@@ -120,6 +121,7 @@ void GameRoom::EnterSession(SessionRef session)
             itemEtc->set_item_code(item._itemCode);
             itemEtc->set_item_count(item._count);
             itemEtc->set_item_type(item._type);
+            itemEtc->set_position(item._position);
         }
         SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPktInven, protocol::MessageCode::S_LOADINVENTORY);
         session->AsyncWrite(sendBuffer);

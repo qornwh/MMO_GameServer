@@ -46,6 +46,7 @@ CREATE TABLE InventoryEquip
     attack int Not NULL,
     speed int Not NULL,
     isEquip int Not NULL DEFAULT 0,
+    position int Not NULL,
 )
 
 -- 기타아이템
@@ -55,6 +56,7 @@ CREATE TABLE InventoryEtc
     itemCode int NOT NULL,
     itemType int NOT NULL,
     itemCount int NOT NULL,
+    position int Not NULL,
 )
 
 --  친구 시스템
@@ -110,7 +112,7 @@ CREATE TABLE IpLog
     currentTime smalldatetime NOT NULL default getdate()
 )
 
-    INSERT INTO Account (id, pwd, cash, weaponOne, weaponTwo, weaponThr, curPlayerType, curWeaponType) VALUES
+INSERT INTO Account (id, pwd, cash, weaponOne, weaponTwo, weaponThr, curPlayerType, curWeaponType) VALUES
 ('Gm', '1234', 10000, 1, 1, 1, 1, 1),
 ('Gm2', '1234', 10000, 1, 1, 1, 1, 1)
 
@@ -118,17 +120,17 @@ INSERT INTO Player (name, jobCode, mapCode, accountCode, gold, lv) VALUES
 ('GmPlayer1', 1, 1, 1, 1000, 1),
 ('GmPlayer2', 1, 1, 2, 1000, 1)
 
-INSERT INTO InventoryEquip (playerCode, itemCode, equipType, attack, speed, isEquip) VALUES
-(1, 11, 1, 100, 0, 1),
-(1, 12, 2, 0, 100, 1),
-(2, 11, 1, 100, 0, 1),
-(2, 12, 2, 0, 100, 1)
+INSERT INTO InventoryEquip (playerCode, itemCode, equipType, attack, speed, isEquip, position) VALUES
+(1, 11, 1, 100, 0, 0, 2),
+(1, 12, 2, 0, 100, 0, 4),
+(2, 11, 1, 100, 0, 0, 6),
+(2, 12, 2, 0, 100, 0, 7)
     
-INSERT INTO InventoryEtc (playerCode, itemCode, itemType, itemCount) VALUES
-(1, 1, 1, 10),
-(1, 2, 1, 11),
-(2, 1, 1, 10),
-(2, 2, 1, 11)
+INSERT INTO InventoryEtc (playerCode, itemCode, itemType, itemCount, position) VALUES
+(1, 1, 1, 10, 1),
+(1, 2, 1, 11, 5),
+(2, 1, 1, 10, 2),
+(2, 2, 1, 11, 3)
 
 INSERT INTO Friend (playerCode, friendCode) VALUES
 (1, 2),

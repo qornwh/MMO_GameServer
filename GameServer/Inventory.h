@@ -4,10 +4,12 @@
 
 struct EquipItem
 {
-    EquipItem(int32 uniqueId, int32 itemCode, int32 equipType, int32 attack, int32 speed, int32 isEquip, int32 use);
+    EquipItem(int32 uniqueId, int32 itemCode, int32 equipType, int32 attack, int32 speed, int32 isEquip, int32 position, int32 use);
     ~EquipItem();
 
     EquipItem& operator=(const EquipItem& other);
+
+    static EquipItem EmptyEquipItem();
 
     void UpdateItem(int32 use = 1);
     int32 _uniqueId;
@@ -16,20 +18,24 @@ struct EquipItem
     int32 _attack;
     int32 _speed;
     int32 _isEquip;
+    int32 _position;
     int32 _use;
 };
 
 struct EtcItem
 {
-    EtcItem(int32 itemCode, int32 type, int32 count, bool isNew = false);
+    EtcItem(int32 itemCode, int32 type, int32 count, int32 position, bool isNew = false);
     ~EtcItem();
 
     EtcItem& operator=(const EtcItem& other);
+
+    static EtcItem EmptyEtcItem();
 
     void UpdateItem(int32 count = 1);
     int32 _itemCode;
     int32 _count;
     int32 _type;
+    int32 _position;
     bool _isNew;
 };
 
@@ -63,12 +69,16 @@ private:
     std::weak_ptr<GamePlayerInfo> _playerInfo;
     Map<int32, EquipItem> _inventoryEquipItemList;
     Map<int32, EtcItem> _inventoryEtcItemList;
+    PriorityQueueDes<int32> _emptyEquipInvenList;
+    PriorityQueueDes<int32> _emptyEtcInvenList;
 
     int32 _weaponSocket = -1;
     int32 _shoseSocket = -1;
 
-    // 빈 아이템 사용용도!
-    EquipItem _emptyEquip {-1,-1,-1,-1,-1,-1,-1};
+    // 인벤토리 사이즈 고정
+    const int32 _invenSize = 20;
 
+    // 맵에 비어있을때 빈 아이템사용함. 
+    EquipItem _emptyEquip;
     Atomic<int32> _uniqueNum{0};
 };

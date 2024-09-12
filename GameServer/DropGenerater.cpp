@@ -26,11 +26,12 @@ void DropGenSystem::InitEquip()
     {
         // if (genEquip(drop_rng) > 4)
         // {
-            _equipUniqueId.fetch_add(1);
-            equipItem.GetItemCode();
-            auto itemInfo = GEquipItem->GetItem(equipItem.GetItemCode());
-            _equipItemList.emplace(_equipUniqueId.load(),
-                           EquipItem(_equipUniqueId.load(), equipItem.GetItemCode(), itemInfo->GetType(), itemInfo->GetAttack(), itemInfo->GetSpeed(), 0, 0));
+        _equipUniqueId.fetch_add(1);
+        equipItem.GetItemCode();
+        auto itemInfo = GEquipItem->GetItem(equipItem.GetItemCode());
+        _equipItemList.emplace(_equipUniqueId.load(),
+                               EquipItem(_equipUniqueId.load(), equipItem.GetItemCode(), itemInfo->GetType(), itemInfo->GetAttack(), itemInfo->GetSpeed(), 0, -1,
+                                         0));
         // }
     }
 }
@@ -41,6 +42,6 @@ void DropGenSystem::InitEtc()
     for (auto& etcItem : GDropItem->GetMonsterDropList(_monsterCode))
     {
         auto itemInfo = GEtcItem->GetItem(etcItem.GetItemCode());
-        _etcItemList.emplace(etcItem.GetItemCode(), EtcItem(etcItem.GetItemCode(), itemInfo->GetType(), etcItem.GetCnt(), true));
+        _etcItemList.emplace(etcItem.GetItemCode(), EtcItem(etcItem.GetItemCode(), itemInfo->GetType(), etcItem.GetCnt(), -1, true));
     }
 }
