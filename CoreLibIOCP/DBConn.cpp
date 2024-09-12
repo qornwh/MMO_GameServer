@@ -54,6 +54,8 @@ bool DBConn::Exec(const wchar_t* query)
     SQLRETURN ret = SQLExecDirect(_hstmt, (SQLWCHAR*)query, SQL_NTSL);
     if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO)
         return true;
+    if (ret == SQL_NO_DATA)
+        return true;
     ErrorDisplay(ret);
     return false;
 }
