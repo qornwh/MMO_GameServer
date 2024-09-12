@@ -31,6 +31,12 @@ template <typename T>
 using Queue = std::queue<T>;
 
 template <typename T>
+using PriorityQueueDes = std::priority_queue<T, Vector<T>, std::greater<T>>;
+
+template <typename T>
+using PriorityQueue = std::priority_queue<T>;
+
+template <typename T>
 using Set = std::set<T>;
 
 template <typename T, typename K>
