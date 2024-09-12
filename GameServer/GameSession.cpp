@@ -219,6 +219,11 @@ void GameSession::HandlePacket(BYTE* buffer, PacketHeader* header)
             }
         }
         break;
+    case protocol::MessageCode::S_CLOSEPLAYER:
+        {
+             ClosePlayerHandler(buffer, header, static_cast<int32>(sizeof(PacketHeader)));
+        }
+        break;
     }
 }
 
@@ -873,5 +878,13 @@ void GameSession::UpdateItemsHandler(BYTE* buffer, PacketHeader* header, int32 o
 
         SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::C_UPDATEITEMS);
         AsyncWrite(sendBuffer);
+    }
+}
+
+void GameSession::ClosePlayerHandler(BYTE* buffer, PacketHeader* header, int32 offset)
+{
+    if (GRoomManger->getRoom(GetRoomId()) != nullptr)
+    {
+        GRoomManger->getRoom(GetRoomId())->OutSession(std::static_pointer_cast<GameSession>(shared_from_this()));
     }
 }

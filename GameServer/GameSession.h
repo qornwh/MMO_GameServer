@@ -22,6 +22,7 @@ public:
     void PlayerJumpHandler(BYTE* buffer, PacketHeader* header, int32 offset);
     void SellItemsHandler(BYTE* buffer, PacketHeader* header, int32 offset);
     void UpdateItemsHandler(BYTE* buffer, PacketHeader* header, int32 offset);
+    void ClosePlayerHandler(BYTE* buffer, PacketHeader* header, int32 offset);
     
     void HandlePacket(BYTE* buffer, PacketHeader* header);
     int32 OnRecv(BYTE* buffer, int32 len) override;
