@@ -285,7 +285,7 @@ EtcItem& Inventory::AddItemEtc(EtcItem& etc)
             return etc;
         }
 
-        int position = _emptyEquipInvenList.top();
+        int position = _emptyEtcInvenList.top();
         _emptyEtcInvenList.pop();
         etc._position = position;
     }
