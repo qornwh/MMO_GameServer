@@ -66,12 +66,7 @@ void Session::AsyncRead()
         if (errorCode != WSA_IO_PENDING)
         {
             ErrorCode(errorCode);
-            //ERROR_SERVICE_NO_THREAD
             _recvOLS.SetSession(nullptr);
-            if (errorCode == WSAECONNRESET && errorCode == WSAECONNABORTED)
-            {
-                AsyncDisconnect();
-            }
         }
     }
 }
@@ -155,10 +150,6 @@ void Session::AsyncWrite(SendBufferRef sendBuffer)
         {
             ErrorCode(errorCode);
             _sendOLS.SetSession(nullptr);
-            if (errorCode == WSAECONNRESET && errorCode == WSAECONNABORTED)
-            {
-                AsyncDisconnect();
-            }
         }
     }
 }

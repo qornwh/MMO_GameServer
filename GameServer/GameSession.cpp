@@ -660,7 +660,7 @@ void GameSession::MoveHandler(BYTE* buffer, PacketHeader* header, int32 offset)
         pkt.set_is_monster(false);
 
         SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(pkt, protocol::MessageCode::S_MOVE);
-        GetService()->BroadCast(sendBuffer);
+        GRoomManger->getRoom(GetRoomId())->BroadCastAnother(sendBuffer, GetPlayer()->GetUUid());
     }
 }
 
