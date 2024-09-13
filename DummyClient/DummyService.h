@@ -10,6 +10,7 @@ public:
     bool Start() override;
     SessionRef CreateSession() override;
     void DummyTask();
+    void DisConnectionAll();
 
 private:
     void AsyncSession();

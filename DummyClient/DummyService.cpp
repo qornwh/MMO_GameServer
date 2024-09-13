@@ -77,3 +77,11 @@ void DummyService::AsyncSession()
         _timer = current;
     }
 }
+
+void DummyService::DisConnectionAll()
+{
+    for (auto session : _sessions)
+    {
+        session->AsyncDisconnect();
+    }
+}

@@ -24,6 +24,7 @@ int main()
                 service->task();
                 service->DummyTask();
             }
+            service->DisConnectionAll();
         }
     );
 
