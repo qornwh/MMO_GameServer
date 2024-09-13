@@ -35,6 +35,7 @@ void GameRoom::EnterSession(SessionRef session)
     {
         protocol::SLoad sendPktLoad;
         sendPktLoad.set_room_id(_id);
+        ReadLockGuard readLock(lock, "room");
         for (auto it : _sessionList)
         {
             if (it != nullptr)
@@ -321,6 +322,7 @@ void GameRoom::BroadCastAnother(SendBufferRef sendBuffer, int32 uuid)
     OverlappedTask* overlapped = new OverlappedTask();
     overlapped->f = [this, sendBuffer, uuid]()
     {
+        WriteLockGuard writeLock(lock, "room");
         for (auto session : _sessionList)
         {
             GameSessionRef gameSession = std::static_pointer_cast<GameSession>(session);

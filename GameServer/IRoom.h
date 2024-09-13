@@ -47,6 +47,7 @@ public:
         OverlappedTask* overlapped = new OverlappedTask();
         overlapped->f = [this, session]()
         {
+            WriteLockGuard writeLock(lock, "room");
             _sessionList.insert(session);
         };
         PostQueuedCompletionStatus(_taskIo, dwNumberOfBytesTransferred, dwCompletionKey, reinterpret_cast<LPOVERLAPPED>(overlapped));
@@ -57,7 +58,8 @@ public:
         ULONG_PTR dwCompletionKey = _taskId.fetch_add(1);
         OverlappedTask* overlapped = new OverlappedTask();
         overlapped->f = [this, session]()
-        {
+        {   
+            WriteLockGuard writeLock(lock, "room");
             _sessionList.erase(session);
         };
         PostQueuedCompletionStatus(_taskIo, dwNumberOfBytesTransferred, dwCompletionKey, reinterpret_cast<LPOVERLAPPED>(overlapped));
@@ -68,8 +70,9 @@ public:
         ULONG_PTR dwCompletionKey = _taskId.fetch_add(1);
         OverlappedTask* overlapped = new OverlappedTask();
         overlapped->f = [this, sendBuffer]()
-        {
-            for (const auto session : _sessionList)
+        {   
+            WriteLockGuard writeLock(lock, "room");
+            for (auto& session : _sessionList)
             {
                 session->AsyncWrite(sendBuffer);
             }
@@ -82,6 +85,7 @@ public:
     }
 
 protected:
+    Lock lock;
     Set<SessionRef> _sessionList;
     int32 _id;
     uint32 _type;

@@ -160,17 +160,12 @@ void Service::task()
         int errorCode = WSAGetLastError();
         if (errorCode != WAIT_TIMEOUT)
         {
-            ErrorCode(errorCode);
             if (errorCode == ERROR_NETNAME_DELETED)
             {
                 // 이미 종료됨
-                SessionRef session = overlappedPtr->GetSession();
-                if (session != nullptr)
-                {
-                    session->OnDisconnect();
-                }
                 return;
             }
+            ErrorCode(errorCode);
             assert(-1);
         }
     }

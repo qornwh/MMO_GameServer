@@ -149,7 +149,12 @@ void Session::AsyncWrite(SendBufferRef sendBuffer)
         if (errorCode != WSA_IO_PENDING)
         {
             ErrorCode(errorCode);
+            _sendBuffers.clear();
             _sendOLS.SetSession(nullptr);
+            if (errorCode == WSAECONNRESET || errorCode == WSAECONNABORTED)
+            {
+                OnDisconnect();
+            }
         }
     }
 }
