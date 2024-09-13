@@ -77,11 +77,11 @@ void GameSession::DropItem(std::shared_ptr<GameMosterInfo> monster)
     auto& monsterDrop = monster->GetDropSystem();
     for (auto& dropItem : monsterDrop.GetDropEquipList())
     {
-        protocol::ItemEquip* itemEquip = pkt.add_itemequips();
         EquipItem& item = inventory.AddItemEquip(dropItem.second);
 
         if (item._position >= 0)
         {
+            protocol::ItemEquip* itemEquip = pkt.add_itemequips();
             // 인벤토리 빈공간 있는경우, 없으면 메일행
             itemEquip->set_item_code(item._itemCode);
             itemEquip->set_item_type(item._equipType);
@@ -94,11 +94,11 @@ void GameSession::DropItem(std::shared_ptr<GameMosterInfo> monster)
     }
     for (auto& dropItem : monsterDrop.GetDropEtcList())
     {
-        protocol::ItemEtc* itemEtc = pkt.add_itemetcs();
         EtcItem& item = inventory.AddItemEtc(dropItem.second);
 
         if (item._position >= 0)
         {
+            protocol::ItemEtc* itemEtc = pkt.add_itemetcs();
             // 인벤토리 빈공간 있는경우, 없으면 메일행
             itemEtc->set_item_code(item._itemCode);
             itemEtc->set_item_count(item._count);
