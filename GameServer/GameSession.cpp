@@ -221,7 +221,7 @@ void GameSession::HandlePacket(BYTE* buffer, PacketHeader* header)
         break;
     case protocol::MessageCode::S_CLOSEPLAYER:
         {
-             ClosePlayerHandler(buffer, header, static_cast<int32>(sizeof(PacketHeader)));
+            ClosePlayerHandler(buffer, header, static_cast<int32>(sizeof(PacketHeader)));
         }
         break;
     }
@@ -420,7 +420,6 @@ void GameSession::BuyCharaterHandler(BYTE* buffer, PacketHeader* header, int32 o
         {
             int32 buyCharaterType = readPkt.charatertype();
             WCHAR* newName = GameUtils::Utils::CharToWchar(readPkt.name().c_str());
-            cash -= readPkt.usecash();
             pkt.set_result(1);
 
             // 해당 타입 캐릭터 있는지 체크!!
@@ -444,7 +443,9 @@ void GameSession::BuyCharaterHandler(BYTE* buffer, PacketHeader* header, int32 o
                 {
                     if (sdb.InsertCharater(_accountCode, buyCharaterType, newName))
                     {
+                        cash -= readPkt.usecash();
                         pkt.set_result(1);
+                        sdb.UpdateAccount(_accountCode, charaterType, weaponType, cash, weaponOne, weaponTwo, weaponThr);
                         Player player(playerCode, jobCode, _accountCode, newName);
                         GUserAccess->AddPlayerList(player);
                     }
@@ -481,6 +482,7 @@ void GameSession::BuyCharaterHandler(BYTE* buffer, PacketHeader* header, int32 o
         {
             pkt.set_result(0);
         }
+        pkt.set_cash(cash);
 
         SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(pkt, protocol::MessageCode::S_BUYRESULT);
         AsyncWrite(sendBuffer);
@@ -505,7 +507,6 @@ void GameSession::BuyWeaponHandler(BYTE* buffer, PacketHeader* header, int32 off
         if (cash >= readPkt.usecash())
         {
             int32 buyWeaponType = readPkt.weapontype();
-            cash -= readPkt.usecash();
             pkt.set_result(1);
 
             if (buyWeaponType == 1 && weaponOne == 0)
@@ -519,11 +520,10 @@ void GameSession::BuyWeaponHandler(BYTE* buffer, PacketHeader* header, int32 off
 
             if (pkt.result() > 0)
             {
+                cash -= readPkt.usecash();
                 sdb.UpdateAccount(_accountCode, charaterType, weaponType, cash, weaponOne, weaponTwo, weaponThr);
-
                 pkt.set_curcharatertype(charaterType);
                 pkt.set_curweapontype(weaponType);
-                pkt.set_cash(cash);
                 pkt.add_weaponlist(weaponOne);
                 pkt.add_weaponlist(weaponTwo);
                 pkt.add_weaponlist(weaponThr);
@@ -556,6 +556,7 @@ void GameSession::BuyWeaponHandler(BYTE* buffer, PacketHeader* header, int32 off
         {
             pkt.set_result(0);
         }
+        pkt.set_cash(cash);
 
         SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(pkt, protocol::MessageCode::S_BUYRESULT);
         AsyncWrite(sendBuffer);
@@ -755,22 +756,12 @@ void GameSession::DamegaHandler(BYTE* buffer, PacketHeader* header, int32 offset
             {
                 if (!isMonster)
                 {
-                    GRoomManger->getRoom(_roomId)->Attack(std::static_pointer_cast<GameSession>(
-                                                              shared_from_this()),
-                                                          isMonster,
-                                                          demageVal,
-                                                          uuid);
+                    GRoomManger->getRoom(_roomId)->Attack(std::static_pointer_cast<GameSession>(shared_from_this()), isMonster, demageVal, uuid);
                 }
                 else
                 {
-                    GRoomManger->getRoom(_roomId)->Attack(std::static_pointer_cast<GameSession>(
-                                                              shared_from_this()),
-                                                          isMonster,
-                                                          demageVal,
-                                                          uuid,
-                                                          demage.position().x(),
-                                                          demage.position().y(),
-                                                          demage.position().yaw());
+                    GRoomManger->getRoom(_roomId)->Attack(std::static_pointer_cast<GameSession>(shared_from_this()), isMonster, demageVal, uuid,
+                                                          demage.position().x(), demage.position().y(), demage.position().yaw());
                 }
             }
             SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(pkt, protocol::MessageCode::S_UNITDEMAGE);
