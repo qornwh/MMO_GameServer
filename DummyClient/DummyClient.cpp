@@ -24,12 +24,9 @@ int main()
                 service->task();
                 service->DummyTask();
             }
-            service->DisConnectionAll();
         }
     );
 
-    while (true)
-    {
-    }
+    GThreadManager->ThreadJoinAll();
     return 0;
 }
