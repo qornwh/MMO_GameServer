@@ -8,6 +8,7 @@ struct EquipItem
     ~EquipItem();
 
     EquipItem& operator=(const EquipItem& other);
+    EquipItem& operator=(EquipItem&& other);
 
     static EquipItem EmptyEquipItem();
 
@@ -28,6 +29,7 @@ struct EtcItem
     ~EtcItem();
 
     EtcItem& operator=(const EtcItem& other);
+    EtcItem& operator=(EtcItem&& other);
 
     static EtcItem EmptyEtcItem();
 

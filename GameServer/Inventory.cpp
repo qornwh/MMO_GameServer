@@ -32,6 +32,19 @@ EquipItem& EquipItem::operator=(const EquipItem& other)
     return *this;
 }
 
+EquipItem& EquipItem::operator=(EquipItem&& other)
+{
+    _uniqueId = other._uniqueId;
+    _itemCode = other._itemCode;
+    _equipType = other._equipType;
+    _attack = other._attack;
+    _speed = other._speed;
+    _isEquip = other._isEquip;
+    _position = other._position;
+    _use = other._use;
+    return *this;
+}
+
 EquipItem EquipItem::EmptyEquipItem()
 {
     return EquipItem{-1, -1, -1, -1, -1, -1, -1, 0};
@@ -52,6 +65,16 @@ EtcItem::~EtcItem()
 }
 
 EtcItem& EtcItem::operator=(const EtcItem& other)
+{
+    _itemCode = other._itemCode;
+    _count = other._count;
+    _type = other._type;
+    _position = other._position;
+    _isNew = other._isNew;
+    return *this;
+}
+
+EtcItem& EtcItem::operator=(EtcItem&& other)
 {
     _itemCode = other._itemCode;
     _count = other._count;
