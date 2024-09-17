@@ -40,11 +40,22 @@ template <typename T>
 using Set = std::set<T>;
 
 template <typename T, typename K>
-using Map = std::unordered_map<T, K>;
-
-template <typename T, typename K>
 using Tuple = std::pair<T, K>;
 
+template <typename T, typename K>
+struct TupleHash {
+    std::size_t operator()(const Tuple<T, K>& p) const {
+        return std::hash<T>()(p.first) ^ std::hash<K>()(p.second); // 비트 연산을 사용하여 두 해시를 결합
+    }
+};
+
+template <typename T, typename K>
+using Map = std::unordered_map<T, K>;
+
+template <typename T1, typename T2, typename K>
+using MapTuple = std::unordered_map<Tuple<T1, T2>, K, TupleHash<T1, T2>>; // pair 커스텀 해시 적용
+
 using String = std::string;
+using WString = std::wstring;
 
 using Function = std::function<void()>;

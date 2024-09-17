@@ -5,10 +5,12 @@
 struct EquipItem
 {
     EquipItem(int32 uniqueId, int32 itemCode, int32 equipType, int32 attack, int32 speed, int32 isEquip, int32 position, int32 use);
+    EquipItem(const EquipItem& other);
+    EquipItem(EquipItem&& other) noexcept;
     ~EquipItem();
 
     EquipItem& operator=(const EquipItem& other);
-    EquipItem& operator=(EquipItem&& other);
+    EquipItem& operator=(EquipItem&& other) noexcept;
 
     static EquipItem EmptyEquipItem();
 
@@ -26,10 +28,12 @@ struct EquipItem
 struct EtcItem
 {
     EtcItem(int32 itemCode, int32 type, int32 count, int32 position, bool isNew = false);
+    EtcItem(const EtcItem& other);
+    EtcItem(EtcItem&& other) noexcept;
     ~EtcItem();
 
     EtcItem& operator=(const EtcItem& other);
-    EtcItem& operator=(EtcItem&& other);
+    EtcItem& operator=(EtcItem&& other) noexcept;
 
     static EtcItem EmptyEtcItem();
 
