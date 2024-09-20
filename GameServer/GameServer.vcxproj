@@ -195,6 +195,8 @@
     <ClInclude Include="InventoryDB.h" />
     <ClInclude Include="IRoom.h" />
     <ClInclude Include="GamePacketHandler.h" />
+    <ClInclude Include="MailDB.h" />
+    <ClInclude Include="MailSystem.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="GameSerivce.h" />
     <ClInclude Include="GameSession.h" />
@@ -223,6 +225,8 @@
     <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="InventoryDB.cpp" />
     <ClCompile Include="IRoom.cpp" />
+    <ClCompile Include="MailDB.cpp" />
+    <ClCompile Include="MailSystem.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="GameSerivce.cpp" />
     <ClCompile Include="GameSession.cpp" />

@@ -23,6 +23,8 @@ public:
     void SellItemsHandler(BYTE* buffer, PacketHeader* header, int32 offset);
     void UpdateItemsHandler(BYTE* buffer, PacketHeader* header, int32 offset);
     void ClosePlayerHandler(BYTE* buffer, PacketHeader* header, int32 offset);
+    void UpdateMail(BYTE* buffer, PacketHeader* header, int32 offset);
+    void AllUpdateMail(BYTE* buffer, PacketHeader* header, int32 offset);
     
     void HandlePacket(BYTE* buffer, PacketHeader* header);
     int32 OnRecv(BYTE* buffer, int32 len) override;
@@ -33,6 +35,7 @@ public:
     int32 GetRoomId() { return _roomId; }
     void AddExp(int32 exp);
     void DropItem(std::shared_ptr<GameMosterInfo> monster);
+    void UpdateItems();
     int32 GetAccountCode() { return _accountCode; }
 
 private:

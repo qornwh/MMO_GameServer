@@ -71,7 +71,7 @@ void GameSession::DropItem(std::shared_ptr<GameMosterInfo> monster)
     // IRoom에서 호출된다 lock 문제 x
     if (!monster) return;
 
-    protocol::DropMessage pkt;
+    protocol::UpdateInventory pkt;
     auto& inventory = GetPlayer()->GetInventory();
 
     auto& monsterDrop = monster->GetDropSystem();
@@ -106,11 +106,51 @@ void GameSession::DropItem(std::shared_ptr<GameMosterInfo> monster)
             itemEtc->set_position(item._position);
         }
     }
-    int32 dropGold = monsterDrop.GetDropGold();
-    inventory.AddGold(dropGold);
-    pkt.set_gold(dropGold);
+    inventory.AddGold( monsterDrop.GetDropGold());
+    int32 gold = inventory.GetGold();
+    pkt.set_gold(gold);
 
-    SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(pkt, protocol::DROPMESSAGE);
+    SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(pkt, protocol::MessageCode::UPDATEINVENTROY);
+    AsyncWrite(sendBuffer);
+}
+
+void GameSession::UpdateItems()
+{
+    protocol::UpdateInventory pkt;
+    auto& inventory = GetPlayer()->GetInventory();
+
+    for (auto& item : inventory.GetUpdateEquipList())
+    {
+        if (item._position >= 0)
+        {
+            protocol::ItemEquip* itemEquip = pkt.add_itemequips();
+            // 인벤토리 빈공간 있는경우, 없으면 메일행
+            itemEquip->set_item_code(item._itemCode);
+            itemEquip->set_item_type(item._equipType);
+            itemEquip->set_unipeid(item._uniqueId);
+            itemEquip->set_attack(item._attack);
+            itemEquip->set_speed(item._speed);
+            itemEquip->set_is_equip(item._isEquip);
+            itemEquip->set_position(item._position);
+        }
+    }
+    for (auto& item : inventory.GetUpdateEtcList())
+    {
+        if (item._position >= 0)
+        {
+            protocol::ItemEtc* itemEtc = pkt.add_itemetcs();
+            // 인벤토리 빈공간 있는경우, 없으면 메일행
+            itemEtc->set_item_code(item._itemCode);
+            itemEtc->set_item_count(item._count);
+            itemEtc->set_item_type(item._type);
+            itemEtc->set_position(item._position);
+        }
+    }
+    int32 gold = inventory.GetGold();
+    pkt.set_gold(gold);
+
+    inventory.ResetUpdateItems();
+    SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(pkt, protocol::MessageCode::UPDATEINVENTROY);
     AsyncWrite(sendBuffer);
 }
 
@@ -224,6 +264,16 @@ void GameSession::HandlePacket(BYTE* buffer, PacketHeader* header)
             ClosePlayerHandler(buffer, header, static_cast<int32>(sizeof(PacketHeader)));
         }
         break;
+    case protocol::MessageCode::C_UPDATEMAIL:
+        {
+            UpdateMail(buffer, header, static_cast<int32>(sizeof(PacketHeader)));
+        }
+        break;
+    case protocol::MessageCode::C_ALLUPDATEMAIL:
+        {
+            AllUpdateMail(buffer, header, static_cast<int32>(sizeof(PacketHeader)));
+        }
+        break;
     }
 }
 
@@ -233,8 +283,10 @@ void GameSession::LoginHandler(BYTE* buffer, PacketHeader* header, int32 offset)
     if (GamePacketHandler::ParsePacketHandler(readPkt, buffer, header->size - offset, offset))
     {
         protocol::LoginAccess logPkt;
-        WCHAR* wId = GameUtils::Utils::CharToWchar(readPkt.id().c_str());
-        WCHAR* wPwd = GameUtils::Utils::CharToWchar(readPkt.pwd().c_str());
+        WCHAR wId[10] = {};
+        WCHAR wPwd[10] = {};
+        GameUtils::Utils::CharToWchar(readPkt.id().c_str(), wId);
+        GameUtils::Utils::CharToWchar(readPkt.pwd().c_str(), wPwd);
 
         SessionDB sdb;
         int32 curCharaterCode = 0;
@@ -270,6 +322,9 @@ void GameSession::LoginHandler(BYTE* buffer, PacketHeader* header, int32 offset)
                         int32 lv = 0;
                         int32 exp = 0;
                         WCHAR name[10] = {0,};
+                        char nameC[20] = {0,};
+                        String nameStr;
+                        nameStr.reserve(20);
 
                         while (sdb.GetPlayerDBInfo(playerCode, name, jobCode, mapCode, gold, lv, exp) == true)
                         {
@@ -277,8 +332,8 @@ void GameSession::LoginHandler(BYTE* buffer, PacketHeader* header, int32 offset)
                             charater->set_code(jobCode);
                             charater->set_uuid(_sessionId);
                             charater->set_lv(lv);
-                            char* nameByte = GameUtils::Utils::WcharToChar(name);
-                            charater->set_name(nameByte);
+                            nameStr = GameUtils::Utils::WcharToChar(name, nameC);
+                            charater->set_name(nameStr);
                             memset(name, 0, 10);
                         }
                     }
@@ -317,8 +372,6 @@ void GameSession::LoginHandler(BYTE* buffer, PacketHeader* header, int32 offset)
         }
         SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(logPkt, protocol::MessageCode::LOGINACCESS);
         AsyncWrite(sendBuffer);
-        delete wId;
-        delete wPwd;
     }
 }
 
@@ -348,6 +401,9 @@ void GameSession::UpdateAccountHandler(BYTE* buffer, PacketHeader* header, int32
                 WCHAR name[10] = {0,};
                 int32 lv = 0;
                 int32 exp = 0;
+                char nameC[20] = {0,};
+                String nameStr;
+                nameStr.reserve(20);
 
                 while (sdb.GetPlayerDBInfo(playerCode, name, jobCode, mapCode, gold, lv, exp))
                 {
@@ -358,8 +414,8 @@ void GameSession::UpdateAccountHandler(BYTE* buffer, PacketHeader* header, int32
                         protocol::Charater* charater = new protocol::Charater();
                         charater->set_code(jobCode);
                         charater->set_uuid(_sessionId);
-                        char* nameByte = GameUtils::Utils::WcharToChar(name);
-                        charater->set_name(nameByte);
+                        nameStr = GameUtils::Utils::WcharToChar(name, nameC);
+                        charater->set_name(nameStr);
                         charater->set_lv(lv);
                         pkt.set_allocated_charater(charater);
                         pkt.set_exp(exp);
@@ -419,7 +475,8 @@ void GameSession::BuyCharaterHandler(BYTE* buffer, PacketHeader* header, int32 o
         if (cash >= readPkt.usecash())
         {
             int32 buyCharaterType = readPkt.charatertype();
-            WCHAR* newName = GameUtils::Utils::CharToWchar(readPkt.name().c_str());
+            WCHAR wId[10] = {};
+            WCHAR* newName = GameUtils::Utils::CharToWchar(readPkt.name().c_str(), wId);
             pkt.set_result(1);
 
             // 해당 타입 캐릭터 있는지 체크!!
@@ -465,6 +522,9 @@ void GameSession::BuyCharaterHandler(BYTE* buffer, PacketHeader* header, int32 o
                 int32 lv = 0;
                 int32 exp = 0;
                 WCHAR name[10] = {0,};
+                char nameC[20] = {0,};
+                String nameStr;
+                nameStr.reserve(20);
 
                 while (sdb.GetPlayerDBInfo(playerCode, name, jobCode, mapCode, gold, lv, exp) == true)
                 {
@@ -472,8 +532,8 @@ void GameSession::BuyCharaterHandler(BYTE* buffer, PacketHeader* header, int32 o
                     charater->set_code(jobCode);
                     charater->set_uuid(_sessionId);
                     charater->set_lv(lv);
-                    char* nameByte = GameUtils::Utils::WcharToChar(name);
-                    charater->set_name(nameByte);
+                    nameStr = GameUtils::Utils::WcharToChar(name, nameC);
+                    charater->set_name(nameStr);
                     memset(name, 0, 10);
                 }
             }
@@ -537,6 +597,9 @@ void GameSession::BuyWeaponHandler(BYTE* buffer, PacketHeader* header, int32 off
                     int32 lv = 0;
                     int32 exp = 0;
                     WCHAR name[10] = {0,};
+                    char nameC[20] = {0,};
+                    String nameStr;
+                    nameStr.reserve(20);
 
                     while (sdb.GetPlayerDBInfo(playerCode, name, jobCode, mapCode, gold, lv, exp) == true)
                     {
@@ -544,10 +607,9 @@ void GameSession::BuyWeaponHandler(BYTE* buffer, PacketHeader* header, int32 off
                         charater->set_code(jobCode);
                         charater->set_uuid(_sessionId);
                         charater->set_lv(lv);
-                        char* nameByte = GameUtils::Utils::WcharToChar(name);
-                        charater->set_name(nameByte);
+                        nameStr = GameUtils::Utils::WcharToChar(name, nameC);
+                        charater->set_name(nameStr);
                         memset(name, 0, 10);
-                        delete nameByte;
                     }
                 }
             }
@@ -580,18 +642,22 @@ void GameSession::LoadHandler(BYTE* buffer, PacketHeader* header, int32 offset)
             int32 lv = 0;
             int32 exp = 0;
             WCHAR name[10] = {0,};
+            char nameC[20] = {0,};
+            String nameStr;
+            nameStr.reserve(20);
+            
             sdb.GetPlayerDBInfo(_playerCode, name, jobCode, mapCode, gold, lv, exp);
             sdb.ResetDBOrm();
 
-            char* nameCStr = GameUtils::Utils::WcharToChar(name);
-            String nameStr = nameCStr;
             CreatePlayerInfo(jobCode, _weaponCode, lv);
+            nameStr = GameUtils::Utils::WcharToChar(name, nameC);
             GetPlayer()->SetName(nameStr);
             GetPlayer()->SetPosition(position.x(), position.y());
             GetPlayer()->SetRotate(position.yaw());
             GetPlayer()->SetExp(exp);
             GetPlayer()->SetInventory(gold);
             GetPlayer()->SetFriend();
+            GetPlayer()->SetMail();
 
             // 나를 확인용 메시지 전달.
             if (GetService() != nullptr)
@@ -620,7 +686,8 @@ void GameSession::LoadHandler(BYTE* buffer, PacketHeader* header, int32 offset)
                     auto it = GUserAccess->GetPlayerList().find(myFriend.first);
                     if (it != GUserAccess->GetPlayerList().end())
                     {
-                        char* friendNameCStr = GameUtils::Utils::WcharToChar(it->second.name);
+                        char friendNamdC[20] = {0, };
+                        String friendNameCStr = GameUtils::Utils::WcharToChar(it->second.name, friendNamdC);
                         int32 friendCode = myFriend.first;
                         int32 friendAccess = myFriend.second;
 
@@ -629,13 +696,11 @@ void GameSession::LoadHandler(BYTE* buffer, PacketHeader* header, int32 offset)
                         addFriend->set_playername(friendNameCStr);
                         addFriend->set_access(friendAccess);
                         addFriend->set_add(true);
-                        delete friendNameCStr;
                     }
                 }
                 SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::S_FRIENDSYSTEM);
                 AsyncWrite(sendBuffer);
             }
-            delete nameCStr;
         }
     }
 }
@@ -877,5 +942,70 @@ void GameSession::ClosePlayerHandler(BYTE* buffer, PacketHeader* header, int32 o
     if (GRoomManger->getRoom(GetRoomId()) != nullptr)
     {
         GRoomManger->getRoom(GetRoomId())->OutSession(std::static_pointer_cast<GameSession>(shared_from_this()));
+    }
+}
+
+void GameSession::UpdateMail(BYTE* buffer, PacketHeader* header, int32 offset)
+{
+    protocol::CUpdateMail pkt;
+
+    if (GamePacketHandler::ParsePacketHandler(pkt, buffer, header->size - offset, offset))
+    {
+        int32 type = pkt.type();
+        int32 mailCode = pkt.mail().code();
+        auto& MailBox = GetPlayer()->GetMail();
+
+        if (type == 2)
+        {
+            // 메일 아이템 받기
+            if (GetPlayer()->GetMail().ReciveItemMail(mailCode, _playerCode))
+            {
+                auto it = MailBox.GetMail().find(mailCode);
+                if (it != MailBox.GetMail().end())
+                {
+                    auto& mail = it->second;
+                    pkt.mutable_mail()->set_socket1(mail._socket1);
+                    pkt.mutable_mail()->set_socket2(mail._socket2);
+                }
+                UpdateItems();
+            }
+        }
+        else if (type == 3)
+        {
+            if (GetPlayer()->GetMail().RemoveMail(mailCode, _playerCode))
+            {
+                // 메일 삭제
+                pkt.mutable_mail()->set_code(mailCode);
+            }
+            else
+            {
+                // 삭제 실패
+                pkt.mutable_mail()->set_code(-1);
+            }
+        }
+        SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(pkt, protocol::MessageCode::C_UPDATEMAIL);
+        AsyncWrite(sendBuffer);
+    }
+}
+
+void GameSession::AllUpdateMail(BYTE* buffer, PacketHeader* header, int32 offset)
+{
+    protocol::CAllUpdateMail pkt;
+
+    if (GamePacketHandler::ParsePacketHandler(pkt, buffer, header->size - offset, offset))
+    {
+        int32 type = pkt.type();
+        if (type == 1)
+        {
+            // 메일 갱신
+        }
+        else if (type == 2)
+        {
+            // 메일 아이템 전부 받기
+        }
+        else if (type == 3)
+        {
+            // 메일 전부 삭제
+        }
     }
 }

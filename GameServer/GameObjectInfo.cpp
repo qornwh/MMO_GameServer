@@ -404,6 +404,12 @@ void GamePlayerInfo::SetFriend()
     _friendSystem.NotifyFriend(true);
 }
 
+void GamePlayerInfo::SetMail()
+{
+    _mailSystem.LoadMail(_playerCode);
+    _mailSystem.SetPlayer(shared_from_this());
+}
+
 void GamePlayerInfo::ReSpawn()
 {
     _hp = _maxHp;

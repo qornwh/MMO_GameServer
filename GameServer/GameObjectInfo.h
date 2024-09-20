@@ -8,6 +8,7 @@
 #include "GameCharater.h"
 #include "GameService.pb.h"
 #include "Inventory.h"
+#include "MailSystem.h"
 
 static std::mt19937_64 rng{};
 
@@ -132,6 +133,7 @@ public:
     GameSessionRef GetGameSession() { return _gameSession.lock(); }
     void SetInventory(int32 gold);
     void SetFriend();
+    void SetMail();
     const int32 GetPlayerCode() { return _playerCode; }
     int32 GetWeapon() { return _weaponCode; }
     void ReSpawn();
@@ -141,6 +143,7 @@ public:
     int32 GetExp() { return _exp; }
     Inventory& GetInventory() { return _inventory; }
     FriendSystem& GetFriend() { return _friendSystem; }
+    MailSystem& GetMail() { return _mailSystem; }
 
 private:
     int32 _targetCode;
@@ -150,6 +153,7 @@ private:
     std::weak_ptr<GameSession> _gameSession;
     Inventory _inventory;
     FriendSystem _friendSystem;
+    MailSystem _mailSystem;
 
     //더미용
 public:

@@ -71,7 +71,7 @@ EquipItem& EquipItem::operator=(EquipItem&& other) noexcept
 
 EquipItem EquipItem::EmptyEquipItem()
 {
-    return EquipItem{-1, -1, -1, -1, -1, -1, -1, 0};
+    return EquipItem{-1, -1, -1, -1, -1, 0, -1, 0};
 }
 
 void EquipItem::UpdateItem(int32 use)
@@ -138,6 +138,8 @@ void EtcItem::UpdateItem(int32 count)
 
 Inventory::Inventory() : _emptyEquip(EquipItem::EmptyEquipItem())
 {
+    _updateEquipList.reserve(20);
+    _updateEtcList.reserve(20);
 }
 
 Inventory::~Inventory()
@@ -161,7 +163,7 @@ void Inventory::Init(int32 playerCode, int32 gold)
             notEmptyEquipInven[equip._position] = 1;
         }
     }
-    
+
     Vector<int32> notEmptyEtcInven(_invenSize, 0);
     inventoryDB.LoadEtcDB(_playerCode);
     EtcItem etc = EtcItem::EmptyEtcItem();
@@ -288,6 +290,7 @@ bool Inventory::CheckEquipped(int32 uniqueId, int32 equipped)
 
 EquipItem& Inventory::AddItemEquip(EquipItem& equip)
 {
+    WriteLockGuard writeLock(lock, "inventory");
     if (equip._position < 0 && equip._isEquip == 0)
     {
         if (_emptyEquipInvenList.size() == 0)
@@ -342,6 +345,7 @@ bool Inventory::UseItemEtc(int32 itemCode, int32 count)
 
 EtcItem& Inventory::AddItemEtc(EtcItem& etc)
 {
+    WriteLockGuard writeLock(lock, "inventory");
     if (etc._position < 0)
     {
         if (_emptyEtcInvenList.size() == 0)
@@ -354,7 +358,7 @@ EtcItem& Inventory::AddItemEtc(EtcItem& etc)
         _emptyEtcInvenList.pop();
         etc._position = position;
     }
-    
+
     int32 itemCode = etc._itemCode;
     auto it = _inventoryEtcItemList.find(itemCode);
     if (it != _inventoryEtcItemList.end())
@@ -433,4 +437,34 @@ void Inventory::SaveDB()
 
     SessionDB sessionDB;
     sessionDB.SavePlayerDB(_playerCode, _gold);
+}
+
+void Inventory::ResetUpdateItems()
+{
+    _updateEquipList.clear();
+    _updateEtcList.clear();
+}
+
+bool Inventory::AddMailItemEquip(EquipItem& equip)
+{
+    if (_emptyEquipInvenList.size() == 0)
+    {
+        return false;
+    }
+
+    equip._position = -1;
+    _updateEquipList.emplace_back(AddItemEquip(equip));
+    return true;
+}
+
+bool Inventory::AddMailItemEtc(EtcItem& etc)
+{
+    if (_emptyEtcInvenList.size() == 0)
+    {
+        return false;
+    }
+
+    etc._position = -1;
+    _updateEtcList.emplace_back(AddItemEtc(etc));
+    return true;
 }

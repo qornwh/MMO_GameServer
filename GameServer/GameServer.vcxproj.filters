@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="GameBossInfo.cpp">
-      <Filter>Unit</Filter>
-    </ClCompile>
     <ClCompile Include="GameObjectInfo.cpp">
       <Filter>Unit</Filter>
     </ClCompile>
@@ -53,26 +50,14 @@
     <ClCompile Include="InventoryDB.cpp">
       <Filter>DB</Filter>
     </ClCompile>
-    <ClCompile Include="Item.cpp">
-      <Filter>Item</Filter>
-    </ClCompile>
-    <ClCompile Include="InventoryItem.cpp">
-      <Filter>Inventory</Filter>
-    </ClCompile>
     <ClCompile Include="Inventory.cpp">
       <Filter>Inventory</Filter>
-    </ClCompile>
-    <ClCompile Include="DropItem.cpp">
-      <Filter>Item</Filter>
     </ClCompile>
     <ClCompile Include="FriendSystem.cpp">
       <Filter>Contents\Friend</Filter>
     </ClCompile>
     <ClCompile Include="GameUserAccess.cpp">
       <Filter>Contents\User</Filter>
-    </ClCompile>
-    <ClCompile Include="MailSystem.cpp">
-      <Filter>Contents\Mail</Filter>
     </ClCompile>
     <ClCompile Include="GameService.pb.cc">
       <Filter>proto</Filter>
@@ -92,11 +77,14 @@
     <ClCompile Include="GameDrop.cpp">
       <Filter>GameInfo</Filter>
     </ClCompile>
+    <ClCompile Include="MailSystem.cpp">
+      <Filter>Contents\Mail</Filter>
+    </ClCompile>
+    <ClCompile Include="DropGenerater.cpp">
+      <Filter>Item</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GameBossInfo.h">
-      <Filter>Unit</Filter>
-    </ClInclude>
     <ClInclude Include="GameObjectInfo.h">
       <Filter>Unit</Filter>
     </ClInclude>
@@ -148,26 +136,14 @@
     <ClInclude Include="InventoryDB.h">
       <Filter>DB</Filter>
     </ClInclude>
-    <ClInclude Include="Item.h">
-      <Filter>Item</Filter>
-    </ClInclude>
-    <ClInclude Include="InventoryItem.h">
-      <Filter>Inventory</Filter>
-    </ClInclude>
     <ClInclude Include="Inventory.h">
       <Filter>Inventory</Filter>
-    </ClInclude>
-    <ClInclude Include="DropItem.h">
-      <Filter>Item</Filter>
     </ClInclude>
     <ClInclude Include="FriendSystem.h">
       <Filter>Contents\Friend</Filter>
     </ClInclude>
     <ClInclude Include="GameUserAccess.h">
       <Filter>Contents\User</Filter>
-    </ClInclude>
-    <ClInclude Include="MailSystem.h">
-      <Filter>Contents\Mail</Filter>
     </ClInclude>
     <ClInclude Include="GameService.pb.h">
       <Filter>proto</Filter>
@@ -187,6 +163,12 @@
     <ClInclude Include="GameDrop.h">
       <Filter>GameInfo</Filter>
     </ClInclude>
+    <ClInclude Include="MailSystem.h">
+      <Filter>Contents\Mail</Filter>
+    </ClInclude>
+    <ClInclude Include="DropGenerater.h">
+      <Filter>Item</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Unit">
@@ -203,9 +185,6 @@
     </Filter>
     <Filter Include="Client">
       <UniqueIdentifier>{876103ae-0bde-4c17-88d4-9ed9c5ad98f9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Item">
-      <UniqueIdentifier>{134ed715-33db-4d48-b73e-dc744dccfaac}</UniqueIdentifier>
     </Filter>
     <Filter Include="Map">
       <UniqueIdentifier>{af7c36c3-8c77-42da-8d5a-1016b88c35a0}</UniqueIdentifier>
@@ -236,6 +215,9 @@
     </Filter>
     <Filter Include="GameInfo">
       <UniqueIdentifier>{1b2a6611-219d-4e19-a831-20f168eb1fed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Item">
+      <UniqueIdentifier>{134ed715-33db-4d48-b73e-dc744dccfaac}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

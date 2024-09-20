@@ -67,6 +67,12 @@ public:
     int32 GetGold() { return _gold; }
     Map<int32, EquipItem>& GetEquipItemInfo() { return _inventoryEquipItemList; }
     Map<int32, EtcItem>& GetEtcItemInfo() { return _inventoryEtcItemList; }
+    
+    void ResetUpdateItems();
+    Vector<EquipItem>& GetUpdateEquipList() { return _updateEquipList; }
+    Vector<EtcItem>& GetUpdateEtcList() { return _updateEtcList; }
+    bool AddMailItemEquip(EquipItem& equip);
+    bool AddMailItemEtc(EtcItem& etc);
 
 private:
     Lock lock;
@@ -87,4 +93,8 @@ private:
     // 맵에 비어있을때 빈 아이템사용함. 
     EquipItem _emptyEquip;
     Atomic<int32> _uniqueNum{0};
+
+    // 업데이트될 아이템 리스트
+    Vector<EquipItem> _updateEquipList;
+    Vector<EtcItem> _updateEtcList;
 };
