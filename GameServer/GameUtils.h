@@ -63,26 +63,20 @@ namespace GameUtils
     class Utils
     {
     public:
-        static wchar_t* CharToWchar(const char* cPtr)
+        static wchar_t* CharToWchar(const char* cPtr, WCHAR* wPtr)
         {
             int isize = strlen(cPtr);
             int nLength = MultiByteToWideChar(CP_ACP, 0, cPtr, isize, NULL, NULL);
-
             int nLen = sizeof(wchar_t) * (nLength + 1);
-            wchar_t* wPtr = new wchar_t[nLen];
             memset(wPtr, 0, nLen);
-
             MultiByteToWideChar(CP_ACP, 0, cPtr, isize, wPtr, nLength);
             return wPtr;
         }
 
-        static char* WcharToChar(const wchar_t* wPtr)
+        static char* WcharToChar(const wchar_t* wPtr, char* cPtr)
         {
             int nLength = WideCharToMultiByte(CP_ACP, 0, wPtr, -1, NULL, 0, NULL, NULL);
-
-            char* cPtr = new char[nLength + 1];
             memset(cPtr, 0, nLength + 1);
-
             WideCharToMultiByte(CP_ACP, 0, wPtr, -1, cPtr, nLength, NULL, NULL);
             return cPtr;
         }
