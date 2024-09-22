@@ -16,6 +16,7 @@ void GameRoom::EnterSession(SessionRef session)
         auto player = gameSession->GetPlayer();
         unit->set_name(player->GetName());
         unit->set_code(player->GetCode());
+        unit->set_weaponcode(player->GetWeapon());
         unit->set_uuid(player->GetUUid());
         unit->set_hp(player->GetHp());
         unit->set_lv(player->GetLv());
