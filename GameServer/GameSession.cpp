@@ -335,14 +335,19 @@ void GameSession::HandlePacket(BYTE* buffer, PacketHeader* header)
         break;
     case protocol::MessageCode::C_UPDATEMAIL:
         {
-            UpdateMail(buffer, header, static_cast<int32>(sizeof(PacketHeader)));
+            UpdateMailHandler(buffer, header, static_cast<int32>(sizeof(PacketHeader)));
         }
         break;
     case protocol::MessageCode::C_ALLUPDATEMAIL:
         {
-            AllUpdateMail(buffer, header, static_cast<int32>(sizeof(PacketHeader)));
+            AllUpdateMailHandler(buffer, header, static_cast<int32>(sizeof(PacketHeader)));
         }
         break;
+    // case protocol::MessageCode::C_SENDMAIL:
+    //     {
+    //         SendMailHandler(buffer, header, static_cast<int32>(sizeof(PacketHeader)));
+    //     }
+    //     break;
     }
 }
 
@@ -1014,7 +1019,7 @@ void GameSession::ClosePlayerHandler(BYTE* buffer, PacketHeader* header, int32 o
     }
 }
 
-void GameSession::UpdateMail(BYTE* buffer, PacketHeader* header, int32 offset)
+void GameSession::UpdateMailHandler(BYTE* buffer, PacketHeader* header, int32 offset)
 {
     protocol::CUpdateMail pkt;
 
@@ -1057,7 +1062,7 @@ void GameSession::UpdateMail(BYTE* buffer, PacketHeader* header, int32 offset)
     }
 }
 
-void GameSession::AllUpdateMail(BYTE* buffer, PacketHeader* header, int32 offset)
+void GameSession::AllUpdateMailHandler(BYTE* buffer, PacketHeader* header, int32 offset)
 {
     protocol::CAllUpdateMail pkt;
 
