@@ -14,6 +14,7 @@ struct EquipItem
 
     static EquipItem EmptyEquipItem();
 
+    bool IsEmpty();
     void UpdateItem(int32 use = 1);
     int32 _uniqueId;
     int32 _itemCode;

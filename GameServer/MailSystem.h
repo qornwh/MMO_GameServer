@@ -55,6 +55,7 @@ public:
     void SetPlayer(GameObjectInfoRef player);
 
 private:
+    Lock lock;
     Map<int32, Mail> _mailList;
     std::weak_ptr<GamePlayerInfo> _playerInfo;
     MapTuple<int32, int32, EquipItem> _mailEquipList; // 메일코드, 포지션이 키

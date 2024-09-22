@@ -979,30 +979,32 @@ void GameSession::UpdateItemsHandler(BYTE* buffer, PacketHeader* header, int32 o
         protocol::CUpdateItems sendPkt;
         for (auto& item : pkt.itemequips())
         {
-            EquipItem& unequipItem = GetPlayer()->GetInventory().ItemEquipped(item.unipeid(), item.is_equip());
             if (GetPlayer()->GetInventory().CheckEquipped(item.unipeid(), item.is_equip()))
             {
-                auto& targetItem = GetPlayer()->GetInventory().GetEquipItemInfo().find(item.unipeid())->second;
-                auto accessItem = sendPkt.add_itemequips();
-                accessItem->set_unipeid(targetItem._uniqueId);
-                accessItem->set_is_equip(targetItem._isEquip);
-                accessItem->set_attack(targetItem._attack);
-                accessItem->set_speed(targetItem._speed);
-                accessItem->set_item_type(targetItem._equipType);
-                accessItem->set_item_code(targetItem._itemCode);
-                accessItem->set_position(targetItem._position);
+                // 이미 장착되어 있으면 넘긴다
+                continue;
+            }
+            EquipItem& targetEquipItem = GetPlayer()->GetInventory().ItemEquipped(item.unipeid(), item.is_equip());
+            auto& targetItem = GetPlayer()->GetInventory().GetEquipItemInfo().find(item.unipeid())->second;
+            auto accessItem = sendPkt.add_itemequips();
+            accessItem->set_unipeid(targetItem._uniqueId);
+            accessItem->set_is_equip(targetItem._isEquip);
+            accessItem->set_attack(targetItem._attack);
+            accessItem->set_speed(targetItem._speed);
+            accessItem->set_item_type(targetItem._equipType);
+            accessItem->set_item_code(targetItem._itemCode);
+            accessItem->set_position(targetItem._position);
 
-                if (unequipItem._uniqueId > 0)
-                {
-                    auto otherItem = sendPkt.add_itemequips();
-                    otherItem->set_unipeid(unequipItem._uniqueId);
-                    otherItem->set_is_equip(unequipItem._isEquip);
-                    otherItem->set_attack(unequipItem._attack);
-                    otherItem->set_speed(unequipItem._speed);
-                    otherItem->set_item_type(unequipItem._equipType);
-                    otherItem->set_item_code(unequipItem._itemCode);
-                    otherItem->set_position(unequipItem._position);
-                }
+            if (targetEquipItem._uniqueId > 0)
+            {
+                auto otherItem = sendPkt.add_itemequips();
+                otherItem->set_unipeid(targetEquipItem._uniqueId);
+                otherItem->set_is_equip(targetEquipItem._isEquip);
+                otherItem->set_attack(targetEquipItem._attack);
+                otherItem->set_speed(targetEquipItem._speed);
+                otherItem->set_item_type(targetEquipItem._equipType);
+                otherItem->set_item_code(targetEquipItem._itemCode);
+                otherItem->set_position(targetEquipItem._position);
             }
         }
 
@@ -1040,6 +1042,7 @@ void GameSession::UpdateMailHandler(BYTE* buffer, PacketHeader* header, int32 of
                     auto& mail = it->second;
                     pkt.mutable_mail()->set_socket1(mail._socket1);
                     pkt.mutable_mail()->set_socket2(mail._socket2);
+                    pkt.mutable_mail()->set_gold(mail._gold);
                 }
                 UpdateItems();
             }

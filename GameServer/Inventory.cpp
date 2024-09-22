@@ -74,6 +74,13 @@ EquipItem EquipItem::EmptyEquipItem()
     return EquipItem{-1, -1, -1, -1, -1, 0, -1, 0};
 }
 
+bool EquipItem::IsEmpty()
+{
+    if (_uniqueId == -1 && _itemCode == -1)
+        return true;
+    return false;
+}
+
 void EquipItem::UpdateItem(int32 use)
 {
     _use = use;
