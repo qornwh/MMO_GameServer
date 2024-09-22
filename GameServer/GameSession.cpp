@@ -106,7 +106,7 @@ void GameSession::DropItem(std::shared_ptr<GameMosterInfo> monster)
             itemEtc->set_position(item._position);
         }
     }
-    inventory.AddGold( monsterDrop.GetDropGold());
+    inventory.AddGold(monsterDrop.GetDropGold());
     int32 gold = inventory.GetGold();
     pkt.set_gold(gold);
 
@@ -151,6 +151,75 @@ void GameSession::UpdateItems()
 
     inventory.ResetUpdateItems();
     SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(pkt, protocol::MessageCode::UPDATEINVENTROY);
+    AsyncWrite(sendBuffer);
+}
+
+void GameSession::LoadMails()
+{
+    protocol::CLoadMail sendPktMail;
+    sendPktMail.set_type(0);
+    MailSystem& mailSystem = GetPlayer()->GetMail();
+
+    // 메일 
+    char titleCStr[20] = {0,};
+    char messageCStr[100] = {0,};
+    String titleStr;
+    String messageStr;
+    titleStr.reserve(20);
+    messageStr.reserve(100);
+    for (auto& entry : mailSystem.GetMail())
+    {
+        auto& mailInfo = entry.second;
+        protocol::Mail* mail = sendPktMail.add_mails();
+        mail->set_code(mailInfo._code);
+        mail->set_read(mailInfo._read);
+        mail->set_gold(mailInfo._gold);
+        mail->set_socket1(mailInfo._socket1);
+        mail->set_socket1type(mailInfo._socket1Type);
+        mail->set_socket2(mailInfo._socket2);
+        mail->set_socket2type(mailInfo._socket2Type);
+        titleStr = GameUtils::Utils::WcharToChar(mailInfo._title, titleCStr);
+        mail->set_title(titleStr);
+        messageStr = GameUtils::Utils::WcharToChar(mailInfo._message, messageCStr);
+        mail->set_message(messageStr);
+    }
+
+    for (auto& entry : mailSystem.GetMailEquip())
+    {
+        int32 mailCode = entry.first.first;
+        int32 socket = entry.first.second;
+        auto& item = entry.second;
+        protocol::MailEquipItem* mailEquip = sendPktMail.add_equipitems();
+        protocol::ItemEquip* equip = new protocol::ItemEquip();
+        equip->set_item_code(item._itemCode);
+        equip->set_unipeid(item._uniqueId);
+        equip->set_is_equip(item._isEquip);
+        equip->set_attack(item._attack);
+        equip->set_speed(item._speed);
+        equip->set_item_type(item._equipType);
+        equip->set_position(item._position);
+        mailEquip->set_allocated_item(equip);
+        mailEquip->set_socket(socket);
+        mailEquip->set_mailcode(mailCode);
+    }
+
+    for (auto& entry : mailSystem.GetMailEtc())
+    {
+        int32 mailCode = entry.first.first;
+        int32 socket = entry.first.second;
+        auto& item = entry.second;
+        protocol::MailEtcItem* mailEtc = sendPktMail.add_etcitems();
+        protocol::ItemEtc* etc = new protocol::ItemEtc();
+        etc->set_item_code(item._itemCode);
+        etc->set_item_type(item._type);
+        etc->set_item_count(item._count);
+        etc->set_position(item._position);
+        mailEtc->set_allocated_item(etc);
+        mailEtc->set_socket(socket);
+        mailEtc->set_mailcode(mailCode);
+    }
+
+    SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPktMail, protocol::MessageCode::C_LOADMAIL);
     AsyncWrite(sendBuffer);
 }
 
@@ -645,7 +714,7 @@ void GameSession::LoadHandler(BYTE* buffer, PacketHeader* header, int32 offset)
             char nameC[20] = {0,};
             String nameStr;
             nameStr.reserve(20);
-            
+
             sdb.GetPlayerDBInfo(_playerCode, name, jobCode, mapCode, gold, lv, exp);
             sdb.ResetDBOrm();
 
@@ -686,7 +755,7 @@ void GameSession::LoadHandler(BYTE* buffer, PacketHeader* header, int32 offset)
                     auto it = GUserAccess->GetPlayerList().find(myFriend.first);
                     if (it != GUserAccess->GetPlayerList().end())
                     {
-                        char friendNamdC[20] = {0, };
+                        char friendNamdC[20] = {0,};
                         String friendNameCStr = GameUtils::Utils::WcharToChar(it->second.name, friendNamdC);
                         int32 friendCode = myFriend.first;
                         int32 friendAccess = myFriend.second;
@@ -995,17 +1064,23 @@ void GameSession::AllUpdateMail(BYTE* buffer, PacketHeader* header, int32 offset
     if (GamePacketHandler::ParsePacketHandler(pkt, buffer, header->size - offset, offset))
     {
         int32 type = pkt.type();
+        auto& MailBox = GetPlayer()->GetMail();
         if (type == 1)
         {
             // 메일 갱신
+            MailBox.ReLoadMail(_playerCode);
         }
         else if (type == 2)
         {
             // 메일 아이템 전부 받기
+            MailBox.ReciveItemMailAll(_playerCode);
+            UpdateItems();
         }
         else if (type == 3)
         {
             // 메일 전부 삭제
+            MailBox.RemoveMailAll(_playerCode);
         }
+        LoadMails();
     }
 }

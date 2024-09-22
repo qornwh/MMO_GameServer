@@ -37,6 +37,7 @@ public:
     void DropItem(std::shared_ptr<GameMosterInfo> monster);
     void UpdateItems();
     int32 GetAccountCode() { return _accountCode; }
+    void LoadMails();
 
 private:
     std::shared_ptr<class GamePlayerInfo> _player;

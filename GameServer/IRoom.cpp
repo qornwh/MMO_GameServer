@@ -129,71 +129,7 @@ void GameRoom::EnterSession(SessionRef session)
     }
 
     {
-        protocol::CLoadMail sendPktMail;
-        sendPktMail.set_type(0);
-        MailSystem& mailSystem = gameSession->GetPlayer()->GetMail();
-
-        // 메일 
-        char titleCStr[20] = {0,};
-        char messageCStr[100] = {0,};
-        String titleStr;
-        String messageStr;
-        titleStr.reserve(20);
-        messageStr.reserve(100);
-        for (auto& entry : mailSystem.GetMail())
-        {
-            auto& mailInfo = entry.second;
-            protocol::Mail* mail = sendPktMail.add_mails();
-            mail->set_code(mailInfo._code);
-            mail->set_read(mailInfo._read);
-            mail->set_gold(mailInfo._gold);
-            mail->set_socket1(mailInfo._socket1);
-            mail->set_socket1type(mailInfo._socket1Type);
-            mail->set_socket2(mailInfo._socket2);
-            mail->set_socket2type(mailInfo._socket2Type);
-            titleStr = GameUtils::Utils::WcharToChar(mailInfo._title, titleCStr);
-            mail->set_title(titleStr);
-            messageStr = GameUtils::Utils::WcharToChar(mailInfo._message, messageCStr);
-            mail->set_message(messageStr);
-        }
-        
-        for (auto& entry : mailSystem.GetMailEquip())
-        {
-            int32 mailCode = entry.first.first;
-            int32 socket = entry.first.second;
-            auto& item = entry.second;
-            protocol::MailEquipItem* mailEquip = sendPktMail.add_equipitems();
-            protocol::ItemEquip* equip = new protocol::ItemEquip();
-            equip->set_item_code(item._itemCode);
-            equip->set_unipeid(item._uniqueId);
-            equip->set_is_equip(item._isEquip);
-            equip->set_attack(item._attack);
-            equip->set_speed(item._speed);
-            equip->set_item_type(item._equipType);
-            equip->set_position(item._position);
-            mailEquip->set_allocated_item(equip);
-            mailEquip->set_socket(socket);
-            mailEquip->set_mailcode(mailCode);
-        }
-        
-        for (auto& entry : mailSystem.GetMailEtc())
-        {
-            int32 mailCode = entry.first.first;
-            int32 socket = entry.first.second;
-            auto& item = entry.second;
-            protocol::MailEtcItem* mailEtc = sendPktMail.add_etcitems();
-            protocol::ItemEtc* etc = new protocol::ItemEtc();
-            etc->set_item_code(item._itemCode);
-            etc->set_item_type(item._type);
-            etc->set_item_count(item._count);
-            etc->set_position(item._position);
-            mailEtc->set_allocated_item(etc);
-            mailEtc->set_socket(socket);
-            mailEtc->set_mailcode(mailCode);
-        }
-        
-        SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPktMail, protocol::MessageCode::C_LOADMAIL);
-        session->AsyncWrite(sendBuffer);
+        gameSession->LoadMails();
     }
 
     IRoom::EnterSession(session);

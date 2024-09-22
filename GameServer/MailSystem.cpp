@@ -266,13 +266,40 @@ bool MailSystem::RemoveMail(int32 mailCode, int32 playerCode)
         auto mail = it->second;
         if (mail._gold == 0 && mail._socket1 <= 0 && mail._socket2 <= 0)
         {
+            RemoveItemEqipMail(mailCode);
+            RemoveItemEtcMail(mailCode);
             mailDB.RemoveMail(mailCode, playerCode);
-            // mailDB.InsertRemoveMail(mail, playerCode);
             _mailList.erase(mailCode);
             return true;
         }
     }
     return false;
+}
+
+void MailSystem::RemoveItemEqipMail(int32 mailCode)
+{
+    for (int32 position = 1; position <= _itemMaxSize; position++)
+    {
+        auto key = Tuple<int,int>{mailCode, position};
+        auto it = _mailEquipList.find(key);
+        if (it != _mailEquipList.end())
+        {
+            _mailEquipList.erase(it);
+        }
+    }
+}
+
+void MailSystem::RemoveItemEtcMail(int32 mailCode)
+{
+    for (int32 position = 1; position <= _itemMaxSize; position++)
+    {
+        auto key = Tuple<int,int>{mailCode, position};
+        auto it = _mailEtcList.find(key);
+        if (it != _mailEtcList.end())
+        {
+            _mailEtcList.erase(it);
+        }
+    }
 }
 
 void MailSystem::RemoveMailAll(int32 playerCode)
@@ -282,6 +309,7 @@ void MailSystem::RemoveMailAll(int32 playerCode)
     for (auto it = _mailList.begin(); it != _mailList.end();)
     {
         int32 mailCode = it->first;
+        ++it;
         RemoveMail(mailCode, playerCode);
     }
 }

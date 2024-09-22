@@ -41,6 +41,8 @@ public:
     bool ReciveItemEtcMail(int32 mailCode, int32 position); // 메일 아이템 받기
     void ReciveItemMailAll(int32 playerCode); // 메일 아이템 전부 받기
     bool RemoveMail(int32 mailCode, int32 playerCode); // 메일 삭제
+    void RemoveItemEqipMail(int32 mailCode); // 메일 아이템 삭제
+    void RemoveItemEtcMail(int32 mailCode); // 메일 아이템 삭제
     void RemoveMailAll(int32 playerCode); // 메일 전부 삭제
     void SendMail(Mail& mail, int32 playerCode); // 메일 보내기
     void SendEquipItemMail(Mail& mail, int32 playerCode, EquipItem& item); // 메일 아이템 장비 보내기
