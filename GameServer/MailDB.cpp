@@ -160,7 +160,6 @@ void MailDB::InsertMail(Mail& mail, int32 playerCode)
 {
     // insert 문
     conn->Prepare(insertMailQuery);
-    _dbOrm.BindParamInt(&mail._code);
     _dbOrm.BindParamInt(&playerCode);
     _dbOrm.BindParamWchar(sizeof(mail._title), (SQLPOINTER)mail._title);
     _dbOrm.BindParamWchar(sizeof(mail._message), (SQLPOINTER)mail._message);

@@ -27,6 +27,7 @@ void GameUserAccess::LoadUserList()
     {
         int32 playerCode = player.playerCode;
         _playerList.emplace(playerCode, player);
+        _playerToName.emplace(player.name, playerCode);
     }
 }
 
@@ -40,6 +41,7 @@ void GameUserAccess::AddPlayerList(Player& player)
 {
     int32 playerCode = player.playerCode;
     _playerList.emplace(playerCode, player);
+    _playerToName.emplace(player.name, playerCode);
 }
 
 bool GameUserAccess::AccessUser(int32 userCode, SessionRef session)

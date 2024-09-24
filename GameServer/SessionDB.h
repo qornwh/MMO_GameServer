@@ -17,7 +17,7 @@ public:
 	bool PlayerDB(int32 accountCode, int32 type);
 	bool GetPlayerDBInfo(int32& playerCode, wchar_t* name, int32& jobCode, int32& mapCode, int32& gold, int32& lv, int32& exp);
 	void SavePlayerDB(int32 playerCode, int32 gold);
-	bool InsertCharater(int32 accountCode, int32 type, const wchar_t* name);
+	bool InsertCharater(int32& playerCode, int32 accountCode, int32 type, const wchar_t* name);
 	bool UpdateExp(int32 playerCode, int32 exp, int32 lv);
 	void ResetDBOrm();
 

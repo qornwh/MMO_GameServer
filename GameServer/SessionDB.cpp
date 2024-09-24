@@ -186,9 +186,9 @@ void SessionDB::SavePlayerDB(int32 playerCode, int32 gold)
     _dbOrm.ReSetIdx();
 }
 
-bool SessionDB::InsertCharater(int32 accountCode, int32 type, const wchar_t* name)
+bool SessionDB::InsertCharater(int32& playerCode, int32 accountCode, int32 type, const wchar_t* name)
 {
-    const wchar_t* query = L"INSERT INTO Player (name, jobCode, mapCode, accountCode, gold, lv) VALUES (?, ?, 1, ?, 0, 1)";
+    const wchar_t* query = L"INSERT INTO Player (name, jobCode, mapCode, accountCode, gold, lv) OUTPUT inserted.playerCode VALUES (?, ?, 1, ?, 0, 1)";
 
     _dbOrm.SetDBConn(conn);
     bool result = conn->Prepare(query);
@@ -197,6 +197,11 @@ bool SessionDB::InsertCharater(int32 accountCode, int32 type, const wchar_t* nam
     _dbOrm.BindParamInt(&accountCode);
     result = conn->Execute();
 
+    // output으로 메일 code 받아온다.
+    _dbOrm.BindColInt(sizeof(playerCode), &playerCode);
+    conn->Fetch();
+
+    conn->CloseCursor();
     _dbOrm.ReSetIdx();
     return result;
 }

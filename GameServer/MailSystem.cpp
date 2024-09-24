@@ -75,6 +75,14 @@ Mail Mail::EmptyEtcItem()
     return Mail{-1, -1, 0, -1, -1, -1, -1, nullptr, nullptr};
 }
 
+Mail Mail::FirstMail()
+{
+    Mail First = Mail{-1, 0, 10000, 1, 1, 1, 1, nullptr, nullptr};
+    wcscpy_s(First._title, 10, L"System");
+    wcscpy_s(First._message, 50, L"캐릭터 생성을 축하합니다 !!!");
+    return First;
+}
+
 MailSystem::MailSystem()
 {
 }

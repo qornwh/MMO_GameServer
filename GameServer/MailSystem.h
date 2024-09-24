@@ -13,6 +13,7 @@ struct Mail
     Mail& operator=(Mail&& other) noexcept;
 
     static Mail EmptyEtcItem();
+    static Mail FirstMail();
 
     int32 _code;
     int32 _read;
@@ -48,6 +49,9 @@ public:
     void SendEquipItemMail(Mail& mail, int32 playerCode, EquipItem& item); // 메일 아이템 장비 보내기
     void SendEtcItemMail(Mail& mail, int32 playerCode, EtcItem& item); // 메일 아이템 기타템 보내기
     void ReLoadMail(int32 playerCode); // 메일 다시 로드
+
+    void FirstMail(int32 playerCode); // 캐릭터 생성시 처음 메일 전달
+    void DropMail(int32 playerCode); // 드랍시 인벤토리 꽉 찰때 메일 전달
 
     Map<int32, Mail>& GetMail() { return _mailList; }
     MapTuple<int32, int32, EquipItem>& GetMailEquip() { return _mailEquipList; }

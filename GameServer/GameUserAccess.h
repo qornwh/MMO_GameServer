@@ -22,8 +22,10 @@ public:
 private:
     Lock lock;
 
+    // 일단 dual hash로 할수 밖에 없다...
     Map<int32, User> _userList;
     Map<int32, Player> _playerList;
+    Map<WString, int32> _playerToName;
 
     Map<int32, std::weak_ptr<class GameSession>> _userAccess;
     Map<int32, std::weak_ptr<class GameSession>> _playerAccess;

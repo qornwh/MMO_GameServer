@@ -1,5 +1,7 @@
 ﻿#include "pch.h"
 #include "GameSession.h"
+
+#include "GameEvent.h"
 #include "GameGlobal.h"
 #include "GameItem.h"
 #include "GameService.pb.h"
@@ -73,7 +75,6 @@ void GameSession::DropItem(std::shared_ptr<GameMosterInfo> monster)
 
     protocol::UpdateInventory pkt;
     auto& inventory = GetPlayer()->GetInventory();
-
     auto& monsterDrop = monster->GetDropSystem();
     for (auto& dropItem : monsterDrop.GetDropEquipList())
     {
@@ -91,6 +92,10 @@ void GameSession::DropItem(std::shared_ptr<GameMosterInfo> monster)
             itemEquip->set_is_equip(item._isEquip);
             itemEquip->set_position(item._position);
         }
+        else
+        {
+            GEvent->DropEquipMail(_playerCode, item);
+        }
     }
     for (auto& dropItem : monsterDrop.GetDropEtcList())
     {
@@ -104,6 +109,10 @@ void GameSession::DropItem(std::shared_ptr<GameMosterInfo> monster)
             itemEtc->set_item_count(item._count);
             itemEtc->set_item_type(item._type);
             itemEtc->set_position(item._position);
+        }
+        else
+        {
+            GEvent->DropEtcMail(_playerCode, item);
         }
     }
     inventory.AddGold(monsterDrop.GetDropGold());
@@ -572,13 +581,14 @@ void GameSession::BuyCharaterHandler(BYTE* buffer, PacketHeader* header, int32 o
 
                 if (flag)
                 {
-                    if (sdb.InsertCharater(_accountCode, buyCharaterType, newName))
+                    if (sdb.InsertCharater(playerCode, _accountCode, buyCharaterType, newName))
                     {
                         cash -= readPkt.usecash();
                         pkt.set_result(1);
                         sdb.UpdateAccount(_accountCode, charaterType, weaponType, cash, weaponOne, weaponTwo, weaponThr);
                         Player player(playerCode, jobCode, _accountCode, newName);
                         GUserAccess->AddPlayerList(player);
+                        GEvent->CreateCharacterMail(playerCode);
                     }
                 }
                 else

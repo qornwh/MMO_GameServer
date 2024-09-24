@@ -2,6 +2,7 @@
 
 #include "GameCharater.h"
 #include "GameDrop.h"
+#include "GameEvent.h"
 #include "GameExpLv.h"
 #include "GameRoomManager.h"
 #include "GameSkill.h"
@@ -18,6 +19,7 @@ std::shared_ptr<GameExpLv> GExpLv = std::make_shared<GameExpLv>();
 std::shared_ptr<GameEquipItem> GEquipItem = std::make_shared<GameEquipItem>();
 std::shared_ptr<GameEtcItem> GEtcItem = std::make_shared<GameEtcItem>();
 std::shared_ptr<GameDrop> GDropItem = std::make_shared<GameDrop>();
+std::shared_ptr<GameEvent> GEvent = std::make_shared<GameEvent>();
 
 std::shared_ptr<GameUserAccess> GUserAccess = std::make_shared<GameUserAccess>();
 
