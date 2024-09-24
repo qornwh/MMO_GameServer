@@ -197,7 +197,6 @@ bool SessionDB::InsertCharater(int32& playerCode, int32 accountCode, int32 type,
     _dbOrm.BindParamInt(&accountCode);
     result = conn->Execute();
 
-    // output으로 메일 code 받아온다.
     _dbOrm.BindColInt(sizeof(playerCode), &playerCode);
     conn->Fetch();
 
