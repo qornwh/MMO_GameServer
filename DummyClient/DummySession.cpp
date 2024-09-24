@@ -66,20 +66,26 @@ void DummySession::OnConnect()
     _playerInfo->Start();
     std::wstring name = L"Dummy-" + std::to_wstring(_id);
     _playerInfo->SetName(name);
-    char* nameToStr = DummyUtils::Utils::WcharToChar(name.c_str());
-    std::string* nameStr = new String(nameToStr);
+    char nameCStr[20] = {0,};
+    String nameStr;
+    nameStr.reserve(20);
+    nameStr = DummyUtils::Utils::WcharToChar(name.c_str(), nameCStr);
 
     protocol::DLoad pkt;
     protocol::Unit* unit = new protocol::Unit();
     unit->set_uuid(_id);
     unit->set_code(1);
     unit->set_weaponcode(1);
-    unit->set_allocated_name(nameStr);
+    unit->set_name(nameStr);
     unit->set_hp(1);
     unit->set_state(1);
     unit->set_lv(1);
+    protocol::Position* pos = new protocol::Position();
+    pos->set_x(_playerInfo->GetPostion().X);
+    pos->set_y(_playerInfo->GetPostion().Y);
+    pos->set_yaw(_playerInfo->GetPostion().Yaw);
+    unit->set_allocated_position(pos);
     pkt.set_allocated_unit(unit);
-    delete nameToStr;
 
     SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(pkt, protocol::MessageCode::D_LOAD);
     AsyncWrite(sendBuffer);
