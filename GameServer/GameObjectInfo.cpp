@@ -370,7 +370,6 @@ GamePlayerInfo::~GamePlayerInfo()
 {
     if (IsDummy()) return;
     _inventory.SaveDB();
-    _friendSystem.NotifyFriends(false);
 }
 
 void GamePlayerInfo::Update()
@@ -401,7 +400,6 @@ void GamePlayerInfo::SetInventory(int32 gold)
 void GamePlayerInfo::SetFriend()
 {
     _friendSystem.LoadFriend();
-    _friendSystem.NotifyFriends(true);
 }
 
 void GamePlayerInfo::SetMail()

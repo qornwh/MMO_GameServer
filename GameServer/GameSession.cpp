@@ -1061,17 +1061,9 @@ void GameSession::FriendUpdateHandler(BYTE* buffer, PacketHeader* header, int32 
                     newFriend->set_playercode(friendCode);
                     newFriend->set_playername(pkt.friend_().playername());
                     newFriend->set_access(false);
-
-                    if (GUserAccess->IsAccessPlayer(friendCode))
-                    {
-                        newFriend->set_access(true);
-                        GetPlayer()->GetFriend().AddFriend(friendCode, true);
-                        GetPlayer()->GetFriend().NotifyFriend(friendCode, true);
-                    }
-                    else
-                    {
-                        GetPlayer()->GetFriend().AddFriend(friendCode, false);
-                    }
+                    bool friendAccess = GUserAccess->IsAccessPlayer(friendCode);
+                    newFriend->set_access(friendAccess);
+                    GetPlayer()->GetFriend().AddFriend(friendCode, friendAccess);
                 }
             }
         }

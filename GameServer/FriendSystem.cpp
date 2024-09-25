@@ -64,56 +64,6 @@ void FriendSystem::UpdateFriend(int32 friendCode, bool flag)
     {
         _friendList[friendCode] = flag;
     }
-    else
-    {
-        AddFriend(friendCode, flag);
-    }
-}
-
-void FriendSystem::NotifyFriends(bool flag)
-{
-    auto PlayerAccess = GUserAccess->GetPlayerAccess();
-    
-    protocol::SFriendSystem sendPkt;
-    protocol::Friend* addFriend = sendPkt.add_friend_();
-    addFriend->set_playercode(_playerCode);
-    addFriend->set_access(flag);
-    addFriend->set_add(false);
-    for (auto& entry : _friendList)
-    {
-        auto session = PlayerAccess[entry.first].lock();
-        if (session)
-        {
-            auto gameSession = std::static_pointer_cast<GameSession>(session);
-            gameSession->GetPlayer()->GetFriend().UpdateFriend(_playerCode, flag);
-
-            // 각자 친구들에게 내 접속여부를 던진다.
-            SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::S_FRIENDSYSTEM);
-            gameSession->AsyncWrite(sendBuffer);
-        }
-    }
-}
-
-void FriendSystem::NotifyFriend(int32 friendCode, bool flag)
-{
-    auto PlayerAccess = GUserAccess->GetPlayerAccess();
-    
-    protocol::SFriendSystem sendPkt;
-    protocol::Friend* addFriend = sendPkt.add_friend_();
-    addFriend->set_playercode(_playerCode);
-    addFriend->set_access(flag);
-    addFriend->set_add(false);
-    
-    auto session = PlayerAccess[friendCode].lock();
-    if (session)
-    {
-        auto gameSession = std::static_pointer_cast<GameSession>(session);
-        gameSession->GetPlayer()->GetFriend().UpdateFriend(_playerCode, flag);
-
-        // 각자 친구에게 내 접속여부를 던진다.
-        SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::S_FRIENDSYSTEM);
-        gameSession->AsyncWrite(sendBuffer);
-    }
 }
 
 Map<int32, int32>& FriendSystem::GetFriendList()
