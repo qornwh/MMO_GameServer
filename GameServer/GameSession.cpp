@@ -342,6 +342,11 @@ void GameSession::HandlePacket(BYTE* buffer, PacketHeader* header)
             ClosePlayerHandler(buffer, header, static_cast<int32>(sizeof(PacketHeader)));
         }
         break;
+    case protocol::MessageCode::C_FRIEND:
+        {
+            FriendUpdateHandler(buffer, header, static_cast<int32>(sizeof(PacketHeader)));
+        }
+        break;
     case protocol::MessageCode::C_UPDATEMAIL:
         {
             UpdateMailHandler(buffer, header, static_cast<int32>(sizeof(PacketHeader)));
@@ -1029,6 +1034,52 @@ void GameSession::ClosePlayerHandler(BYTE* buffer, PacketHeader* header, int32 o
     {
         GRoomManger->getRoom(GetRoomId())->OutSession(std::static_pointer_cast<GameSession>(shared_from_this()));
     }
+}
+
+void GameSession::FriendUpdateHandler(BYTE* buffer, PacketHeader* header, int32 offset)
+{
+    protocol::CFriend pkt;
+    protocol::SFriendSystem sendPkt;
+
+    int32 result = -1;
+    if (GamePacketHandler::ParsePacketHandler(pkt, buffer, header->size - offset, offset))
+    {
+        if (pkt.type() == 0)
+        {
+            // 친구 추가
+            if (!pkt.friend_().playername().empty())
+            {
+                WCHAR name[10] = {0,};
+                WString nameStr = GameUtils::Utils::CharToWchar(pkt.friend_().playername().c_str(), name);
+                auto it = GUserAccess->GetPlayerNameList().find(nameStr);
+                if (it != GUserAccess->GetPlayerNameList().end())
+                {
+                    int32 friendCode = it->second;
+                    result = 1;
+                    protocol::Friend* newFriend = sendPkt.add_friend_();
+                    newFriend->set_add(true);
+                    newFriend->set_playercode(friendCode);
+                    newFriend->set_playername(pkt.friend_().playername());
+                    newFriend->set_access(false);
+
+                    if (GUserAccess->IsAccessPlayer(friendCode))
+                    {
+                        newFriend->set_access(true);
+                        GetPlayer()->GetFriend().AddFriend(friendCode, true);
+                        GetPlayer()->GetFriend().NotifyFriend(friendCode, true);
+                    }
+                    else
+                    {
+                        GetPlayer()->GetFriend().AddFriend(friendCode, false);
+                    }
+                }
+            }
+        }
+    }
+    sendPkt.set_result(result);
+
+    SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::S_FRIENDSYSTEM);
+    AsyncWrite(sendBuffer);
 }
 
 void GameSession::UpdateMailHandler(BYTE* buffer, PacketHeader* header, int32 offset)

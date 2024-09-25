@@ -35,12 +35,19 @@ void FriendSystem::LoadFriend()
     }
 }
 
-void FriendSystem::AddFriend(int32 friendCode, GamePlayerInfoRef friendSession)
+void FriendSystem::AddFriend(int32 friendCode, bool Access)
 {
     FriendDB friendDB;
     friendDB.InsertFriend(_playerCode, friendCode);
 
-    _friendList[friendCode] = 1;
+    if (Access)
+    {
+        _friendList[friendCode] = 1;
+    }
+    else
+    {
+        _friendList[friendCode] = 0;
+    }
 }
 
 void FriendSystem::RemoveFriend(int32 friendCode)
@@ -53,14 +60,17 @@ void FriendSystem::RemoveFriend(int32 friendCode)
 
 void FriendSystem::UpdateFriend(int32 friendCode, bool flag)
 {
-    auto PlayerAccess = GUserAccess->GetPlayerAccess();
     if (_friendList.find(friendCode) != _friendList.end())
     {
         _friendList[friendCode] = flag;
     }
+    else
+    {
+        AddFriend(friendCode, flag);
+    }
 }
 
-void FriendSystem::NotifyFriend(bool flag)
+void FriendSystem::NotifyFriends(bool flag)
 {
     auto PlayerAccess = GUserAccess->GetPlayerAccess();
     
@@ -81,6 +91,28 @@ void FriendSystem::NotifyFriend(bool flag)
             SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::S_FRIENDSYSTEM);
             gameSession->AsyncWrite(sendBuffer);
         }
+    }
+}
+
+void FriendSystem::NotifyFriend(int32 friendCode, bool flag)
+{
+    auto PlayerAccess = GUserAccess->GetPlayerAccess();
+    
+    protocol::SFriendSystem sendPkt;
+    protocol::Friend* addFriend = sendPkt.add_friend_();
+    addFriend->set_playercode(_playerCode);
+    addFriend->set_access(flag);
+    addFriend->set_add(false);
+    
+    auto session = PlayerAccess[friendCode].lock();
+    if (session)
+    {
+        auto gameSession = std::static_pointer_cast<GameSession>(session);
+        gameSession->GetPlayer()->GetFriend().UpdateFriend(_playerCode, flag);
+
+        // 각자 친구에게 내 접속여부를 던진다.
+        SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::S_FRIENDSYSTEM);
+        gameSession->AsyncWrite(sendBuffer);
     }
 }
 

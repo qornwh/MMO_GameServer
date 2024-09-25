@@ -14,10 +14,14 @@ public:
     bool AccessUser(int32 userCode, SessionRef session);
     bool AccessPlayer(int32 playerCode, SessionRef session);
 
+    bool IsAccessPlayer(int32 playerCode);
+    bool IsAccessUser(int32 userCode);
+
     Map<int32, std::weak_ptr<class GameSession>>& GetUserAccess();
     Map<int32, std::weak_ptr<class GameSession>>& GetPlayerAccess();
     Map<int32, User>& GetUserList();
     Map<int32, Player>& GetPlayerList();
+    Map<WString, int32>& GetPlayerNameList();
 
 private:
     Lock lock;

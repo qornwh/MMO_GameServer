@@ -39,7 +39,7 @@ bool FriendDB::GetFriend(int32& friendCode)
 
 void FriendDB::InsertFriend(int32 playerCode, int32 friendCode)
 {
-    const wchar_t* query = L"INSERT INTO Friend (playerCode, friendCode) VALUES (?,?,?,?) = ?";
+    const wchar_t* query = L"INSERT INTO Friend (playerCode, friendCode) VALUES (?,?)";
     conn->Prepare(query);
     _dbOrm.BindParamInt(&playerCode);
     _dbOrm.BindParamInt(&friendCode);

@@ -23,10 +23,11 @@ public:
     void SellItemsHandler(BYTE* buffer, PacketHeader* header, int32 offset);
     void UpdateItemsHandler(BYTE* buffer, PacketHeader* header, int32 offset);
     void ClosePlayerHandler(BYTE* buffer, PacketHeader* header, int32 offset);
+    void FriendUpdateHandler(BYTE* buffer, PacketHeader* header, int32 offset);
     void UpdateMailHandler(BYTE* buffer, PacketHeader* header, int32 offset);
     void AllUpdateMailHandler(BYTE* buffer, PacketHeader* header, int32 offset);
     // void SendMailHandler(BYTE* buffer, PacketHeader* header, int32 offset);
-    
+
     void HandlePacket(BYTE* buffer, PacketHeader* header);
     int32 OnRecv(BYTE* buffer, int32 len) override;
     void CreatePlayerInfo(int32 jobCode, int32 weaponCode, int32 lv);
