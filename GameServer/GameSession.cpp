@@ -357,11 +357,11 @@ void GameSession::HandlePacket(BYTE* buffer, PacketHeader* header)
             AllUpdateMailHandler(buffer, header, static_cast<int32>(sizeof(PacketHeader)));
         }
         break;
-    // case protocol::MessageCode::C_SENDMAIL:
-    //     {
-    //         SendMailHandler(buffer, header, static_cast<int32>(sizeof(PacketHeader)));
-    //     }
-    //     break;
+    case protocol::MessageCode::C_SENDMAIL:
+        {
+            SendMailHandler(buffer, header, static_cast<int32>(sizeof(PacketHeader)));
+        }
+        break;
     }
 }
 
@@ -1143,5 +1143,61 @@ void GameSession::AllUpdateMailHandler(BYTE* buffer, PacketHeader* header, int32
             MailBox.RemoveMailAll(_playerCode);
         }
         LoadMails();
+    }
+}
+
+void GameSession::SendMailHandler(BYTE* buffer, PacketHeader* header, int32 offset)
+{
+    protocol::CSendMail pkt;
+
+    if (GamePacketHandler::ParsePacketHandler(pkt, buffer, header->size - offset, offset))
+    {
+        auto& mail = pkt.mails();
+
+        Mail newMail(mail.code(), mail.read(), mail.gold(), mail.socket1(), mail.socket1type(), mail.socket1(), mail.socket1type(), nullptr, nullptr);
+        GameUtils::Utils::CharToWchar(mail.title().c_str(), newMail._title);
+        GameUtils::Utils::CharToWchar(mail.message().c_str(), newMail._message);
+
+        protocol::SSendMail sendPtk;
+        auto& mailBox = GetPlayer()->GetMail();
+        auto& inventory = GetPlayer()->GetInventory();
+        // 유저 체크
+        WString userName = newMail._title;
+        if (GUserAccess->IsCheckPlayer(newMail._title) && inventory.CheckGold(mail.gold()))
+        {
+            int32 targetPlayerCode = GUserAccess->GetPlayerNameList().find(newMail._title)->second;
+            mailBox.SendMail(newMail, targetPlayerCode);
+            for (auto& MailItem : pkt.equipitems())
+            {
+                auto& Item = MailItem.item();
+                EquipItem EquipItem(-1, Item.item_code(), Item.item_type(), Item.attack(), Item.speed(), 0, Item.position(), 0);
+                if (Item.position() == 1 && mail.socket1() == 1)
+                {
+                    mailBox.SendEquipItemMail(newMail, targetPlayerCode, EquipItem);
+                    inventory.UseItemEquip(Item.unipeid());
+
+                    auto removeItem = sendPtk.add_itemequips();
+                    removeItem->set_unipeid(Item.unipeid());
+                }
+                else if (Item.position() == 2 && mail.socket2() == 1)
+                {
+                    mailBox.SendEquipItemMail(newMail, targetPlayerCode, EquipItem);
+                    inventory.UseItemEquip(Item.unipeid());
+
+                    auto removeItem = sendPtk.add_itemequips();
+                    removeItem->set_unipeid(Item.unipeid());
+                }
+            }
+            inventory.UseGold(mail.gold());
+            sendPtk.set_gold(inventory.GetGold());
+            sendPtk.set_result(1);
+        }
+        else
+        {
+            // 유저 존재 하지 않음
+            sendPtk.set_result(-1);
+        }
+        SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPtk, protocol::MessageCode::S_SENDMAIL);
+        AsyncWrite(sendBuffer);
     }
 }
