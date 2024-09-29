@@ -102,6 +102,16 @@ bool GameUserAccess::IsAccessUser(int32 playerCode)
     return false;
 }
 
+bool GameUserAccess::IsCheckPlayer(const wchar_t* playerName)
+{
+    auto it = GetPlayerNameList().find(playerName);
+    if (it != GetPlayerNameList().end())
+    {
+        return true;
+    }
+    return false;
+}
+
 Map<int32, User>& GameUserAccess::GetUserList()
 {
     return _userList;

@@ -16,6 +16,7 @@ public:
 
     bool IsAccessPlayer(int32 playerCode);
     bool IsAccessUser(int32 userCode);
+    bool IsCheckPlayer(const wchar_t* playerName);
 
     Map<int32, std::weak_ptr<class GameSession>>& GetUserAccess();
     Map<int32, std::weak_ptr<class GameSession>>& GetPlayerAccess();
