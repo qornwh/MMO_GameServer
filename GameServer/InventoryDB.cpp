@@ -14,10 +14,9 @@ InventoryDB::~InventoryDB()
 
 void InventoryDB::LoadEquipDB(int32 playerCode)
 {
-    const wchar_t* query = L"SELECT itemCode, equipType, attack, speed, isEquip, position FROM InventoryEquip WHERE playerCode = ?";
-    bool result = conn->Prepare(query);
+    bool result = conn->Prepare(selectEquipItemQuery);
     _dbOrm.BindParamInt(&playerCode);
-    conn->Exec(query);
+    conn->Exec(selectEquipItemQuery);
 
     _dbOrm.BindColInt(sizeof(_equipItem._itemCode), &_equipItem._itemCode);
     _dbOrm.BindColInt(sizeof(_equipItem._equipType), &_equipItem._equipType);
@@ -42,10 +41,9 @@ bool InventoryDB::GetEquipItem(EquipItem& item)
 
 void InventoryDB::LoadEtcDB(int32 playerCode)
 {
-    const wchar_t* query = L"SELECT itemCode, itemType, itemCount, position FROM InventoryEtc WHERE playerCode = ?";
-    bool result = conn->Prepare(query);
+    conn->Prepare(selectEtcItemQuery);
     _dbOrm.BindParamInt(&playerCode);
-    result = conn->Exec(query);
+    conn->Exec(selectEtcItemQuery);
 
     _dbOrm.BindColInt(sizeof(_etcItem._itemCode), &_etcItem._itemCode);
     _dbOrm.BindColInt(sizeof(_etcItem._type), &_etcItem._type);
@@ -68,7 +66,7 @@ bool InventoryDB::GetEtcItem(EtcItem& item)
 
 void InventoryDB::SaveInsertEquipDB(int32 playerCode, EquipItem& item)
 {
-    bool result = conn->Prepare(insertEquipQuery);
+    conn->Prepare(insertEquipQuery);
     _dbOrm.BindParamInt(&playerCode);
     _dbOrm.BindParamInt(&item._itemCode);
     _dbOrm.BindParamInt(&item._equipType);
@@ -76,51 +74,51 @@ void InventoryDB::SaveInsertEquipDB(int32 playerCode, EquipItem& item)
     _dbOrm.BindParamInt(&item._speed);
     _dbOrm.BindParamInt(&item._isEquip);
     _dbOrm.BindParamInt(&item._position);
-    result = conn->Exec(insertEquipQuery);
+    conn->Exec(insertEquipQuery);
 
     _dbOrm.ReSetIdx();
 }
 
 void InventoryDB::SaveDeleteEquipDB(int32 playerCode)
 {
-    bool result = conn->Prepare(deleteEquipQuery);
+    conn->Prepare(deleteEquipQuery);
     _dbOrm.BindParamInt(&playerCode);
-    result = conn->Exec(deleteEquipQuery);
+    conn->Exec(deleteEquipQuery);
 
     _dbOrm.ReSetIdx();
 }
 
 void InventoryDB::SaveInsertEtcDB(int32 playerCode, EtcItem& item)
 {
-    bool result = conn->Prepare(insertEtcQuery);
+    conn->Prepare(insertEtcQuery);
     _dbOrm.BindParamInt(&playerCode);
     _dbOrm.BindParamInt(&item._itemCode);
     _dbOrm.BindParamInt(&item._type);
     _dbOrm.BindParamInt(&item._count);
     _dbOrm.BindParamInt(&item._position);
-    result = conn->Exec(insertEtcQuery);
+    conn->Exec(insertEtcQuery);
 
     _dbOrm.ReSetIdx();
 }
 
 void InventoryDB::SaveUpdateEtcDB(int32 playerCode, EtcItem& item)
 {
-    bool result = conn->Prepare(updateEtcQuery);
+    conn->Prepare(updateEtcQuery);
     _dbOrm.BindParamInt(&item._count);
     _dbOrm.BindParamInt(&item._position);
     _dbOrm.BindParamInt(&playerCode);
     _dbOrm.BindParamInt(&item._itemCode);
-    result = conn->Exec(updateEtcQuery);
+    conn->Exec(updateEtcQuery);
 
     _dbOrm.ReSetIdx();
 }
 
 void InventoryDB::SaveDeleteEtcDB(int32 playerCode, EtcItem& item)
 {
-    bool result = conn->Prepare(deletEtcQuery);
+    conn->Prepare(deletEtcQuery);
     _dbOrm.BindParamInt(&playerCode);
     _dbOrm.BindParamInt(&item._itemCode);
-    result = conn->Exec(deletEtcQuery);
+    conn->Exec(deletEtcQuery);
 
     _dbOrm.ReSetIdx();
 }

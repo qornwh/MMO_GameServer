@@ -14,10 +14,9 @@ FriendDB::~FriendDB()
 
 void FriendDB::LoadFriend(int32 playerCode)
 {
-    const wchar_t* query = L"SELECT friendCode FROM Friend WHERE playerCode = ?";
-    conn->Prepare(query);
+    conn->Prepare(selectFriendQuery);
     _dbOrm.BindParamInt(&playerCode);
-    conn->Exec(query);
+    conn->Exec(selectFriendQuery);
 
     _dbOrm.BindColInt(sizeof(_friendCode), &_friendCode);
 }
@@ -39,22 +38,20 @@ bool FriendDB::GetFriend(int32& friendCode)
 
 void FriendDB::InsertFriend(int32 playerCode, int32 friendCode)
 {
-    const wchar_t* query = L"INSERT INTO Friend (playerCode, friendCode) VALUES (?,?)";
-    conn->Prepare(query);
+    conn->Prepare(insertFriendQuery);
     _dbOrm.BindParamInt(&playerCode);
     _dbOrm.BindParamInt(&friendCode);
-    conn->Exec(query);
+    conn->Exec(insertFriendQuery);
 
     _dbOrm.ReSetIdx();
 }
 
 void FriendDB::DeleteFriend(int32 playerCode, int32 friendCode)
 {
-    const wchar_t* query = L"DELETE FROM Friend WHERE playerCode = ? AND friendCode = ?";
-    conn->Prepare(query);
+    conn->Prepare(deleteFriendQuery);
     _dbOrm.BindParamInt(&playerCode);
     _dbOrm.BindParamInt(&friendCode);
-    conn->Exec(query);
+    conn->Exec(deleteFriendQuery);
 
     _dbOrm.ReSetIdx();
 }

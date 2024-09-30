@@ -448,7 +448,6 @@ void GameSession::LoginHandler(BYTE* buffer, PacketHeader* header, int32 offset)
             {
                 std::cout << "Create Account ID: " << readPkt.id().c_str() << std::endl;
                 logPkt.set_result(2);
-                // 여기에 유저 추가 넣어야됨
                 User user(_accountCode, wId);
                 GUserAccess->AddUserList(user);
             }

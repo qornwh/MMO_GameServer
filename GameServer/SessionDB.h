@@ -1,6 +1,16 @@
 #pragma once
 #include "DBOrm.h"
 
+static const wchar_t* selectSessionAccountQuery = L"SELECT accountCode, id, pwd, cash, curPlayerType, curWeaponType FROM Account WHERE id = ?";
+static const wchar_t* insertSessionAccountquery = L"INSERT INTO Account (id, pwd, cash) VALUES (?, ?, ?)";
+static const wchar_t* selectSessionAccountCodeQuery = L"SELECT cash, curPlayerType, curWeaponType, weaponOne, weaponTwo, weaponThr FROM Account WHERE accountCode = ?";
+static const wchar_t* updateSessionAccountQuery = L"UPDATE Account SET cash = ?, curPlayerType = ?, curWeaponType = ?, weaponOne = ?, weaponTwo = ?, weaponThr = ? WHERE accountCode = ?";
+static const wchar_t* selectSessionPlayerQuery = L"SELECT playerCode, name, jobCode, mapCode, gold, lv, exp FROM Player WHERE accountCode = ?";
+static const wchar_t* selectSessionPlayerOneQuery = L"SELECT playerCode, name, jobCode, mapCode, gold, lv, exp FROM Player WHERE accountCode = ? AND jobCode = ?";
+static const wchar_t* updateSessionPlayerGoldQuery = L"UPDATE Player SET gold = ? WHERE playerCode = ?";
+static const wchar_t* insertSessionPlayerQuery = L"INSERT INTO Player (name, jobCode, mapCode, accountCode, gold, lv) OUTPUT inserted.playerCode VALUES (?, ?, 1, ?, 0, 1)";
+static const wchar_t* updateSessionPlayerExpquery = L"UPDATE Player SET lv = ?, exp = ? WHERE playerCode = ?";
+
 class SessionDB
 {
 public:

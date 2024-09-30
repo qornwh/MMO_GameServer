@@ -2,6 +2,9 @@
 #include "DBOrm.h"
 #include "Types.h"
 
+static const wchar_t* selectAccountQuery = L"SELECT accountCode, id FROM Account";
+static const wchar_t* selectPlayerQuery = L"SELECT playerCode, name, jobCode, accountCode FROM Player";
+
 struct User
 {
     User() : accountCode(-1), id{0, }
@@ -79,6 +82,4 @@ private:
 
     User _user;
     Player _player;
-    wchar_t selectAccountQuery[50] = L"SELECT accountCode, id FROM Account";
-    wchar_t selectPlayerQuery[100] = L"SELECT playerCode, name, jobCode, accountCode FROM Player";
 };

@@ -2,6 +2,15 @@
 #include "DBOrm.h"
 #include "Inventory.h"
 
+static const wchar_t* selectEquipItemQuery = L"SELECT itemCode, equipType, attack, speed, isEquip, position FROM InventoryEquip WHERE playerCode = ?";
+static const wchar_t* selectEtcItemQuery = L"SELECT itemCode, itemType, itemCount, position FROM InventoryEtc WHERE playerCode = ?";
+    
+static const wchar_t* insertEquipQuery = L"INSERT INTO InventoryEquip (playerCode, itemCode, equipType, attack, speed, isEquip, position) VALUES (?,?,?,?,?,?,?)";
+static const wchar_t* deleteEquipQuery = L"DELETE FROM InventoryEquip WHERE playerCode = ?";
+static const wchar_t* insertEtcQuery = L"INSERT INTO InventoryEtc (playerCode, itemCode, itemType, itemCount, position) VALUES (?,?,?,?,?)";
+static const wchar_t* updateEtcQuery = L"UPDATE InventoryEtc SET itemCount = ?, position = ? WHERE playerCode = ? AND itemCode = ?";
+static const wchar_t* deletEtcQuery = L"DELETE FROM InventoryEtc WHERE playerCode = ? AND itemCode = ?";
+
 class InventoryDB
 {
 public:
@@ -22,12 +31,6 @@ public:
 private:
     DBOrm _dbOrm;
     DBConnRef conn = nullptr;
-    
-    wchar_t insertEquipQuery[120] = L"INSERT INTO InventoryEquip (playerCode, itemCode, equipType, attack, speed, isEquip, position) VALUES (?,?,?,?,?,?,?)";
-    wchar_t deleteEquipQuery[150] = L"DELETE FROM InventoryEquip WHERE playerCode = ?";
-    wchar_t insertEtcQuery[100] = L"INSERT INTO InventoryEtc (playerCode, itemCode, itemType, itemCount, position) VALUES (?,?,?,?,?)";
-    wchar_t updateEtcQuery[100] = L"UPDATE InventoryEtc SET itemCount = ?, position = ? WHERE playerCode = ? AND itemCode = ?";
-    wchar_t deletEtcQuery[100] = L"DELETE FROM InventoryEtc WHERE playerCode = ? AND itemCode = ?";
     
     EquipItem _equipItem;
     EtcItem _etcItem;
