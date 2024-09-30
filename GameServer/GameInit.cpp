@@ -34,6 +34,7 @@ GameInit::GameInit()
 	boost::json::value skillJson = GameUtils::JsonParser::Parser("Skills", unitJson);
 	boost::json::value LvJson = GameUtils::JsonParser::Parser("lvs", json);
 	boost::json::value mapJson = GameUtils::JsonParser::Parser("maps", json);
+	boost::json::value mapUnitJson = GameUtils::JsonParser::Parser("mapsUnits", json);
 	boost::json::value itemEqiupJson = GameUtils::JsonParser::Parser("itemEquip", json);
 	boost::json::value itemEtcJson = GameUtils::JsonParser::Parser("itemEtc", json);
 	boost::json::value dropJsonJson = GameUtils::JsonParser::Parser("dropJson", json);
@@ -46,10 +47,10 @@ GameInit::GameInit()
 	SetItemEquip(itemEqiupJson);
 	SetItemEtc(itemEtcJson);
 	SetDropItem(dropJsonJson);
-	SetMap(mapJson);
+	SetMap(mapJson, mapUnitJson);
 }
 
-void GameInit::SetMap(boost::json::value& mapJson)
+void GameInit::SetMap(boost::json::value& mapJson, boost::json::value& mapUnitJson)
 {
 	for (int i = 0; i < mapJson.get_array().size(); i++)
 	{
@@ -83,7 +84,17 @@ void GameInit::SetMap(boost::json::value& mapJson)
 			room->GetGameMap()->GetMonsterMapInfo()->GetRect().Y = y;
 			room->GetGameMap()->GetMonsterMapInfo()->GetRect().CenterX = centerX;
 			room->GetGameMap()->GetMonsterMapInfo()->GetRect().CenterY = centerY;
-			room->InitMonsters();
+
+			
+			auto& mapsUnits = mapUnitJson.as_array()[i];
+			auto mapMonsterList = GameUtils::JsonParser::Parser("monsterList", mapsUnits);
+			for(int32 j = 0; j < mapMonsterList.get_array().size(); j++)
+			{
+				auto& unitsInfo = mapMonsterList.get_array()[j];
+				int32 monsterType = GameUtils::JsonParser::Parser("code", unitsInfo).get_int64();
+				int32 monsterCount = GameUtils::JsonParser::Parser("count", unitsInfo).get_int64();
+				room->CreateMonster(monsterType, monsterCount);
+			}
 		}
 	}
 }

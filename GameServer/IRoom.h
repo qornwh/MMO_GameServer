@@ -118,7 +118,7 @@ public:
     void Attack(GameSessionRef session, bool isMonster, int32 demage, int32 uuid, float x = 0, float y = 0, float yaw = 0);
     void Heal(GameSessionRef session, int32 heal, int32 uuid);
     GameMapInfoRef CreateMapInfo(int32 type);
-    void InitMonsters();
+    void CreateMonster(int32 type, int32 count);
     void BroadCastAnother(SendBufferRef sendBuffer, int32 uuid);
 
     GameMosterInfoRef GetMonster(int32 Code)
@@ -141,8 +141,7 @@ public:
     protocol::SUnitStates& GetUnitPacket() { return _unitPkt; }
 
 private:
-    int32 _monsterCount = -1;
-    int32 _bosMonsterCount = -1;
+    int32 _monsterCount = 0;
     GameMapInfoRef _gameMapInfo;
     Map<int32, GameMosterInfoRef> _monsterMap;
     Map<int32, GamePlayerInfoRef> _playerMap;

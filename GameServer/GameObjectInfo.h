@@ -62,7 +62,7 @@ public:
     ObjectState GetObjectState() { return _state; }
     void SetGameRoom(GameRoomRef gameRoom);
     GameRoomRef GetGameRoom() { return _gameRoomRef.lock(); }
-    
+
 protected:
     std::string _name;
     int32 _uuid;
@@ -71,7 +71,7 @@ protected:
     int32 _maxHp = 0;
     int32 _hp = 0;
     int32 _lv = 0;
-    
+
     Collider _collider;
     ObjectState _state = ObjectState::IDLE;
     std::weak_ptr<GameRoom> _gameRoomRef;
@@ -95,7 +95,7 @@ public:
     int32 GetTarget() { return _targetUUid; }
     int32 GetExp() { return _exp; }
     DropGenSystem& GetDropSystem() { return _dropGenSystem; }
-    
+
     virtual int32 AddAttackCounter(int32 count = 1);
     virtual int32 AddIdleCounter(int32 count = 1);
     virtual int32 AddHitCounter(int32 count = 1);

@@ -5,7 +5,7 @@ class GameInit
 {
 public:
     GameInit();
-    void SetMap(boost::json::value& mapJson);
+    void SetMap(boost::json::value& mapJson, boost::json::value& mapUnitJson);
     void SetPlayer(boost::json::value& unitJson);
     void SetMonster(boost::json::value& unitJson);
     void SetWeapon(boost::json::value& unitJson);

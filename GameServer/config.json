@@ -37,16 +37,16 @@
     "monsters": [
       {
         "code": 1,
-        "attack": 10.0,
+        "attack": 15.0,
         "moveSpeed": 300.0,
         "hp": 1000,
         "exp": 5
       },
       {
         "code": 2,
-        "attack": 7.0,
+        "attack": 20.0,
         "moveSpeed": 300.0,
-        "hp": 1000,
+        "hp": 1500,
         "exp": 10
       }
     ],
@@ -140,7 +140,7 @@
       "type" : 0
     }
   ],
-  "mapsUnit": [
+  "mapsUnits": [
     {
       "mapCode" : 0,
       "monsterList": [

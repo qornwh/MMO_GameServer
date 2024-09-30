@@ -280,43 +280,26 @@ void GameRoom::Heal(GameSessionRef session, int32 heal, int32 uuid)
 
 GameMapInfoRef GameRoom::CreateMapInfo(int32 type)
 {
-    // 일단 하드코딩으로 생성해둔다.
-    if (type == 0)
-    {
-        // 일반 몹 맵
-        _gameMapInfo = std::make_shared<GameMapInfo>(0, 0, 0, 0);
-        _gameMapInfo->CreateMonsterMapInfo(0, 0, 0, 0, MapType::MONSTER);
-        _monsterCount = 10;
-    }
-    else if (type == 1)
-    {
-        // 보스 몹 맵
-        _gameMapInfo = std::make_shared<GameMapInfo>(0, 0, 0, 0);
-        _gameMapInfo->CreateMonsterMapInfo(0, 0, 0, 0, MapType::BOS);
-        _bosMonsterCount = 1;
-    }
+    _gameMapInfo = std::make_shared<GameMapInfo>(0, 0, 0, 0);
+    _gameMapInfo->CreateMonsterMapInfo(0, 0, 0, 0, MapType::MONSTER);
 
     return _gameMapInfo;
 }
 
-void GameRoom::InitMonsters()
+void GameRoom::CreateMonster(int32 type, int32 count)
 {
-    StartGameRoom();
-    MapType mapType = _gameMapInfo->GetMonsterMapInfo()->GetMapType();
     Rect& rect = _gameMapInfo->GetMonsterMapInfo()->GetRect();
     std::uniform_int_distribution<> genX(rect.StartX(), rect.EndX());
     std::uniform_int_distribution<> genY(rect.StartY(), rect.EndY());
-
-    if (mapType == MapType::MONSTER)
+    
+    for (int i = 0; i < count; i++)
     {
-        for (int32 i = 0; i < _monsterCount; i++)
-        {
-            int32 startX = genX(rng);
-            int32 startZ = genY(rng);
-            GameMosterInfoRef info = std::make_shared<GameMosterInfo>(std::static_pointer_cast<GameRoom>(shared_from_this()), i, 1, 1, startX, startZ);
-            info->Spawn();
-            _monsterMap[i] = info;
-        }
+        ++_monsterCount;
+        int32 startX = genX(rng);
+        int32 startZ = genY(rng);
+        GameMosterInfoRef info = std::make_shared<GameMosterInfo>(std::static_pointer_cast<GameRoom>(shared_from_this()), _monsterCount, type, 1, startX, startZ);
+        info->Spawn();
+        _monsterMap[_monsterCount] = info;
     }
 }
 
