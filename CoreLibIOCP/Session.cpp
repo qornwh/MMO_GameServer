@@ -67,6 +67,10 @@ void Session::AsyncRead()
         {
             ErrorCode(errorCode);
             _recvOLS.SetSession(nullptr);
+            if (errorCode == WSAECONNRESET || errorCode == WSAECONNABORTED)
+            {
+                OnDisconnect();
+            }
         }
     }
 }
