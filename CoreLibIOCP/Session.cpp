@@ -207,8 +207,6 @@ void Session::OnDisconnect()
     _sendBuffers.clear();
     _connected.exchange(false);
 
-    _recvOLS.SetSession(nullptr);
-    _sendOLS.SetSession(nullptr);
     _discOLS.SetSession(nullptr);
     if (_serviceRef.lock() != nullptr)
     {
