@@ -98,6 +98,7 @@
     <IncludePath>$(SolutionDir)CoreLibIOCP\;$(SolutionDir)GameEngine\;$(IncludePath);$(SolutionDir)protobuf\include</IncludePath>
     <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);C:\boost\boost_1_83_0</ExternalIncludePath>
     <LibraryPath>$(SolutionDir)Libraries\Libs\;$(LibraryPath);$(SolutionDir)protobuf\lib\win64\Release</LibraryPath>
+    <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -172,6 +173,14 @@
       <Command>"../protobuf/bin/protoc.exe" -I=./ --cpp_out=./ ./GameService.proto</Command>
       <Message>protobuf</Message>
     </PreBuildEvent>
+    <PreLinkEvent>
+      <Command></Command>
+      <Message></Message>
+    </PreLinkEvent>
+    <PostBuildEvent>
+      <Command>copy "./config.json" "../binary/Release\"</Command>
+      <Message>config.json copy</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="DropGenerater.h" />
