@@ -22,6 +22,11 @@ void OverlappedSocket::SetSession(SessionRef session)
     }
     else
     {
+        _overlapped.hEvent = 0;
+        _overlapped.Internal = 0;
+        _overlapped.InternalHigh = 0;
+        _overlapped.Offset = 0;
+        _overlapped.OffsetHigh = 0;
         _session = session;
     }
 }
