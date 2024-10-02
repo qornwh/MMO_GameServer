@@ -813,7 +813,11 @@ void GameSession::MoveHandler(BYTE* buffer, PacketHeader* header, int32 offset)
         pkt.set_is_monster(false);
 
         SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(pkt, protocol::MessageCode::S_MOVE);
-        GRoomManger->getRoom(GetRoomId())->BroadCastAnother(sendBuffer, GetPlayer()->GetUUid());
+        
+        if (GRoomManger->getRoom(GetRoomId()) != nullptr)
+        {
+            GRoomManger->getRoom(GetRoomId())->BroadCastAnother(sendBuffer, GetPlayer()->GetUUid());
+        }
     }
 }
 
@@ -918,8 +922,10 @@ void GameSession::DamegaHandler(BYTE* buffer, PacketHeader* header, int32 offset
                 }
             }
             SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(pkt, protocol::MessageCode::S_UNITDEMAGE);
-            GRoomManger->getRoom(GetRoomId())->BroadCastAnother(sendBuffer, GetPlayer()->GetUUid());
-            // GetService()->BroadCast(sendBuffer);
+            if (GRoomManger->getRoom(GetRoomId()) != nullptr)
+            {
+                GRoomManger->getRoom(GetRoomId())->BroadCastAnother(sendBuffer, GetPlayer()->GetUUid());
+            }
         }
     }
 }
@@ -931,7 +937,10 @@ void GameSession::PlayerAimHandler(BYTE* buffer, PacketHeader* header, int32 off
     if (GamePacketHandler::ParsePacketHandler(pkt, buffer, header->size - offset, offset))
     {
         SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(pkt, protocol::MessageCode::C_PLAYERAIM);
-        GRoomManger->getRoom(GetRoomId())->BroadCastAnother(sendBuffer, GetPlayer()->GetUUid());
+        if (GRoomManger->getRoom(GetRoomId()) != nullptr)
+        {
+            GRoomManger->getRoom(GetRoomId())->BroadCastAnother(sendBuffer, GetPlayer()->GetUUid());
+        }
     }
 }
 
@@ -942,7 +951,10 @@ void GameSession::PlayerJumpHandler(BYTE* buffer, PacketHeader* header, int32 of
     if (GamePacketHandler::ParsePacketHandler(pkt, buffer, header->size - offset, offset))
     {
         SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(pkt, protocol::MessageCode::C_PLAYERJUMP);
-        GRoomManger->getRoom(GetRoomId())->BroadCastAnother(sendBuffer, GetPlayer()->GetUUid());
+        if (GRoomManger->getRoom(GetRoomId()) != nullptr)
+        {
+            GRoomManger->getRoom(GetRoomId())->BroadCastAnother(sendBuffer, GetPlayer()->GetUUid());
+        }
     }
 }
 
