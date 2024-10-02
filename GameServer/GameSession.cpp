@@ -1153,7 +1153,7 @@ void GameSession::SendMailHandler(BYTE* buffer, PacketHeader* header, int32 offs
     {
         auto& mail = pkt.mails();
 
-        Mail newMail(mail.code(), mail.read(), mail.gold(), mail.socket1(), mail.socket1type(), mail.socket1(), mail.socket1type(), nullptr, nullptr);
+        Mail newMail(mail.code(), mail.read(), mail.gold(), mail.socket1(), mail.socket1type(), mail.socket2(), mail.socket2type(), nullptr, nullptr);
         GameUtils::Utils::CharToWchar(mail.title().c_str(), newMail._title);
         GameUtils::Utils::CharToWchar(mail.message().c_str(), newMail._message);
 

@@ -9,21 +9,19 @@ DROP TABLE IF EXISTS MailEquipItem
 DROP TABLE IF EXISTS MailEtcItem
 DROP TABLE IF EXISTS RemoveMail
 
--- ���� ����
 CREATE TABLE Account
 (
     accountCode int IDENTITY(1,1) NOT NULL,
     id varchar(10) NOT NULL PRIMARY KEY,
     pwd varchar(10) NOT NULL,
     cash int NOT NULL DEFAULT 10000,
-    weaponOne int NOT NULL DEFAULT 1, -- ������ 1, ������ 0
+    weaponOne int NOT NULL DEFAULT 1, -- 보유 1, 비보유 0
     weaponTwo int NOT NULL DEFAULT 0,
     weaponThr int NOT NULL DEFAULT 0,
     curPlayerType int NOT NULL DEFAULT 0,
     curWeaponType int NOT NULL DEFAULT 0,
 )
 
--- �÷��̾�
 CREATE TABLE Player
 (
     playerCode int IDENTITY(1,1) NOT NULL,
@@ -36,7 +34,6 @@ CREATE TABLE Player
     accountCode int NOT NULL,
 )
 
--- ��������
 CREATE TABLE InventoryEquip
 (
     equipUniqueId UNIQUEIDENTIFIER DEFAULT NEWID(),
@@ -49,7 +46,6 @@ CREATE TABLE InventoryEquip
     position int Not NULL,
 )
 
--- ��Ÿ������
 CREATE TABLE InventoryEtc
 (
     playerCode int NOT NULL,
@@ -59,18 +55,16 @@ CREATE TABLE InventoryEtc
     position int Not NULL,
 )
 
---  ģ�� �ý���
 CREATE TABLE Friend
 (
     playerCode int NOT NULL,
     friendCode int NOT NULL
 )
 
--- ���� ���� ����
--- socket1 = MailEquip, MailEtc�� positionüũ��, 
--- socket1 = -1 ���� ����
--- socket1 = 0  �̹� ����
--- socket1 = 1  ���� ���� ���
+-- socket1 = MailEquip, MailEtc position, 
+-- socket1 = -1 첨부 x
+-- socket1 = 0  첨부 수령 o
+-- socket1 = 1  첨부 수령 x
 CREATE TABLE Mail
 (
     mailCode int IDENTITY(1,1) NOT NULL,
@@ -110,22 +104,20 @@ CREATE TABLE MailEtcItem
     isRemove int NOT NULL DEFAULT 0
 )
 
--- ������ ���ϵ�
-CREATE TABLE RemoveMail
-(
-    mailCode int NOT NULL,
-    playerCode int NOT NULL,
-    title varchar(50),
-    message varchar(50),
-    gold int NOT NULL DEFAULT 0,
-    readCheck int NOT NULL DEFAULT 1,
-    socket1 int NOT NULL,
-    socket1Type int NOT NULL,
-    socket2 int NOT NULL,
-    socket2Type int NOT NULL
-)
+--CREATE TABLE RemoveMail
+--(
+--    mailCode int NOT NULL,
+--    playerCode int NOT NULL,
+--    title varchar(50),
+--    message varchar(50),
+--    gold int NOT NULL DEFAULT 0,
+--    readCheck int NOT NULL DEFAULT 1,
+--    socket1 int NOT NULL,
+--    socket1Type int NOT NULL,
+--    socket2 int NOT NULL,
+--    socket2Type int NOT NULL
+--)
 
--- �α� ���
 CREATE TABLE IpLog
 (
     accountCode int NOT NULL,
@@ -133,6 +125,8 @@ CREATE TABLE IpLog
     currentTime smalldatetime NOT NULL default getdate()
 )
 
+
+-- defatult 더미 row
 INSERT INTO Account (id, pwd, cash, weaponOne, weaponTwo, weaponThr, curPlayerType, curWeaponType) VALUES
 ('Gm', '1234', 10000, 1, 1, 1, 1, 1),
 ('Gm2', '1234', 10000, 1, 1, 1, 1, 1)
@@ -181,5 +175,4 @@ INSERT INTO MailEtcItem (mailCode, playerCode, itemCode, itemType, itemCount, po
 (4, 1, 1, 1, 10, 2),
 (5, 1, 2, 1, 20, 2),
 (6, 1, 1, 1, 10, 2)
-
 --
