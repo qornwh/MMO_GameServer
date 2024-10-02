@@ -5,6 +5,10 @@
 
 int main()
 {
+    // 한글 설정
+    std::wcout.imbue(std::locale("kor"));
+    std::setlocale(LC_ALL, "Korean");
+    
     // 게임 정보 초기화
     if (!SocketConfig::Init())
     {
