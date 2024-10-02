@@ -1,48 +1,56 @@
 ﻿#pragma once
-#include <shared_mutex>
 
-class Lock : public std::shared_mutex
+class Lock
 {
+    enum
+    {
+        EMPTY = 0x0000000,
+        READ  = 0x000FFFF,
+        WRITE = 0xFFF0000,
+    };
 public:
+    Lock();
+    void ReadLock();
+    void ReadUnLock();
+    void WriteLock();
+    void WriteUnLock();
 private:
+    const int MAX_SPIN_COUNT = 5000;
+    volatile long  sharedConunt = 0;
 };
 
 class ReadLockGuard
 {
 public:
-    ReadLockGuard(Lock& lock, const char* name) : _readLock(lock), _name(name)
+    ReadLockGuard(Lock& lock, const char* name) : _lock(lock), _name(name)
     {
-    }
-
-    ReadLockGuard(std::shared_mutex& lock, const char* name) : _readLock(lock), _name(name)
-    {
+        _lock.ReadLock();
     }
 
     ~ReadLockGuard()
     {
+        _lock.ReadUnLock();
     }
 
 private:
-    std::shared_lock<std::shared_mutex> _readLock;
+    Lock &_lock;
     const char* _name;
 };
 
 class WriteLockGuard
 {
 public:
-    WriteLockGuard(Lock& lock, const char* name) : _writeLock(lock), _name(name)
+    WriteLockGuard(Lock& lock, const char* name) : _lock(lock), _name(name)
     {
-    }
-
-    WriteLockGuard(std::shared_mutex& lock, const char* name) : _writeLock(lock), _name(name)
-    {
+        _lock.WriteLock();
     }
 
     ~WriteLockGuard()
     {
+        _lock.WriteUnLock();
     }
 
 private:
-    std::unique_lock<std::shared_mutex> _writeLock;
+    Lock &_lock;
     const char* _name;
 };
