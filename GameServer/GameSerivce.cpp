@@ -42,7 +42,7 @@ bool GameService::Start()
     std::cout << "Start Service" << std::endl;
     Init();
 
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < GetMaxSessionCount(); i++)
     {
         OverlappedSocket* overlappedPtr = new OverlappedSocket();
         overlappedPtr->SetType(0); // 초기 설정
