@@ -126,7 +126,7 @@ void Session::AsyncWrite(SendBufferRef sendBuffer)
 
     _sendOLS.SetSession(shared_from_this());
     {
-        WriteLockGuard wl(lock, "write");
+        WriteLockGuard wl(lock);
         for (auto buffer : _waitBuffers)
         {
             _sendBuffers.emplace_back(buffer);
@@ -165,13 +165,13 @@ void Session::AsyncWrite(SendBufferRef sendBuffer)
 
 void Session::AddWriteBuffer(SendBufferRef sendBuffer)
 {
-    WriteLockGuard wl(lock, "write");
+    WriteLockGuard wl(lock);
     _waitBuffers.emplace_back(sendBuffer);
 }
 
 void Session::OnWrite(int32 len)
 {
-    WriteLockGuard wl(lock, "write");
+    WriteLockGuard wl(lock);
     _sendOLS.SetSession(nullptr);
     _sendBuffers.clear();
 }

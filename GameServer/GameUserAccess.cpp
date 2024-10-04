@@ -33,14 +33,14 @@ void GameUserAccess::LoadUserList()
 
 void GameUserAccess::AddUserList(User& user)
 {
-    WriteLockGuard writeLock(lock, "friend lock");
+    WriteLockGuard writeLock(lock);
     int32 accountCode = user.accountCode;
     _userList.emplace(accountCode, user);
 }
 
 void GameUserAccess::AddPlayerList(Player& player)
 {
-    WriteLockGuard writeLock(lock, "friend lock");
+    WriteLockGuard writeLock(lock);
     int32 playerCode = player.playerCode;
     _playerList.emplace(playerCode, player);
     _playerToName.emplace(player.name, playerCode);
@@ -50,7 +50,7 @@ bool GameUserAccess::AccessUser(int32 userCode, SessionRef session)
 {
     // sessionId : 들어온 세션 아이디
     // userCode : db상 unique 계정 번호
-    WriteLockGuard writeLock(lock, "friend lock");
+    WriteLockGuard writeLock(lock);
     if (_userAccess.find(userCode) != _userAccess.end())
     {
         if (_userAccess[userCode].lock() != nullptr)
@@ -64,7 +64,7 @@ bool GameUserAccess::AccessPlayer(int32 playerCode, SessionRef session)
 {
     // sessionId : 들어온 세션 아이디
     // playerCode : db상 unique 캐릭터 번호
-    WriteLockGuard writeLock(lock, "friend lock");
+    WriteLockGuard writeLock(lock);
     if (_playerAccess.find(playerCode) != _playerAccess.end())
     {
         if (_playerAccess[playerCode].lock() != nullptr)
@@ -76,7 +76,7 @@ bool GameUserAccess::AccessPlayer(int32 playerCode, SessionRef session)
 
 bool GameUserAccess::IsAccessPlayer(int32 userCode)
 {
-    WriteLockGuard writeLock(lock, "friend lock");
+    ReadLockGuard readLock(lock);
     auto it = GetPlayerAccess().find(userCode);
     if (it != GetPlayerAccess().end())
     {
@@ -90,7 +90,7 @@ bool GameUserAccess::IsAccessPlayer(int32 userCode)
 
 bool GameUserAccess::IsAccessUser(int32 playerCode)
 {
-    WriteLockGuard writeLock(lock, "friend lock");
+    ReadLockGuard readLock(lock);
     auto it = GetUserAccess().find(playerCode);
     if (it != GetUserAccess().end())
     {

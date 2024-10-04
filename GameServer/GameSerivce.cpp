@@ -53,7 +53,7 @@ bool GameService::Start()
 
 void GameService::BroadCast(SendBufferRef sendBuffer)
 {
-    ReadLockGuard read(lock, "read");
+    ReadLockGuard read(lock);
     for (const auto session : GetSession())
     {
         if (session->IsConnected())

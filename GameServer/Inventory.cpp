@@ -206,7 +206,7 @@ bool Inventory::CheckItemEquip(int32 uniqueId)
 
 bool Inventory::UseItemEquip(int32 uniqueId)
 {
-    WriteLockGuard writeLock(lock, "inventory");
+    WriteLockGuard writeLock(lock);
     auto it = _inventoryEquipItemList.find(uniqueId);
     if (it != _inventoryEquipItemList.end())
     {
@@ -223,7 +223,7 @@ bool Inventory::UseItemEquip(int32 uniqueId)
 
 EquipItem& Inventory::ItemEquipped(int32 uniqueId, int32 equipped)
 {
-    WriteLockGuard writeLock(lock, "inventory");
+    WriteLockGuard writeLock(lock);
     auto it = _inventoryEquipItemList.find(uniqueId);
     if (it != _inventoryEquipItemList.end())
     {
@@ -283,7 +283,7 @@ EquipItem& Inventory::ItemEquipped(int32 uniqueId, int32 equipped)
 
 bool Inventory::CheckEquipped(int32 uniqueId, int32 equipped)
 {
-    ReadLockGuard writeLock(lock, "inventory");
+    ReadLockGuard readLock(lock);
     auto it = _inventoryEquipItemList.find(uniqueId);
     if (it != _inventoryEquipItemList.end())
     {
@@ -297,7 +297,7 @@ bool Inventory::CheckEquipped(int32 uniqueId, int32 equipped)
 
 EquipItem& Inventory::AddItemEquip(EquipItem& equip)
 {
-    WriteLockGuard writeLock(lock, "inventory");
+    WriteLockGuard writeLock(lock);
     if (equip._position < 0 && equip._isEquip == 0)
     {
         if (_emptyEquipInvenList.size() == 0)
@@ -329,6 +329,7 @@ EquipItem& Inventory::AddItemEquip(EquipItem& equip)
 
 bool Inventory::CheckItemEtc(int32 code, int32 count)
 {
+    ReadLockGuard readLock(lock);
     auto it = _inventoryEtcItemList.find(code);
     if (it != _inventoryEtcItemList.end())
     {
@@ -340,7 +341,7 @@ bool Inventory::CheckItemEtc(int32 code, int32 count)
 
 bool Inventory::UseItemEtc(int32 itemCode, int32 count)
 {
-    WriteLockGuard writeLock(lock, "inventory");
+    WriteLockGuard writeLock(lock);
     if (CheckItemEtc(itemCode, count))
     {
         auto it = _inventoryEtcItemList.find(itemCode);
@@ -352,7 +353,7 @@ bool Inventory::UseItemEtc(int32 itemCode, int32 count)
 
 EtcItem& Inventory::AddItemEtc(EtcItem& etc)
 {
-    WriteLockGuard writeLock(lock, "inventory");
+    WriteLockGuard writeLock(lock);
     if (etc._position < 0)
     {
         if (_emptyEtcInvenList.size() == 0)
@@ -454,6 +455,7 @@ void Inventory::ResetUpdateItems()
 
 bool Inventory::AddMailItemEquip(EquipItem& equip)
 {
+    WriteLockGuard writeLock(lock);
     if (_emptyEquipInvenList.size() == 0)
     {
         return false;
@@ -466,6 +468,7 @@ bool Inventory::AddMailItemEquip(EquipItem& equip)
 
 bool Inventory::AddMailItemEtc(EtcItem& etc)
 {
+    WriteLockGuard writeLock(lock);
     if (_emptyEtcInvenList.size() == 0)
     {
         return false;

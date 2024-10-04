@@ -37,7 +37,7 @@ void GameRoom::EnterSession(SessionRef session)
     {
         protocol::SLoad sendPktLoad;
         sendPktLoad.set_room_id(_id);
-        ReadLockGuard readLock(lock, "room");
+        ReadLockGuard readLock(lock);
         for (auto it : _sessionList)
         {
             if (it != nullptr)
@@ -181,17 +181,6 @@ void GameRoom::Work()
     const MapType mapType = _gameMapInfo->GetMonsterMapInfo()->GetMapType();
     const MapInfoRef monsterMap = _gameMapInfo->GetMonsterMapInfo();
 #pragma endregion
-
-    // for (auto& it : _playerMap)
-    // {
-    //     if (it.second != nullptr)
-    //     {
-    //         if (it.second->IsDummy()) continue;
-    //         GamePlayerInfoRef info = it.second;
-    //         info->Update();
-    //     }
-    // }
-
     for (auto& it : _monsterMap)
     {
         GameMosterInfoRef info = it.second;

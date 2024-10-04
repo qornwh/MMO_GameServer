@@ -8,7 +8,7 @@ DBPool::DBPool()
 
 DBPool::~DBPool()
 {
-    WriteLockGuard writeLock(lock, "write");
+    WriteLockGuard writeLock(lock);
     while (!_dbQueue.empty())
         _dbQueue.pop();
     
@@ -27,7 +27,7 @@ void DBPool::Init(const wchar_t* connStr)
     CrashFunc(ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO);
 
     wcscpy_s(_connStr, connStr);
-    WriteLockGuard writeLock(lock, "write");
+    WriteLockGuard writeLock(lock);
     for (int i = 0; i < 10; i++)
     {
         DBConnRef conn = DBConnRef(new DBConn(), GlobalPush);
@@ -38,7 +38,7 @@ void DBPool::Init(const wchar_t* connStr)
 
 DBConnRef DBPool::Pop()
 {
-    WriteLockGuard writeLock(lock, "write");
+    WriteLockGuard writeLock(lock);
     if (_dbQueue.empty())
     {
         DBConnRef conn = DBConnRef(new DBConn(), GlobalPush);
@@ -55,7 +55,7 @@ DBConnRef DBPool::Pop()
 
 void DBPool::Push(DBConnRef conn)
 {
-    WriteLockGuard writeLock(lock, "write");
+    WriteLockGuard writeLock(lock);
     _dbQueue.emplace(conn);
 }
 

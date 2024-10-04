@@ -184,7 +184,7 @@ int32 MailSystem::CountEtcItemMail(int32 mailCode)
 bool MailSystem::ReciveItemMail(int32 mailCode, int32 playerCode)
 {
     // 미리 인벤 체크한다.
-    WriteLockGuard writeLock(lock, "mail");
+    WriteLockGuard writeLock(lock);
     auto it = _mailList.find(mailCode);
     if (it != _mailList.end())
     {
@@ -267,7 +267,7 @@ void MailSystem::ReciveItemMailAll(int32 playerCode)
 
 bool MailSystem::RemoveMail(int32 mailCode, int32 playerCode)
 {
-    ReadLockGuard writeLock(lock, "mail");
+    WriteLockGuard writeLock(lock);
     MailDB mailDB;
     
     auto it = _mailList.find(mailCode);
@@ -353,7 +353,7 @@ void MailSystem::ReLoadMail(int32 playerCode)
     // 아마 메일 로드는 메일창 열때 주는걸로 한다.
     // 메일 새로고침때에도 이 함수를 이용한다.
     
-    ReadLockGuard writeLock(lock, "mail");
+    WriteLockGuard writeLock(lock);
     _mailList.clear();
     _mailEquipList.clear();
     _mailEtcList.clear();
