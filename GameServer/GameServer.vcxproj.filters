@@ -51,7 +51,7 @@
       <Filter>DB</Filter>
     </ClCompile>
     <ClCompile Include="Inventory.cpp">
-      <Filter>Inventory</Filter>
+      <Filter>Contents\Inventory</Filter>
     </ClCompile>
     <ClCompile Include="FriendSystem.cpp">
       <Filter>Contents\Friend</Filter>
@@ -143,7 +143,7 @@
       <Filter>DB</Filter>
     </ClInclude>
     <ClInclude Include="Inventory.h">
-      <Filter>Inventory</Filter>
+      <Filter>Contents\Inventory</Filter>
     </ClInclude>
     <ClInclude Include="FriendSystem.h">
       <Filter>Contents\Friend</Filter>
@@ -207,9 +207,6 @@
     <Filter Include="Skill">
       <UniqueIdentifier>{6b1da8a7-21d1-4dc2-be96-fd0374bd2db5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Inventory">
-      <UniqueIdentifier>{c81b26c2-3875-475a-868c-10c2520c0738}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Contents">
       <UniqueIdentifier>{657d8de2-539c-4a07-a15f-2c1cc44413d6}</UniqueIdentifier>
     </Filter>
@@ -230,6 +227,9 @@
     </Filter>
     <Filter Include="Item">
       <UniqueIdentifier>{134ed715-33db-4d48-b73e-dc744dccfaac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contents\Inventory">
+      <UniqueIdentifier>{c81b26c2-3875-475a-868c-10c2520c0738}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
