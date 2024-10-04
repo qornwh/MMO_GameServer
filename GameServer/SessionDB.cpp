@@ -1,10 +1,10 @@
 #include "pch.h"
 #include "SessionDB.h"
 
-SessionDB::SessionDB() : _dbOrm(10)
+SessionDB::SessionDB() : _dbOdbc(10)
 {
     conn = GDBPool->Pop();
-    _dbOrm.SetDBConn(conn);
+    _dbOdbc.SetDBConn(conn);
 }
 
 SessionDB::~SessionDB()
@@ -15,21 +15,21 @@ SessionDB::~SessionDB()
 
 bool SessionDB::LoginDB(const wchar_t* id, int32& accountCode, int32& curCharaterType, int32& curWeaponType, int32& cash)
 {
-    _dbOrm.SetDBConn(conn);
+    _dbOdbc.SetDBConn(conn);
     bool result = conn->Prepare(selectSessionAccountQuery);
-    _dbOrm.BindParamWchar(sizeof(id), (SQLPOINTER)id);
+    _dbOdbc.BindParamWchar(sizeof(id), (SQLPOINTER)id);
     result = conn->Execute();
 
-    _dbOrm.BindColInt(sizeof(_accountCode), &_accountCode);
-    _dbOrm.BindColWchar(sizeof(_id), &_id);
-    _dbOrm.BindColWchar(sizeof(_pwd), &_pwd);
-    _dbOrm.BindColInt(sizeof(_cash), &_cash);
-    _dbOrm.BindColInt(sizeof(_curCharaterType), &_curCharaterType);
-    _dbOrm.BindColInt(sizeof(_curWeaponType), &_curWeaponType);
+    _dbOdbc.BindColInt(sizeof(_accountCode), &_accountCode);
+    _dbOdbc.BindColWchar(sizeof(_id), &_id);
+    _dbOdbc.BindColWchar(sizeof(_pwd), &_pwd);
+    _dbOdbc.BindColInt(sizeof(_cash), &_cash);
+    _dbOdbc.BindColInt(sizeof(_curCharaterType), &_curCharaterType);
+    _dbOdbc.BindColInt(sizeof(_curWeaponType), &_curWeaponType);
 
     result = conn->Fetch();
     conn->CloseCursor();
-    _dbOrm.ReSetIdx();
+    _dbOdbc.ReSetIdx();
     accountCode = _accountCode;
     curCharaterType = _curCharaterType;
     curWeaponType = _curWeaponType;
@@ -47,94 +47,94 @@ bool SessionDB::LoginCheck(const wchar_t* pwd)
 
 bool SessionDB::CreateAccount(const wchar_t* id, const wchar_t* pwd, int32 cash)
 {
-    _dbOrm.SetDBConn(conn);
+    _dbOdbc.SetDBConn(conn);
     bool result = conn->Prepare(insertSessionAccountquery);
-    _dbOrm.BindParamWchar(sizeof(id), (SQLPOINTER)id);
-    _dbOrm.BindParamWchar(sizeof(pwd), (SQLPOINTER)pwd);
-    _dbOrm.BindParamInt(&cash);
+    _dbOdbc.BindParamWchar(sizeof(id), (SQLPOINTER)id);
+    _dbOdbc.BindParamWchar(sizeof(pwd), (SQLPOINTER)pwd);
+    _dbOdbc.BindParamInt(&cash);
     result = conn->Execute();
 
-    _dbOrm.ReSetIdx();
+    _dbOdbc.ReSetIdx();
     return result;
 }
 
 bool SessionDB::GetAccount(int32 accountCode, int32& cash, int32& curCharaterType, int32& curWeaponType, int32& weaponOne, int32& weaponTwo, int32& weaponThr)
 {
-    _dbOrm.SetDBConn(conn);
+    _dbOdbc.SetDBConn(conn);
     bool result = conn->Prepare(selectSessionAccountCodeQuery);
-    _dbOrm.BindParamInt(&accountCode);
+    _dbOdbc.BindParamInt(&accountCode);
     result = conn->Execute();
 
-    _dbOrm.BindColInt(sizeof(cash), &cash);
-    _dbOrm.BindColInt(sizeof(curCharaterType), &curCharaterType);
-    _dbOrm.BindColInt(sizeof(curWeaponType), &curWeaponType);
-    _dbOrm.BindColInt(sizeof(weaponOne), &weaponOne);
-    _dbOrm.BindColInt(sizeof(weaponTwo), &weaponTwo);
-    _dbOrm.BindColInt(sizeof(weaponThr), &weaponThr);
+    _dbOdbc.BindColInt(sizeof(cash), &cash);
+    _dbOdbc.BindColInt(sizeof(curCharaterType), &curCharaterType);
+    _dbOdbc.BindColInt(sizeof(curWeaponType), &curWeaponType);
+    _dbOdbc.BindColInt(sizeof(weaponOne), &weaponOne);
+    _dbOdbc.BindColInt(sizeof(weaponTwo), &weaponTwo);
+    _dbOdbc.BindColInt(sizeof(weaponThr), &weaponThr);
     result = conn->Fetch();
 
     conn->CloseCursor();
-    _dbOrm.ReSetIdx();
+    _dbOdbc.ReSetIdx();
     return result;
 }
 
 bool SessionDB::UpdateAccount(int32 accountCode, int32 curCharaterType, int32 curWeaponType, int32 cash, int32 weaponOne, int32 weaponTwo, int32 weaponThr)
 {
-    _dbOrm.SetDBConn(conn);
+    _dbOdbc.SetDBConn(conn);
     bool result = conn->Prepare(updateSessionAccountQuery);
-    _dbOrm.BindParamInt(&cash);
-    _dbOrm.BindParamInt(&curCharaterType);
-    _dbOrm.BindParamInt(&curWeaponType);
-    _dbOrm.BindParamInt(&weaponOne);
-    _dbOrm.BindParamInt(&weaponTwo);
-    _dbOrm.BindParamInt(&weaponThr);
-    _dbOrm.BindParamInt(&accountCode);
+    _dbOdbc.BindParamInt(&cash);
+    _dbOdbc.BindParamInt(&curCharaterType);
+    _dbOdbc.BindParamInt(&curWeaponType);
+    _dbOdbc.BindParamInt(&weaponOne);
+    _dbOdbc.BindParamInt(&weaponTwo);
+    _dbOdbc.BindParamInt(&weaponThr);
+    _dbOdbc.BindParamInt(&accountCode);
     result = conn->Execute();
 
-    _dbOrm.ReSetIdx();
+    _dbOdbc.ReSetIdx();
     return result;
 }
 
 bool SessionDB::PlayerDB(int32 accountCode)
 {
-    _dbOrm.SetDBConn(conn);
+    _dbOdbc.SetDBConn(conn);
     bool result = conn->Prepare(selectSessionPlayerQuery);
     if (_accountCode > 0)
     {
-        _dbOrm.BindParamInt(&_accountCode);
+        _dbOdbc.BindParamInt(&_accountCode);
     }
     else
     {
-        _dbOrm.BindParamInt(&accountCode);
+        _dbOdbc.BindParamInt(&accountCode);
     }
     result = conn->Execute();
 
-    _dbOrm.BindColInt(sizeof(_playerCode), &_playerCode);
-    _dbOrm.BindColWchar(sizeof(_name), &_name);
-    _dbOrm.BindColInt(sizeof(_jobCode), &_jobCode);
-    _dbOrm.BindColInt(sizeof(_mapCode), &_mapCode);
-    _dbOrm.BindColInt(sizeof(_gold), &_gold);
-    _dbOrm.BindColInt(sizeof(_lv), &_lv);
-    _dbOrm.BindColInt(sizeof(_exp), &_exp);
+    _dbOdbc.BindColInt(sizeof(_playerCode), &_playerCode);
+    _dbOdbc.BindColWchar(sizeof(_name), &_name);
+    _dbOdbc.BindColInt(sizeof(_jobCode), &_jobCode);
+    _dbOdbc.BindColInt(sizeof(_mapCode), &_mapCode);
+    _dbOdbc.BindColInt(sizeof(_gold), &_gold);
+    _dbOdbc.BindColInt(sizeof(_lv), &_lv);
+    _dbOdbc.BindColInt(sizeof(_exp), &_exp);
 
     return result;
 }
 
 bool SessionDB::PlayerDB(int32 accountCode, int32 type)
 {
-    _dbOrm.SetDBConn(conn);
+    _dbOdbc.SetDBConn(conn);
     bool result = conn->Prepare(selectSessionPlayerOneQuery);
-    _dbOrm.BindParamInt(&accountCode);
-    _dbOrm.BindParamInt(&type);
+    _dbOdbc.BindParamInt(&accountCode);
+    _dbOdbc.BindParamInt(&type);
     result = conn->Execute();
 
-    _dbOrm.BindColInt(sizeof(_playerCode), &_playerCode);
-    _dbOrm.BindColWchar(sizeof(_name), &_name);
-    _dbOrm.BindColInt(sizeof(_jobCode), &_jobCode);
-    _dbOrm.BindColInt(sizeof(_mapCode), &_mapCode);
-    _dbOrm.BindColInt(sizeof(_gold), &_gold);
-    _dbOrm.BindColInt(sizeof(_lv), &_lv);
-    _dbOrm.BindColInt(sizeof(_exp), &_exp);
+    _dbOdbc.BindColInt(sizeof(_playerCode), &_playerCode);
+    _dbOdbc.BindColWchar(sizeof(_name), &_name);
+    _dbOdbc.BindColInt(sizeof(_jobCode), &_jobCode);
+    _dbOdbc.BindColInt(sizeof(_mapCode), &_mapCode);
+    _dbOdbc.BindColInt(sizeof(_gold), &_gold);
+    _dbOdbc.BindColInt(sizeof(_lv), &_lv);
+    _dbOdbc.BindColInt(sizeof(_exp), &_exp);
 
     return result;
 }
@@ -155,54 +155,54 @@ bool SessionDB::GetPlayerDBInfo(int32& playerCode, wchar_t* name, int32& jobCode
     else
     {
         conn->CloseCursor();
-        _dbOrm.ReSetIdx();
+        _dbOdbc.ReSetIdx();
         return false;
     }
 }
 
 void SessionDB::SavePlayerDB(int32 playerCode, int32 gold)
 {
-    _dbOrm.SetDBConn(conn);
+    _dbOdbc.SetDBConn(conn);
     bool result = conn->Prepare(updateSessionPlayerGoldQuery);
-    _dbOrm.BindParamInt(&gold);
-    _dbOrm.BindParamInt(&playerCode);
+    _dbOdbc.BindParamInt(&gold);
+    _dbOdbc.BindParamInt(&playerCode);
     result = conn->Execute();
 
-    _dbOrm.ReSetIdx();
+    _dbOdbc.ReSetIdx();
 }
 
 bool SessionDB::InsertCharater(int32& playerCode, int32 accountCode, int32 type, const wchar_t* name)
 {
-    _dbOrm.SetDBConn(conn);
+    _dbOdbc.SetDBConn(conn);
     bool result = conn->Prepare(insertSessionPlayerQuery);
-    _dbOrm.BindParamWchar(sizeof(name), (SQLPOINTER)name);
-    _dbOrm.BindParamInt(&type);
-    _dbOrm.BindParamInt(&accountCode);
+    _dbOdbc.BindParamWchar(sizeof(name), (SQLPOINTER)name);
+    _dbOdbc.BindParamInt(&type);
+    _dbOdbc.BindParamInt(&accountCode);
     result = conn->Execute();
 
-    _dbOrm.BindColInt(sizeof(playerCode), &playerCode);
+    _dbOdbc.BindColInt(sizeof(playerCode), &playerCode);
     conn->Fetch();
 
     conn->CloseCursor();
-    _dbOrm.ReSetIdx();
+    _dbOdbc.ReSetIdx();
     return result;
 }
 
 bool SessionDB::UpdateExp(int32 playerCode, int32 exp, int32 lv)
 {
-    _dbOrm.SetDBConn(conn);
+    _dbOdbc.SetDBConn(conn);
     bool result = conn->Prepare(updateSessionPlayerExpquery);
-    _dbOrm.BindParamInt(&lv);
-    _dbOrm.BindParamInt(&exp);
-    _dbOrm.BindParamInt(&playerCode);
+    _dbOdbc.BindParamInt(&lv);
+    _dbOdbc.BindParamInt(&exp);
+    _dbOdbc.BindParamInt(&playerCode);
     result = conn->Execute();
 
-    _dbOrm.ReSetIdx();
+    _dbOdbc.ReSetIdx();
     return result;
 }
 
 void SessionDB::ResetDBOrm()
 {
     conn->CloseCursor();
-    _dbOrm.ReSetIdx();
+    _dbOdbc.ReSetIdx();
 }

@@ -2,11 +2,11 @@
 #include "pch.h"
 #include "DBConnectPool.h"
 
-class DBOrm
+class DBOdbc
 {
 public:
-	DBOrm(int32 size);
-	~DBOrm();
+	DBOdbc(int32 size);
+	~DBOdbc();
 
 	void SetDBConn(DBConnRef conn);
 	void BindColInt(SQLULEN len, SQLPOINTER value);

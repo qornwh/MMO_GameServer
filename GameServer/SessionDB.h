@@ -1,5 +1,5 @@
 #pragma once
-#include "DBOrm.h"
+#include "DBOdbc.h"
 
 static const wchar_t* selectSessionAccountQuery = L"SELECT accountCode, id, pwd, cash, curPlayerType, curWeaponType FROM Account WHERE id = ?";
 static const wchar_t* insertSessionAccountquery = L"INSERT INTO Account (id, pwd, cash) VALUES (?, ?, ?)";
@@ -32,7 +32,7 @@ public:
 	void ResetDBOrm();
 
 private:
-	DBOrm _dbOrm;
+	DBOdbc _dbOdbc;
 	int32 _accountCode = -1;
 	int32 _curCharaterType = -1;
 	int32 _curWeaponType = -1;

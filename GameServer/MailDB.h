@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "DBOrm.h"
+#include "DBOdbc.h"
 #include "MailSystem.h"
 
 static const wchar_t* insertMailQuery =
@@ -47,7 +47,7 @@ public:
     void InsertEtcItemMail(EtcItem& item, int32 mailCode, int32 playerCode);
 
 private:
-    DBOrm _dbOrm;
+    DBOdbc _dbOdbc;
     DBConnRef conn;
 
     Mail _mail;

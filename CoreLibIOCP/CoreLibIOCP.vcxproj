@@ -23,7 +23,7 @@
     <ClCompile Include="CorePch.cpp" />
     <ClCompile Include="DBConn.cpp" />
     <ClCompile Include="DBConnectPool.cpp" />
-    <ClCompile Include="DBOrm.cpp" />
+    <ClCompile Include="DBOdbc.cpp" />
     <ClCompile Include="OverlappedSocket.cpp" />
     <ClCompile Include="OverlappedTask.cpp" />
     <ClCompile Include="pch.cpp">
@@ -43,7 +43,7 @@
     <ClInclude Include="CorePch.h" />
     <ClInclude Include="DBConn.h" />
     <ClInclude Include="DBConnectPool.h" />
-    <ClInclude Include="DBOrm.h" />
+    <ClInclude Include="DBOdbc.h" />
     <ClInclude Include="OverlappedSocket.h" />
     <ClInclude Include="OverlappedTask.h" />
     <ClInclude Include="PacketHeader.h" />

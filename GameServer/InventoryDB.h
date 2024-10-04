@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "DBOrm.h"
+#include "DBOdbc.h"
 #include "Inventory.h"
 
 static const wchar_t* selectEquipItemQuery = L"SELECT itemCode, equipType, attack, speed, isEquip, position FROM InventoryEquip WHERE playerCode = ?";
@@ -29,7 +29,7 @@ public:
     void SaveDeleteEtcDB(int32 playerCode, EtcItem& item);
 
 private:
-    DBOrm _dbOrm;
+    DBOdbc _dbOdbc;
     DBConnRef conn = nullptr;
     
     EquipItem _equipItem;

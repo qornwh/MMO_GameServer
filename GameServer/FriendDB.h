@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "DBOrm.h"
+#include "DBOdbc.h"
 
 static const wchar_t* selectFriendQuery = L"SELECT friendCode FROM Friend WHERE playerCode = ?";
 static const wchar_t* insertFriendQuery = L"INSERT INTO Friend (playerCode, friendCode) VALUES (?,?)";
@@ -17,7 +17,7 @@ public:
     void DeleteFriend(int32 playerCode, int32 friendCode);
 
 private:
-    DBOrm _dbOrm;
+    DBOdbc _dbOdbc;
     int32 _friendCode = -1;
     DBConnRef conn;
 };

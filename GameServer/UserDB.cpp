@@ -1,9 +1,9 @@
 ﻿#include "UserDB.h"
 
-UserDB::UserDB() : _dbOrm(4)
+UserDB::UserDB() : _dbOdbc(4)
 {
     conn = GDBPool->Pop();
-    _dbOrm.SetDBConn(conn);
+    _dbOdbc.SetDBConn(conn);
 }
 
 UserDB::~UserDB()
@@ -14,26 +14,26 @@ UserDB::~UserDB()
 
 void UserDB::LoadAccountDB()
 {
-    _dbOrm.SetDBConn(conn);
+    _dbOdbc.SetDBConn(conn);
     conn->Prepare(selectAccountQuery);
     conn->Execute();
 
-    _dbOrm.BindColInt(sizeof(_user.accountCode), &_user.accountCode);
-    _dbOrm.BindColWchar(sizeof(_user.id), &_user.id);
-    _dbOrm.ReSetIdx();
+    _dbOdbc.BindColInt(sizeof(_user.accountCode), &_user.accountCode);
+    _dbOdbc.BindColWchar(sizeof(_user.id), &_user.id);
+    _dbOdbc.ReSetIdx();
 }
 
 void UserDB::LoadPlayerDB()
 {
-    _dbOrm.SetDBConn(conn);
+    _dbOdbc.SetDBConn(conn);
     conn->Prepare(selectPlayerQuery);
     conn->Execute();
 
-    _dbOrm.BindColInt(sizeof(_player.playerCode), &_player.playerCode);
-    _dbOrm.BindColWchar(sizeof(_player.name), &_player.name);
-    _dbOrm.BindColInt(sizeof(_player.jobCode), &_player.jobCode);
-    _dbOrm.BindColInt(sizeof(_player.accountCode), &_player.accountCode);
-    _dbOrm.ReSetIdx();
+    _dbOdbc.BindColInt(sizeof(_player.playerCode), &_player.playerCode);
+    _dbOdbc.BindColWchar(sizeof(_player.name), &_player.name);
+    _dbOdbc.BindColInt(sizeof(_player.jobCode), &_player.jobCode);
+    _dbOdbc.BindColInt(sizeof(_player.accountCode), &_player.accountCode);
+    _dbOdbc.ReSetIdx();
 }
 
 bool UserDB::GetAccount(User& user)
@@ -47,7 +47,7 @@ bool UserDB::GetAccount(User& user)
     else
     {
         conn->CloseCursor();
-        _dbOrm.ReSetIdx();
+        _dbOdbc.ReSetIdx();
         return false;
     }
 }
@@ -65,7 +65,7 @@ bool UserDB::GetPlayer(Player& player)
     else
     {
         conn->CloseCursor();
-        _dbOrm.ReSetIdx();
+        _dbOdbc.ReSetIdx();
         return false;
     }
 }

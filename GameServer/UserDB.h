@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "DBOrm.h"
+#include "DBOdbc.h"
 #include "Types.h"
 
 static const wchar_t* selectAccountQuery = L"SELECT accountCode, id FROM Account";
@@ -77,7 +77,7 @@ public:
     bool GetPlayer(Player& player);
 
 private:
-    DBOrm _dbOrm;
+    DBOdbc _dbOdbc;
 	DBConnRef conn;
 
     User _user;
