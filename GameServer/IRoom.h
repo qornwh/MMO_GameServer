@@ -47,7 +47,7 @@ public:
         OverlappedTask* overlapped = new OverlappedTask();
         overlapped->f = [this, session]()
         {
-            WriteLockGuard writeLock(lock, "room");
+            WriteLockGuard writeLock(lock);
             _sessionList.insert(session);
         };
         PostQueuedCompletionStatus(_taskIo, dwNumberOfBytesTransferred, dwCompletionKey, reinterpret_cast<LPOVERLAPPED>(overlapped));
@@ -59,7 +59,7 @@ public:
         OverlappedTask* overlapped = new OverlappedTask();
         overlapped->f = [this, session]()
         {   
-            WriteLockGuard writeLock(lock, "room");
+            WriteLockGuard writeLock(lock);
             _sessionList.erase(session);
         };
         PostQueuedCompletionStatus(_taskIo, dwNumberOfBytesTransferred, dwCompletionKey, reinterpret_cast<LPOVERLAPPED>(overlapped));
@@ -71,7 +71,7 @@ public:
         OverlappedTask* overlapped = new OverlappedTask();
         overlapped->f = [this, sendBuffer]()
         {   
-            WriteLockGuard writeLock(lock, "room");
+            WriteLockGuard writeLock(lock);
             for (auto& session : _sessionList)
             {
                 session->AsyncWrite(sendBuffer);
