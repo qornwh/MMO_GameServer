@@ -455,7 +455,6 @@ void Inventory::ResetUpdateItems()
 
 bool Inventory::AddMailItemEquip(EquipItem& equip)
 {
-    WriteLockGuard writeLock(lock);
     if (_emptyEquipInvenList.size() == 0)
     {
         return false;
@@ -468,7 +467,6 @@ bool Inventory::AddMailItemEquip(EquipItem& equip)
 
 bool Inventory::AddMailItemEtc(EtcItem& etc)
 {
-    WriteLockGuard writeLock(lock);
     if (_emptyEtcInvenList.size() == 0)
     {
         return false;

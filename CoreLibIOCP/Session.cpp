@@ -69,7 +69,7 @@ void Session::AsyncRead()
             _recvOLS.SetSession(nullptr);
             if (errorCode == WSAECONNRESET || errorCode == WSAECONNABORTED)
             {
-                OnDisconnect();
+                AsyncDisconnect();
             }
         }
     }
@@ -157,7 +157,7 @@ void Session::AsyncWrite(SendBufferRef sendBuffer)
             _sendOLS.SetSession(nullptr);
             if (errorCode == WSAECONNRESET || errorCode == WSAECONNABORTED)
             {
-                OnDisconnect();
+                AsyncDisconnect();
             }
         }
     }
@@ -189,6 +189,12 @@ void Session::OnConnect()
 void Session::AsyncDisconnect()
 {
     _discOLS.SetSession(shared_from_this());
+    if (_serviceRef.lock() != nullptr)
+    {
+        _serviceRef.lock()->ReleaseSession(shared_from_this());
+    }
+    _connected.exchange(false);
+    
     auto result = SocketConfig::lpfnDisconnectEx(_socket, reinterpret_cast<LPOVERLAPPED>(&_discOLS), TF_REUSE_SOCKET, 0);
     if (!result)
     {
@@ -205,13 +211,15 @@ void Session::OnDisconnect()
 {
     _recvBuffer.Clean();
     _sendBuffers.clear();
-    _connected.exchange(false);
+    // _connected.exchange(false);
 
+    _recvOLS.SetSession(nullptr);
+    _sendOLS.SetSession(nullptr);
     _discOLS.SetSession(nullptr);
-    if (_serviceRef.lock() != nullptr)
-    {
-        _serviceRef.lock()->ReleaseSession(shared_from_this());
-    }
+    // if (_serviceRef.lock() != nullptr)
+    // {
+    //     _serviceRef.lock()->ReleaseSession(shared_from_this());
+    // }
 }
 
 void Session::ErrorCode(int32 errorCode)
