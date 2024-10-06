@@ -299,7 +299,7 @@ void GameRoom::BroadCastAnother(SendBufferRef sendBuffer, int32 uuid)
     OverlappedTask* overlapped = new OverlappedTask();
     overlapped->f = [this, sendBuffer, uuid]()
     {
-        WriteLockGuard writeLock(lock);
+        ReadLockGuard readLock(lock);
         for (auto session : _sessionList)
         {
             GameSessionRef gameSession = std::static_pointer_cast<GameSession>(session);

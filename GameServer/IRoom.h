@@ -71,7 +71,7 @@ public:
         OverlappedTask* overlapped = new OverlappedTask();
         overlapped->f = [this, sendBuffer]()
         {   
-            WriteLockGuard writeLock(lock);
+            ReadLockGuard readLock(lock);
             for (auto& session : _sessionList)
             {
                 session->AsyncWrite(sendBuffer);
