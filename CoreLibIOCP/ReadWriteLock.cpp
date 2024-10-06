@@ -12,7 +12,7 @@ void Lock::ReadLock()
     {
         for (int i = 0; i < MAX_SPIN_COUNT; i++)
         {
-            auto currentCount = sharedConunt & READ;
+            auto currentCount = sharedConunt;
             auto orignCount = InterlockedCompareExchange(&sharedConunt, currentCount + 1, currentCount);
             if (currentCount == orignCount)
             {
