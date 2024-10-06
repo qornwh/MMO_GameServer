@@ -13,9 +13,6 @@
     <ClCompile Include="DBConnectPool.cpp">
       <Filter>DB</Filter>
     </ClCompile>
-    <ClCompile Include="DBOrm.cpp">
-      <Filter>DB</Filter>
-    </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
@@ -46,6 +43,9 @@
     <ClCompile Include="SocketConfig.cpp">
       <Filter>Socket</Filter>
     </ClCompile>
+    <ClCompile Include="DBOdbc.cpp">
+      <Filter>DB</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CorePch.h">
@@ -58,9 +58,6 @@
       <Filter>DB</Filter>
     </ClInclude>
     <ClInclude Include="DBConnectPool.h">
-      <Filter>DB</Filter>
-    </ClInclude>
-    <ClInclude Include="DBOrm.h">
       <Filter>DB</Filter>
     </ClInclude>
     <ClInclude Include="PacketHeader.h">
@@ -98,6 +95,9 @@
     </ClInclude>
     <ClInclude Include="SocketConfig.h">
       <Filter>Socket</Filter>
+    </ClInclude>
+    <ClInclude Include="DBOdbc.h">
+      <Filter>DB</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
