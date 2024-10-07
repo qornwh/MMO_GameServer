@@ -79,6 +79,7 @@ protected:
 
 class GameMosterInfo : public GameObjectInfo
 {
+#pragma region field
 public:
     GameMosterInfo(GameRoomRef gameRoom, int32 uuid, int32 code, int32 lv, int32 startX, int32 startY);
     ~GameMosterInfo() override;
@@ -109,6 +110,7 @@ private:
     int32 _targetUUid = -1;
     int32 _exp = 0;
     std::uniform_int_distribution<> _genYaw;
+#pragma endregion field
     DropGenSystem _dropGenSystem;
 
 protected:
@@ -123,6 +125,7 @@ protected:
 
 class GamePlayerInfo : public GameObjectInfo
 {
+#pragma region field
 public:
     GamePlayerInfo(GameSessionRef gameSession, int32 playerCode, int32 uuid, int32 jobCode, int32 weaponCode, int32 lv);
     ~GamePlayerInfo() override;
@@ -151,6 +154,7 @@ private:
     int32 _weaponCode;
     int32 _exp;
     std::weak_ptr<GameSession> _gameSession;
+#pragma endregion field
     Inventory _inventory;
     FriendSystem _friendSystem;
     MailSystem _mailSystem;
