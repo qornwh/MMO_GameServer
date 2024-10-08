@@ -19,15 +19,6 @@
     <ClCompile Include="ThreadManager.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
-    <ClCompile Include="ReadWriteLock.cpp">
-      <Filter>Packet</Filter>
-    </ClCompile>
-    <ClCompile Include="RecvBuffer.cpp">
-      <Filter>Packet</Filter>
-    </ClCompile>
-    <ClCompile Include="SendBuffer.cpp">
-      <Filter>Packet</Filter>
-    </ClCompile>
     <ClCompile Include="Service.cpp">
       <Filter>Service</Filter>
     </ClCompile>
@@ -45,6 +36,15 @@
     </ClCompile>
     <ClCompile Include="DBOdbc.cpp">
       <Filter>DB</Filter>
+    </ClCompile>
+    <ClCompile Include="ReadWriteLock.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="SendBuffer.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="RecvBuffer.cpp">
+      <Filter>Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -72,15 +72,6 @@
     <ClInclude Include="Types.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="ReadWriteLock.h">
-      <Filter>Packet</Filter>
-    </ClInclude>
-    <ClInclude Include="RecvBuffer.h">
-      <Filter>Packet</Filter>
-    </ClInclude>
-    <ClInclude Include="SendBuffer.h">
-      <Filter>Packet</Filter>
-    </ClInclude>
     <ClInclude Include="Service.h">
       <Filter>Service</Filter>
     </ClInclude>
@@ -98,6 +89,15 @@
     </ClInclude>
     <ClInclude Include="DBOdbc.h">
       <Filter>DB</Filter>
+    </ClInclude>
+    <ClInclude Include="ReadWriteLock.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="SendBuffer.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="RecvBuffer.h">
+      <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
