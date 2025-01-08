@@ -166,7 +166,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;libprotobuf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;..\protobuf\lib\win64\$(Configuration)\libprotobuf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\boost\boost_1_83_0\stage\lib</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
@@ -174,8 +174,10 @@
       <Message>protobuf</Message>
     </PreBuildEvent>
     <PreLinkEvent>
-      <Command></Command>
-      <Message></Message>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
     </PreLinkEvent>
     <PostBuildEvent>
       <Command>copy "./config.json" "../binary/Release\"</Command>
