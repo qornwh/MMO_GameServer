@@ -36,7 +36,7 @@ int main()
     // sql 인증
     //const wchar_t* connStr = L"Driver={SQL Server};Server=127.0.0.1;Database=BSGameServerDB;Uid=qornwh;Pwd=123456;";
     // windows 인증
-    const wchar_t* connStr = L"Driver={SQL Server};Server=DESKTOP-TFSEO7R\\SQLEXPRESS;Database=BSGameServerDB1;Trusted_Connection=Yes;";
+    const wchar_t* connStr = L"Driver={SQL Server};Server=DESKTOP-TFSEO7R\\SQLEXPRESS;Database=BSGameServerDB;Trusted_Connection=Yes;";
     GDBPool->Init(connStr);
     
     // 게임 정보 초기화

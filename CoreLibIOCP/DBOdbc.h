@@ -10,9 +10,11 @@ public:
 
 	void SetDBConn(DBConnRef conn);
 	void BindColInt(SQLULEN len, SQLPOINTER value);
+	void BindColChar(SQLULEN len, SQLPOINTER value);
 	void BindColWchar(SQLULEN len, SQLPOINTER value);
 
 	void BindParamInt(SQLPOINTER value);
+	void BindParamChar(SQLULEN len, SQLPOINTER value);
 	void BindParamWchar(SQLULEN len, SQLPOINTER value);
 	void ParamInit();
 

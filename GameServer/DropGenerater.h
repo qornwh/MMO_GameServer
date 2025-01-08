@@ -16,15 +16,15 @@ public:
     void InitEquip();
     void InitEtc();
 
-    Map<int32, EquipItem>& GetDropEquipList() { return _equipItemList; }
-    Map<int32, EtcItem>& GetDropEtcList() { return _etcItemList; }
+    Vector<EquipItem>& GetDropEquipList() { return _equipItemList; }
+    Vector<EtcItem>& GetDropEtcList() { return _etcItemList; }
     int32 GetDropGold() { return _gold; }
 
 private:
     std::uniform_int_distribution<> genEquip;
-    Atomic<int32> _equipUniqueId{0};
+    //Atomic<int32> _equipUniqueId{0};
     int32 _monsterCode = -1;
-    Map<int32, EquipItem> _equipItemList;
-    Map<int32, EtcItem> _etcItemList;
+    Vector<EquipItem> _equipItemList;
+    Vector<EtcItem> _etcItemList;
     int32 _gold;
 };

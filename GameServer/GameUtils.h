@@ -1,8 +1,11 @@
 ﻿#pragma once
 #include "pch.h"
 #include <boost/json.hpp>
-
 #include <WinNls.h>
+#include <Rpc.h>
+#pragma comment(lib, "Rpcrt4.lib")
+
+#define UUIDSIZE 37
 
 namespace GameUtils
 {
@@ -65,9 +68,9 @@ namespace GameUtils
     public:
         static wchar_t* CharToWchar(const char* cPtr, WCHAR* wPtr)
         {
-            int isize = strlen(cPtr);
-            int nLength = MultiByteToWideChar(CP_UTF8, 0, cPtr, isize, NULL, NULL);
-            int nLen = sizeof(wchar_t) * (nLength + 1);
+            int32 isize = static_cast<int32>(strlen(cPtr));
+            int32 nLength = MultiByteToWideChar(CP_UTF8, 0, cPtr, isize, NULL, NULL);
+            int32 nLen = sizeof(wchar_t) * (nLength + 1);
             memset(wPtr, 0, nLen);
             MultiByteToWideChar(CP_UTF8, 0, cPtr, isize, wPtr, nLength);
             return wPtr;
@@ -75,10 +78,29 @@ namespace GameUtils
 
         static char* WcharToChar(const wchar_t* wPtr, char* cPtr)
         {
-            int nLength = WideCharToMultiByte(CP_UTF8, 0, wPtr, -1, NULL, 0, NULL, NULL);
+            int32 nLength = WideCharToMultiByte(CP_UTF8, 0, wPtr, -1, NULL, 0, NULL, NULL);
             memset(cPtr, 0, nLength + 1);
             WideCharToMultiByte(CP_UTF8, 0, wPtr, -1, cPtr, nLength, NULL, NULL);
             return cPtr;
+        }
+
+        static bool GenUUID(UUID* uuid)
+        {
+            RPC_STATUS status = UuidCreate(uuid);
+            if (status == RPC_S_OK)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        static void UUIDToArray(UUID* uuid, void* cPtr)
+        {
+            sprintf_s(static_cast<char*>(cPtr), UUIDSIZE, "%08lx-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+                uuid->Data1, uuid->Data2, uuid->Data3, 
+                uuid->Data4[0], uuid->Data4[1], uuid->Data4[2],
+                uuid->Data4[3], uuid->Data4[4], uuid->Data4[5], 
+                uuid->Data4[6], uuid->Data4[7]);
         }
     };
 }

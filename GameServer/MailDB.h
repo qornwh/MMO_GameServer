@@ -5,14 +5,14 @@
 static const wchar_t* insertMailQuery =
     L"INSERT INTO Mail (playerCode, title, message, gold, readCheck, socket1, socket1Type, socket2, socket2Type) OUTPUT inserted.mailCode VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 static const wchar_t* insertMailEquipQuery =
-    L"INSERT INTO MailEquipItem (mailCode, playerCode, itemCode, equipType, attack, speed, position) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    L"INSERT INTO MailEquipItem (mailCode, uniqueId, playerCode, itemCode, equipType, attack, speed, position) VALUES (?, ?, ?, ?, ?, ?, ?)";
 static const wchar_t* insertMailEtcQuery =
     L"INSERT INTO MailEtcItem (mailCode, playerCode, itemCode, itemType, itemCount, position) VALUES (?, ?, ?, ?, ?, ?)";
 
 static const wchar_t* selectMailQuery =
     L"SELECT TOP 10 mailCode, title, message, gold, readCheck, socket1, socket1Type, socket2, socket2Type FROM Mail WHERE playerCode = ?";
 static const wchar_t* selectMailEquipQuery =
-    L"SELECT TOP 20 mailCode, itemCode, equipType, attack, speed, position FROM MailEquipItem WHERE playerCode = ? AND isRemove = 0";
+    L"SELECT TOP 20 mailCode, uniqueId, itemCode, equipType, attack, speed, position FROM MailEquipItem WHERE playerCode = ? AND isRemove = 0";
 static const wchar_t* selectMailEtcQuery = L"SELECT TOP 20 mailCode, itemCode, itemType, itemCount, position FROM MailEtcItem WHERE playerCode = ? AND isRemove = 0";
 
 static const wchar_t* updateMailQuery = L"UPDATE Mail SET gold = ?, readCheck = ?, socket1 = ?, socket2 = ? WHERE mailCode = ? AND playerCode = ?";

@@ -110,7 +110,7 @@ void MailSystem::LoadMail(int32 playerCode)
     {
         if (mailCode > 0)
         {
-            Tuple<int,int> key = {mailCode, emptyEquip._position};
+            Tuple<int,int> key = {mailCode, emptyEquip._invenPos};
             EquipItem item = emptyEquip;
             _mailEquipList.emplace(key, item);
         }
@@ -123,7 +123,7 @@ void MailSystem::LoadMail(int32 playerCode)
     {
         if (mailCode > 0)
         {
-            Tuple<int,int> key = {mailCode, emptyEtc._position};
+            Tuple<int,int> key = {mailCode, emptyEtc._invenPos};
             EtcItem item = emptyEtc;
             _mailEtcList.emplace(key, item);
         }

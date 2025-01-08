@@ -49,11 +49,12 @@ void MailDB::LoadMailEquipDB(int32 playerCode)
     conn->Exec(selectMailEquipQuery);
     
     _dbOdbc.BindColInt(sizeof(_mailCode), &_mailCode);
+    _dbOdbc.BindColChar(sizeof(_equipItem._uuid), &_equipItem._uuid);
     _dbOdbc.BindColInt(sizeof(_equipItem._itemCode), &_equipItem._itemCode);
     _dbOdbc.BindColInt(sizeof(_equipItem._equipType), &_equipItem._equipType);
     _dbOdbc.BindColInt(sizeof(_equipItem._attack), &_equipItem._attack);
     _dbOdbc.BindColInt(sizeof(_equipItem._speed), &_equipItem._speed);
-    _dbOdbc.BindColInt(sizeof(_equipItem._position), &_equipItem._position);
+    _dbOdbc.BindColInt(sizeof(_equipItem._invenPos), &_equipItem._invenPos);
 }
 
 bool MailDB::GetMailEquip(EquipItem& equipItem, int32& mailCode)
@@ -80,7 +81,7 @@ void MailDB::LoadMailEtcDB(int32 playerCode)
     _dbOdbc.BindColInt(sizeof(_etcItem._itemCode), &_etcItem._itemCode);
     _dbOdbc.BindColInt(sizeof(_etcItem._type), &_etcItem._type);
     _dbOdbc.BindColInt(sizeof(_etcItem._count), &_etcItem._count);
-    _dbOdbc.BindColInt(sizeof(_etcItem._position), &_etcItem._position);
+    _dbOdbc.BindColInt(sizeof(_etcItem._invenPos), &_etcItem._invenPos);
 }
 
 bool MailDB::GetMailEtc(EtcItem& etcItem, int32& mailCode)
@@ -189,7 +190,7 @@ void MailDB::InsertEquipItemMail(EquipItem& item, int32 mailCode, int32 playerCo
     _dbOdbc.BindParamInt(&item._equipType);
     _dbOdbc.BindParamInt(&item._attack);
     _dbOdbc.BindParamInt(&item._speed);
-    _dbOdbc.BindParamInt(&item._position);
+    _dbOdbc.BindParamInt(&item._invenPos);
     conn->Exec(insertMailEquipQuery);
     _dbOdbc.ReSetIdx();
 }
@@ -202,7 +203,7 @@ void MailDB::InsertEtcItemMail(EtcItem& item, int32 mailCode, int32 playerCode)
     _dbOdbc.BindParamInt(&item._itemCode);
     _dbOdbc.BindParamInt(&item._type);
     _dbOdbc.BindParamInt(&item._count);
-    _dbOdbc.BindParamInt(&item._position);
+    _dbOdbc.BindParamInt(&item._invenPos);
     conn->Exec(insertMailEtcQuery);
     _dbOdbc.ReSetIdx();
 }

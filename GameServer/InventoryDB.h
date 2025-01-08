@@ -2,13 +2,14 @@
 #include "DBOdbc.h"
 #include "Inventory.h"
 
-static const wchar_t* selectEquipItemQuery = L"SELECT itemCode, equipType, attack, speed, isEquip, position FROM InventoryEquip WHERE playerCode = ?";
-static const wchar_t* selectEtcItemQuery = L"SELECT itemCode, itemType, itemCount, position FROM InventoryEtc WHERE playerCode = ?";
+static const wchar_t* selectEquipItemQuery = L"SELECT uniqueId, itemCode, equipType, attack, speed, equipPos, invenPos FROM InventoryEquip WHERE playerCode = ?";
+static const wchar_t* selectEtcItemQuery = L"SELECT itemCode, itemType, itemCount, invenPos FROM InventoryEtc WHERE playerCode = ?";
     
-static const wchar_t* insertEquipQuery = L"INSERT INTO InventoryEquip (playerCode, itemCode, equipType, attack, speed, isEquip, position) VALUES (?,?,?,?,?,?,?)";
-static const wchar_t* deleteEquipQuery = L"DELETE FROM InventoryEquip WHERE playerCode = ?";
-static const wchar_t* insertEtcQuery = L"INSERT INTO InventoryEtc (playerCode, itemCode, itemType, itemCount, position) VALUES (?,?,?,?,?)";
-static const wchar_t* updateEtcQuery = L"UPDATE InventoryEtc SET itemCount = ?, position = ? WHERE playerCode = ? AND itemCode = ?";
+static const wchar_t* insertEquipQuery = L"INSERT INTO InventoryEquip (uniqueId, playerCode, itemCode, equipType, attack, speed, equipPos, invenPos) VALUES (?,?,?,?,?,?,?,?)";
+static const wchar_t* deleteEquipAllQuery = L"DELETE FROM InventoryEquip WHERE playerCode = ?";
+static const wchar_t* insertEtcQuery = L"INSERT INTO InventoryEtc (playerCode, itemCode, itemType, itemCount, invenPos) VALUES (?,?,?,?,?)";
+static const wchar_t* updateEtcQuery = L"UPDATE InventoryEtc SET itemCount = ?, invenPos = ? WHERE playerCode = ? AND itemCode = ?";
+static const wchar_t* deletEtcAllQuery = L"DELETE FROM InventoryEtc WHERE playerCode = ?";
 static const wchar_t* deletEtcQuery = L"DELETE FROM InventoryEtc WHERE playerCode = ? AND itemCode = ?";
 
 class InventoryDB
@@ -23,9 +24,10 @@ public:
     bool GetEtcItem(EtcItem& item);
 
     void SaveInsertEquipDB(int32 playerCode, EquipItem& item);
-    void SaveDeleteEquipDB(int32 playerCode);
+    void SaveDeleteEquipDBAll(int32 playerCode);
     void SaveInsertEtcDB(int32 playerCode, EtcItem& item);
     void SaveUpdateEtcDB(int32 playerCode, EtcItem& item);
+    void SaveDeleteEtcDBAll(int32 playerCode);
     void SaveDeleteEtcDB(int32 playerCode, EtcItem& item);
 
 private:

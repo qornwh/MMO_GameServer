@@ -75,7 +75,6 @@ void GameRoom::EnterSession(SessionRef session)
             GameMosterInfoRef info = it.second;
             protocol::UnitState* unitState = sendPktLoad.add_unit();
             protocol::Unit* unit = new protocol::Unit();
-            // unit->set_name(info->GetName()); // 몬스터는 이름 필요 x
             unit->set_code(info->GetCode());
             unit->set_uuid(info->GetUUid());
             unit->set_hp(info->GetHp());
@@ -100,29 +99,38 @@ void GameRoom::EnterSession(SessionRef session)
         Inventory& inventory = gameSession->GetPlayer()->GetInventory();
         sendPktInven.set_gold(inventory.GetGold());
 
-        for (auto& entry : inventory.GetEquipItemInfo())
+        for (auto& item : inventory.GetEquipItemInfo())
         {
-            auto& item = entry.second;
-            if (item._use == 1) continue;
+            if (item.IsEmpty()) continue;
             protocol::ItemEquip* itemEquip = sendPktInven.add_itemequips();
-            itemEquip->set_unipeid(item._uniqueId);
-            itemEquip->set_is_equip(item._isEquip);
+            itemEquip->set_equippos(item._equipPos);
             itemEquip->set_item_type(item._equipType);
             itemEquip->set_attack(item._attack);
             itemEquip->set_speed(item._speed);
             itemEquip->set_item_code(item._itemCode);
-            itemEquip->set_position(item._position);
+            itemEquip->set_invenpos(item._invenPos);
         }
 
-        for (auto& entry : inventory.GetEtcItemInfo())
+        for (auto& item : inventory.GetEquippedItemInfo())
         {
-            auto& item = entry.second;
-            if (item._count == 0) continue;
+            if (item.IsEmpty()) continue;
+            protocol::ItemEquip* itemEquip = sendPktInven.add_itemequips();
+            itemEquip->set_equippos(item._equipPos);
+            itemEquip->set_item_type(item._equipType);
+            itemEquip->set_attack(item._attack);
+            itemEquip->set_speed(item._speed);
+            itemEquip->set_item_code(item._itemCode);
+            itemEquip->set_invenpos(item._invenPos);
+        }
+
+        for (auto& item : inventory.GetEtcItemInfo())
+        {
+            if (item.IsEmpty()) continue;
             protocol::ItemEtc* itemEtc = sendPktInven.add_itemetcs();
             itemEtc->set_item_code(item._itemCode);
             itemEtc->set_item_count(item._count);
             itemEtc->set_item_type(item._type);
-            itemEtc->set_position(item._position);
+            itemEtc->set_invenpos(item._invenPos);
         }
         SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPktInven, protocol::MessageCode::S_LOADINVENTORY);
         session->AsyncWrite(sendBuffer);
@@ -167,8 +175,12 @@ void GameRoom::Tick()
         std::chrono::duration<double> sec = current - _timer;
         if (std::chrono::duration_cast<std::chrono::milliseconds>(sec).count() >= _timerDelay)
         {
-            Work();
+            DWORD dwNumberOfBytesTransferred = 0;
+            ULONG_PTR dwCompletionKey = _taskId.fetch_add(1);
+            OverlappedTask* overlapped = new OverlappedTask();
+            overlapped->f = [this] { Work(); };
             _timer = current;
+            PostQueuedCompletionStatus(_taskIo, dwNumberOfBytesTransferred, dwCompletionKey, reinterpret_cast<LPOVERLAPPED>(overlapped));
         }
         isLoopTask.exchange(false);
     }

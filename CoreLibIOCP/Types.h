@@ -4,6 +4,7 @@
 #include <queue>
 #include <set>
 #include <functional>
+#include <string>
 
 using SessionRef = std::shared_ptr<class Session>;
 using SendBufferRef = std::shared_ptr<class SendBuffer>;

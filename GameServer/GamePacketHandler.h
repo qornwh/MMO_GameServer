@@ -37,7 +37,7 @@ public:
 
     static SendBufferRef MakePacketHandler(google::protobuf::Message& pkt, uint16 pktId)
     {
-        uint16 pktSize = pkt.ByteSizeLong();
+        uint16 pktSize = static_cast<uint16>(pkt.ByteSizeLong());
         SendBufferRef sendBuffer = MakeHeaderPacketHandler(pktId, pktSize);
         if (pktSize > 0)
             pkt.SerializeToArray(&sendBuffer->Buffer()[sizeof(PacketHeader)], pktSize);

@@ -7,8 +7,11 @@ void GameEvent::CreateCharacterMail(int32 playerCode)
 {
     MailDB mailDB;
     Mail mail = Mail::FirstMail();
-    EquipItem item1{-1, 11, 1, 90, 0, 0, 1, 0};
-    EquipItem item2{-1, 12, 2, 0, 90, 0, 2, 0};
+    UUID uuid1, uuid2;
+    while (!GameUtils::Utils::GenUUID(&uuid1)) {};
+    while (!GameUtils::Utils::GenUUID(&uuid2)) {};
+    EquipItem item1{uuid1, 11, 1, 90, 0, 0, 1};
+    EquipItem item2{uuid2, 12, 2, 0, 90, 0, 2};
 
     mailDB.InsertMail(mail, playerCode);
     mailDB.InsertEquipItemMail(item1, mail._code, playerCode);
@@ -23,7 +26,7 @@ void GameEvent::DropEquipMail(int32 playerCode, EquipItem& item)
     wcscpy_s(mail._message, 50, L"Inventory poll !!!");
 
     mailDB.InsertMail(mail, playerCode);
-    item._position = 1;
+    item._invenPos = 1;
     mailDB.InsertEquipItemMail(item, mail._code, playerCode);
 }
 
@@ -35,6 +38,6 @@ void GameEvent::DropEtcMail(int32 playerCode, EtcItem& item)
     wcscpy_s(mail._message, 50, L"Inventory poll !!!");
 
     mailDB.InsertMail(mail, playerCode);
-    item._position = 1;
+    item._invenPos = 1;
     mailDB.InsertEtcItemMail(item, mail._code, playerCode);
 }

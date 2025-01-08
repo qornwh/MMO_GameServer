@@ -27,23 +27,23 @@ bool MapInfo::InSetRect(float& x, float& y)
     // 몬스터 영역 튀어나오는 값이면 제일 끝값으로 교체한다.
     if (_mapInfo.StartX() > x)
     {
-        x = _mapInfo.StartX();
+        x = static_cast<float>(_mapInfo.StartX());
         flag = true;
     }
     else if (_mapInfo.EndX() < x)
     {
-        x = _mapInfo.EndX();
+        x = static_cast<float>(_mapInfo.StartX());
         flag = true;
     }
 
     if (_mapInfo.StartY() > y)
     {
-        y = _mapInfo.StartY();
+        y = static_cast<float>(_mapInfo.StartY());
         flag = true;
     }
     else if (_mapInfo.EndY() < y)
     {
-        y = _mapInfo.EndY();
+        y = static_cast<float>(_mapInfo.StartY());
         flag = true;
     }
 

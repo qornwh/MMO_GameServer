@@ -78,19 +78,18 @@ void GameSession::DropItem(std::shared_ptr<GameMosterInfo> monster)
     auto& monsterDrop = monster->GetDropSystem();
     for (auto& dropItem : monsterDrop.GetDropEquipList())
     {
-        EquipItem& item = inventory.AddItemEquip(dropItem.second);
+        EquipItem& item = inventory.AddItemEquip(dropItem);
 
-        if (item._position >= 0)
+        if (item._invenPos >= 0)
         {
             protocol::ItemEquip* itemEquip = pkt.add_itemequips();
             // 인벤토리 빈공간 있는경우, 없으면 메일행
             itemEquip->set_item_code(item._itemCode);
             itemEquip->set_item_type(item._equipType);
-            itemEquip->set_unipeid(item._uniqueId);
             itemEquip->set_attack(item._attack);
             itemEquip->set_speed(item._speed);
-            itemEquip->set_is_equip(item._isEquip);
-            itemEquip->set_position(item._position);
+            itemEquip->set_equippos(item._equipPos);
+            itemEquip->set_invenpos(item._invenPos);
         }
         else
         {
@@ -99,16 +98,16 @@ void GameSession::DropItem(std::shared_ptr<GameMosterInfo> monster)
     }
     for (auto& dropItem : monsterDrop.GetDropEtcList())
     {
-        EtcItem& item = inventory.AddItemEtc(dropItem.second);
+        EtcItem& item = inventory.AddItemEtc(dropItem);
 
-        if (item._position >= 0)
+        if (item._invenPos >= 0)
         {
             protocol::ItemEtc* itemEtc = pkt.add_itemetcs();
             // 인벤토리 빈공간 있는경우, 없으면 메일행
             itemEtc->set_item_code(item._itemCode);
             itemEtc->set_item_count(item._count);
             itemEtc->set_item_type(item._type);
-            itemEtc->set_position(item._position);
+            itemEtc->set_invenpos(item._invenPos);
         }
         else
         {
@@ -130,29 +129,28 @@ void GameSession::UpdateItems()
 
     for (auto& item : inventory.GetUpdateEquipList())
     {
-        if (item._position >= 0)
+        if (item._invenPos >= 0)
         {
             protocol::ItemEquip* itemEquip = pkt.add_itemequips();
             // 인벤토리 빈공간 있는경우, 없으면 메일행
             itemEquip->set_item_code(item._itemCode);
             itemEquip->set_item_type(item._equipType);
-            itemEquip->set_unipeid(item._uniqueId);
             itemEquip->set_attack(item._attack);
             itemEquip->set_speed(item._speed);
-            itemEquip->set_is_equip(item._isEquip);
-            itemEquip->set_position(item._position);
+            itemEquip->set_equippos(item._equipPos);
+            itemEquip->set_invenpos(item._invenPos);
         }
     }
     for (auto& item : inventory.GetUpdateEtcList())
     {
-        if (item._position >= 0)
+        if (item._invenPos >= 0)
         {
             protocol::ItemEtc* itemEtc = pkt.add_itemetcs();
             // 인벤토리 빈공간 있는경우, 없으면 메일행
             itemEtc->set_item_code(item._itemCode);
             itemEtc->set_item_count(item._count);
             itemEtc->set_item_type(item._type);
-            itemEtc->set_position(item._position);
+            itemEtc->set_invenpos(item._invenPos);
         }
     }
     int32 gold = inventory.GetGold();
@@ -201,12 +199,11 @@ void GameSession::LoadMails()
         protocol::MailEquipItem* mailEquip = sendPktMail.add_equipitems();
         protocol::ItemEquip* equip = new protocol::ItemEquip();
         equip->set_item_code(item._itemCode);
-        equip->set_unipeid(item._uniqueId);
-        equip->set_is_equip(item._isEquip);
+        equip->set_equippos(item._equipPos);
         equip->set_attack(item._attack);
         equip->set_speed(item._speed);
         equip->set_item_type(item._equipType);
-        equip->set_position(item._position);
+        equip->set_invenpos(item._invenPos);
         mailEquip->set_allocated_item(equip);
         mailEquip->set_socket(socket);
         mailEquip->set_mailcode(mailCode);
@@ -222,7 +219,7 @@ void GameSession::LoadMails()
         etc->set_item_code(item._itemCode);
         etc->set_item_type(item._type);
         etc->set_item_count(item._count);
-        etc->set_position(item._position);
+        etc->set_invenpos(item._invenPos);
         mailEtc->set_allocated_item(etc);
         mailEtc->set_socket(socket);
         mailEtc->set_mailcode(mailCode);
@@ -969,11 +966,11 @@ void GameSession::SellItemsHandler(BYTE* buffer, PacketHeader* header, int32 off
         protocol::CSellItems sendPkt;
         for (auto& item : pkt.itemequips())
         {
-            if (GetPlayer()->GetInventory().UseItemEquip(item.unipeid()))
+            if (GetPlayer()->GetInventory().UseItemEquip(item.invenpos()))
             {
                 useGold += GEquipItem->GetItem(item.item_code())->GetGold();
                 auto accessItem = sendPkt.add_itemequips();
-                accessItem->set_unipeid(item.unipeid());
+                accessItem->set_invenpos(item.invenpos());
             }
         }
 
@@ -983,6 +980,7 @@ void GameSession::SellItemsHandler(BYTE* buffer, PacketHeader* header, int32 off
             {
                 useGold += (GEtcItem->GetItem(item.item_code())->GetGold() * item.item_count());
                 auto accessItem = sendPkt.add_itemetcs();
+                accessItem->set_invenpos(item.invenpos());
                 accessItem->set_item_code(item.item_code());
                 accessItem->set_item_count(item.item_count());
             }
@@ -1002,40 +1000,17 @@ void GameSession::UpdateItemsHandler(BYTE* buffer, PacketHeader* header, int32 o
 
     if (GamePacketHandler::ParsePacketHandler(pkt, buffer, header->size - offset, offset))
     {
-        protocol::CUpdateItems sendPkt;
-        for (auto& item : pkt.itemequips())
+        int32 invenPos = pkt.invenpos();
+        int32 equipPos = pkt.equippos();
+        if (GetPlayer()->GetInventory().ItemEquipped(invenPos, equipPos))
         {
-            if (GetPlayer()->GetInventory().CheckEquipped(item.unipeid(), item.is_equip()))
-            {
-                // 이미 장착되어 있으면 넘긴다
-                continue;
-            }
-            EquipItem& targetEquipItem = GetPlayer()->GetInventory().ItemEquipped(item.unipeid(), item.is_equip());
-            auto& targetItem = GetPlayer()->GetInventory().GetEquipItemInfo().find(item.unipeid())->second;
-            auto accessItem = sendPkt.add_itemequips();
-            accessItem->set_unipeid(targetItem._uniqueId);
-            accessItem->set_is_equip(targetItem._isEquip);
-            accessItem->set_attack(targetItem._attack);
-            accessItem->set_speed(targetItem._speed);
-            accessItem->set_item_type(targetItem._equipType);
-            accessItem->set_item_code(targetItem._itemCode);
-            accessItem->set_position(targetItem._position);
+            protocol::CUpdateItems sendPkt;
+            sendPkt.set_invenpos(invenPos);
+            sendPkt.set_equippos(equipPos);
 
-            if (targetEquipItem._uniqueId > 0)
-            {
-                auto otherItem = sendPkt.add_itemequips();
-                otherItem->set_unipeid(targetEquipItem._uniqueId);
-                otherItem->set_is_equip(targetEquipItem._isEquip);
-                otherItem->set_attack(targetEquipItem._attack);
-                otherItem->set_speed(targetEquipItem._speed);
-                otherItem->set_item_type(targetEquipItem._equipType);
-                otherItem->set_item_code(targetEquipItem._itemCode);
-                otherItem->set_position(targetEquipItem._position);
-            }
+            SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::C_UPDATEITEMS);
+            AsyncWrite(sendBuffer);
         }
-
-        SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::C_UPDATEITEMS);
-        AsyncWrite(sendBuffer);
     }
 }
 
@@ -1181,22 +1156,22 @@ void GameSession::SendMailHandler(BYTE* buffer, PacketHeader* header, int32 offs
             for (auto& MailItem : pkt.equipitems())
             {
                 auto& Item = MailItem.item();
-                EquipItem EquipItem(-1, Item.item_code(), Item.item_type(), Item.attack(), Item.speed(), 0, Item.position(), 0);
-                if (Item.position() == 1 && mail.socket1() == 1)
+                EquipItem EquipItem(nullptr, Item.item_code(), Item.item_type(), Item.attack(), Item.speed(), -1, Item.invenpos());
+                if (Item.invenpos() == 1 && mail.socket1() == 1)
                 {
                     mailBox.SendEquipItemMail(newMail, targetPlayerCode, EquipItem);
-                    inventory.UseItemEquip(Item.unipeid());
+                    inventory.UseItemEquip(Item.invenpos());
 
                     auto removeItem = sendPtk.add_itemequips();
-                    removeItem->set_unipeid(Item.unipeid());
+                    removeItem->set_invenpos(Item.invenpos());
                 }
-                else if (Item.position() == 2 && mail.socket2() == 1)
+                else if (Item.invenpos() == 2 && mail.socket2() == 1)
                 {
                     mailBox.SendEquipItemMail(newMail, targetPlayerCode, EquipItem);
-                    inventory.UseItemEquip(Item.unipeid());
+                    inventory.UseItemEquip(Item.invenpos());
 
                     auto removeItem = sendPtk.add_itemequips();
-                    removeItem->set_unipeid(Item.unipeid());
+                    removeItem->set_invenpos(Item.invenpos());
                 }
             }
             inventory.UseGold(mail.gold());

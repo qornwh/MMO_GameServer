@@ -260,7 +260,7 @@ void GameMosterInfo::Move()
 
     if (_yawCounter.Add() == 0)
     {
-        SetRotate(_genYaw(rng));
+        SetRotate(static_cast<float>(_genYaw(rng)));
     }
 
     float moveX = GetCollider().GetPosition().X + GameEngine::MathUtils::GetSin(GetCollider().GetRotate()) * _moveSpeed;

@@ -3,6 +3,7 @@
 #include "GameDrop.h"
 #include "GameGlobal.h"
 #include "GameItem.h"
+#include "GameUtils.h"
 
 DropGenSystem::DropGenSystem(int32 monsterCode) : genEquip(0, 10), _monsterCode(monsterCode)
 {
@@ -24,15 +25,12 @@ void DropGenSystem::InitEquip()
     _equipItemList.clear();
     for (auto& equipItem : GDropItem->GetMonsterDropEquipList(_monsterCode))
     {
-        // if (genEquip(drop_rng) > 4)
-        // {
-        _equipUniqueId.fetch_add(1);
+        UUID uuid;
+        while (!GameUtils::Utils::GenUUID(&uuid)) { }
+
         equipItem.GetItemCode();
         auto itemInfo = GEquipItem->GetItem(equipItem.GetItemCode());
-        _equipItemList.emplace(_equipUniqueId.load(),
-                               EquipItem(_equipUniqueId.load(), equipItem.GetItemCode(), itemInfo->GetType(), itemInfo->GetAttack(), itemInfo->GetSpeed(), 0, -1,
-                                         0));
-        // }
+        _equipItemList.emplace_back(EquipItem(uuid, equipItem.GetItemCode(), itemInfo->GetType(), itemInfo->GetAttack(), itemInfo->GetSpeed(), 0, -1));
     }
 }
 
@@ -42,6 +40,6 @@ void DropGenSystem::InitEtc()
     for (auto& etcItem : GDropItem->GetMonsterDropList(_monsterCode))
     {
         auto itemInfo = GEtcItem->GetItem(etcItem.GetItemCode());
-        _etcItemList.emplace(etcItem.GetItemCode(), EtcItem(etcItem.GetItemCode(), itemInfo->GetType(), etcItem.GetCnt(), -1, true));
+        _etcItemList.emplace_back(EtcItem(etcItem.GetItemCode(), itemInfo->GetType(), etcItem.GetCnt(), -1, true));
     }
 }

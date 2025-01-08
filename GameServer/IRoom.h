@@ -16,28 +16,21 @@ public:
     
     void task()
     {
-        if (isTask.load() == false)
+        WriteLockGuard wl(lock);
+        DWORD numOfBytes = 0;
+        ULONG_PTR key = 0;
+        OverlappedTask* overlappedPtr = nullptr;
+        
+        while (GetQueuedCompletionStatus(_taskIo, &numOfBytes, &key, reinterpret_cast<LPOVERLAPPED*>(&overlappedPtr), 10))
         {
-            isTask.store(true);
-            DWORD numOfBytes = 0;
-            ULONG_PTR key = 0;
-            OverlappedTask* overlappedPtr = nullptr;
-            
-            if (GetQueuedCompletionStatus(_taskIo, &numOfBytes, &key, reinterpret_cast<LPOVERLAPPED*>(&overlappedPtr), 10))
-            {
-                overlappedPtr->Execute();
-                delete overlappedPtr;
-            }
-            else
-            {
-                int errorCode = WSAGetLastError();
-                if (errorCode != WAIT_TIMEOUT)
-                {
-                    std::cout << "Task ErrorCode: " << errorCode << std::endl;
-                    assert(-1);
-                }
-            }
-            isTask.store(false);
+            overlappedPtr->Execute();
+            delete overlappedPtr;
+        }
+        int errorCode = WSAGetLastError();
+        if (errorCode != WAIT_TIMEOUT)
+        {
+            std::cout << "Task ErrorCode: " << errorCode << std::endl;
+            assert(-1);
         }
     }
 protected:
@@ -92,8 +85,6 @@ protected:
     int32 _id;
     uint32 _type;
     int32 _frameTime = 50; // 50ms, 20프레임
-
-    Atomic<bool> isTask{false};
 };
 
 class GameRoom : public IRoom
