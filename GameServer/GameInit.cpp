@@ -15,7 +15,7 @@ GameInit::GameInit()
 {
 	String configFilePath = "./config.json";
 	String jsonStr = "";
-	boost::json::value json;
+	nlohmann::json json;
 	
 	std::ifstream openFile(configFilePath.data());
 	
@@ -27,17 +27,17 @@ GameInit::GameInit()
 	openFile.close();
 	json = GameUtils::JsonParser::GetStrParser(jsonStr);
 	
-	boost::json::value unitJson = GameUtils::JsonParser::Parser("units", json);
-	boost::json::value playerJson = GameUtils::JsonParser::Parser("players", unitJson);
-	boost::json::value monsterJson = GameUtils::JsonParser::Parser("monsters", unitJson);
-	boost::json::value weaponJson = GameUtils::JsonParser::Parser("weapons", unitJson);
-	boost::json::value skillJson = GameUtils::JsonParser::Parser("Skills", unitJson);
-	boost::json::value LvJson = GameUtils::JsonParser::Parser("lvs", json);
-	boost::json::value mapJson = GameUtils::JsonParser::Parser("maps", json);
-	boost::json::value mapUnitJson = GameUtils::JsonParser::Parser("mapsUnits", json);
-	boost::json::value itemEqiupJson = GameUtils::JsonParser::Parser("itemEquip", json);
-	boost::json::value itemEtcJson = GameUtils::JsonParser::Parser("itemEtc", json);
-	boost::json::value dropJsonJson = GameUtils::JsonParser::Parser("dropJson", json);
+	nlohmann::json unitJson = GameUtils::JsonParser::Parser("units", json);
+	nlohmann::json playerJson = GameUtils::JsonParser::Parser("players", unitJson);
+	nlohmann::json monsterJson = GameUtils::JsonParser::Parser("monsters", unitJson);
+	nlohmann::json weaponJson = GameUtils::JsonParser::Parser("weapons", unitJson);
+	nlohmann::json skillJson = GameUtils::JsonParser::Parser("Skills", unitJson);
+	nlohmann::json LvJson = GameUtils::JsonParser::Parser("lvs", json);
+	nlohmann::json mapJson = GameUtils::JsonParser::Parser("maps", json);
+	nlohmann::json mapUnitJson = GameUtils::JsonParser::Parser("mapsUnits", json);
+	nlohmann::json itemEqiupJson = GameUtils::JsonParser::Parser("itemEquip", json);
+	nlohmann::json itemEtcJson = GameUtils::JsonParser::Parser("itemEtc", json);
+	nlohmann::json dropJsonJson = GameUtils::JsonParser::Parser("dropJson", json);
 	
 	SetPlayer(playerJson);
 	SetMonster(monsterJson);
@@ -50,17 +50,19 @@ GameInit::GameInit()
 	SetMap(mapJson, mapUnitJson);
 }
 
-void GameInit::SetMap(boost::json::value& mapJson, boost::json::value& mapUnitJson)
+void GameInit::SetMap(nlohmann::json& mapJson, nlohmann::json& mapUnitJson)
 {
-	for (int i = 0; i < mapJson.get_array().size(); i++)
+	CrashFunc(mapJson.is_array());
+
+	for (int i = 0; i < mapJson.size(); i++)
 	{
-		auto& map = mapJson.get_array()[i];
-		int32 type = static_cast<int32>(GameUtils::JsonParser::Parser("type", map).get_int64());
-		int32 code = static_cast<int32>(GameUtils::JsonParser::Parser("mapCode", map).get_int64());
-		int32 x = static_cast<int32>(GameUtils::JsonParser::Parser("x", map).get_int64());
-		int32 y = static_cast<int32>(GameUtils::JsonParser::Parser("y", map).get_int64());
-		int32 centerX = static_cast<int32>(GameUtils::JsonParser::Parser("centerX", map).get_int64());
-		int32 centerY = static_cast<int32>(GameUtils::JsonParser::Parser("centerY", map).get_int64());
+		auto& map = mapJson[i];
+		int32 type = static_cast<int32>(GameUtils::JsonParser::Parser("type", map).get<int32>());
+		int32 code = static_cast<int32>(GameUtils::JsonParser::Parser("mapCode", map).get<int32>());
+		int32 x = static_cast<int32>(GameUtils::JsonParser::Parser("x", map).get<int32>());
+		int32 y = static_cast<int32>(GameUtils::JsonParser::Parser("y", map).get<int32>());
+		int32 centerX = static_cast<int32>(GameUtils::JsonParser::Parser("centerX", map).get<int32>());
+		int32 centerY = static_cast<int32>(GameUtils::JsonParser::Parser("centerY", map).get<int32>());
 
 		GameRoomRef room = GRoomManger->CreateRoom(code);
 		CrashFunc(room != nullptr);
@@ -73,12 +75,12 @@ void GameInit::SetMap(boost::json::value& mapJson, boost::json::value& mapUnitJs
 
 		if (type == 0)
 		{
-			boost::json::value monsterMapJson = GameUtils::JsonParser::Parser("monsterMap", map);
+			nlohmann::json monsterMapJson = GameUtils::JsonParser::Parser("monsterMap", map);
 
-			x = static_cast<int32>(GameUtils::JsonParser::Parser("x", monsterMapJson).get_int64());
-			y = static_cast<int32>(GameUtils::JsonParser::Parser("y", monsterMapJson).get_int64());
-			centerX = static_cast<int32>(GameUtils::JsonParser::Parser("centerX", monsterMapJson).get_int64());
-			centerY = static_cast<int32>(GameUtils::JsonParser::Parser("centerY", monsterMapJson).get_int64());
+			x = static_cast<int32>(GameUtils::JsonParser::Parser("x", monsterMapJson).get<int32>());
+			y = static_cast<int32>(GameUtils::JsonParser::Parser("y", monsterMapJson).get<int32>());
+			centerX = static_cast<int32>(GameUtils::JsonParser::Parser("centerX", monsterMapJson).get<int32>());
+			centerY = static_cast<int32>(GameUtils::JsonParser::Parser("centerY", monsterMapJson).get<int32>());
 
 			room->GetGameMap()->GetMonsterMapInfo()->GetRect().X = x;
 			room->GetGameMap()->GetMonsterMapInfo()->GetRect().Y = y;
@@ -86,127 +88,127 @@ void GameInit::SetMap(boost::json::value& mapJson, boost::json::value& mapUnitJs
 			room->GetGameMap()->GetMonsterMapInfo()->GetRect().CenterY = centerY;
 
 			
-			auto& mapsUnits = mapUnitJson.as_array()[i];
+			auto& mapsUnits = mapUnitJson[i];
 			auto mapMonsterList = GameUtils::JsonParser::Parser("monsterList", mapsUnits);
-			for(int32 j = 0; j < mapMonsterList.get_array().size(); j++)
+			for(int32 j = 0; j < mapMonsterList.size(); j++)
 			{
-				auto& unitsInfo = mapMonsterList.get_array()[j];
-				int32 monsterType = static_cast<int32>(GameUtils::JsonParser::Parser("code", unitsInfo).get_int64());
-				int32 monsterCount = static_cast<int32>(GameUtils::JsonParser::Parser("count", unitsInfo).get_int64());
+				auto& unitsInfo = mapMonsterList[j];
+				int32 monsterType = static_cast<int32>(GameUtils::JsonParser::Parser("code", unitsInfo).get<int32>());
+				int32 monsterCount = static_cast<int32>(GameUtils::JsonParser::Parser("count", unitsInfo).get<int32>());
 				room->CreateMonster(monsterType, monsterCount);
 			}
 		}
 	}
 }
 
-void GameInit::SetPlayer(boost::json::value& unitJson)
+void GameInit::SetPlayer(nlohmann::json& unitJson)
 {
-	for (auto& unit : unitJson.as_array())
+	for (auto& unit : unitJson)
 	{
-		int32 code = static_cast<int32>(GameUtils::JsonParser::Parser("code", unit).get_int64());
-		float attack = static_cast<float>(GameUtils::JsonParser::Parser("attack", unit).get_double());
-		float moveSpeed = static_cast<float>(GameUtils::JsonParser::Parser("moveSpeed", unit).get_double());
-		int32 hp = static_cast<int32>(GameUtils::JsonParser::Parser("hp", unit).get_int64());
+		int32 code = static_cast<int32>(GameUtils::JsonParser::Parser("code", unit).get<int32>());
+		float attack = static_cast<float>(GameUtils::JsonParser::Parser("attack", unit).get<float>());
+		float moveSpeed = static_cast<float>(GameUtils::JsonParser::Parser("moveSpeed", unit).get<float>());
+		int32 hp = static_cast<int32>(GameUtils::JsonParser::Parser("hp", unit).get<int32>());
 
 		GPlayer->GetCharater().emplace(code, Charater(code, attack, moveSpeed, hp));
 	}
 }
 
-void GameInit::SetMonster(boost::json::value& unitJson)
+void GameInit::SetMonster(nlohmann::json& unitJson)
 {
-	for (auto& unit : unitJson.as_array())
+	for (auto& unit : unitJson)
 	{
-		int32 code = static_cast<int32>(GameUtils::JsonParser::Parser("code", unit).get_int64());
-		float attack = static_cast<float>(GameUtils::JsonParser::Parser("attack", unit).get_double());
-		float moveSpeed = static_cast<float>(GameUtils::JsonParser::Parser("moveSpeed", unit).get_double());
-		int32 hp = static_cast<int32>(GameUtils::JsonParser::Parser("hp", unit).get_int64());
-		int32 exp = static_cast<int32>(GameUtils::JsonParser::Parser("exp", unit).get_int64());
+		int32 code = static_cast<int32>(GameUtils::JsonParser::Parser("code", unit).get<int32>());
+		float attack = static_cast<float>(GameUtils::JsonParser::Parser("attack", unit).get<float>());
+		float moveSpeed = static_cast<float>(GameUtils::JsonParser::Parser("moveSpeed", unit).get<float>());
+		int32 hp = static_cast<int32>(GameUtils::JsonParser::Parser("hp", unit).get<int32>());
+		int32 exp = static_cast<int32>(GameUtils::JsonParser::Parser("exp", unit).get<int32>());
 
 		GMonster->GetCharater().emplace(code, Charater(code, attack, moveSpeed, hp, exp));
 	}
 }
 
-void GameInit::SetWeapon(boost::json::value& unitJson)
+void GameInit::SetWeapon(nlohmann::json& unitJson)
 {
-	for (auto& unit : unitJson.as_array())
+	for (auto& unit : unitJson)
 	{
-		int32 code = static_cast<int32>(GameUtils::JsonParser::Parser("code", unit).get_int64());
-		float attackSpeed = static_cast<float>(GameUtils::JsonParser::Parser("attackSpeed", unit).get_double());
+		int32 code = static_cast<int32>(GameUtils::JsonParser::Parser("code", unit).get<int32>());
+		float attackSpeed = static_cast<float>(GameUtils::JsonParser::Parser("attackSpeed", unit).get<float>());
 
 		GWeapon->GetWeapon().emplace(code, Weapon(code, attackSpeed));
 	}
 }
 
-void GameInit::SetLv(boost::json::value& lvJson)
+void GameInit::SetLv(nlohmann::json& lvJson)
 {
-	for (auto expLv : lvJson.get_array())
+	for (auto expLv : lvJson)
 	{
-		int32 lv = static_cast<int32>(GameUtils::JsonParser::Parser("lv", expLv).get_int64()); // 레벨
-		int32 exp = static_cast<int32>(GameUtils::JsonParser::Parser("exp", expLv).get_int64()); // 레벨업에 필요한 경험치량
+		int32 lv = static_cast<int32>(GameUtils::JsonParser::Parser("lv", expLv).get<int32>()); // 레벨
+		int32 exp = static_cast<int32>(GameUtils::JsonParser::Parser("exp", expLv).get<int32>()); // 레벨업에 필요한 경험치량
 
 		GExpLv->GetExpLv().emplace(lv, ExpLv(lv, exp));
 	}
 }
 
-void GameInit::SetSkill(boost::json::value& unitJson)
+void GameInit::SetSkill(nlohmann::json& unitJson)
 {
-	for (auto& unit : unitJson.as_array())
+	for (auto& unit : unitJson)
 	{
-		int32 type = static_cast<int32>(GameUtils::JsonParser::Parser("type", unit).get_int64());
-		float value = static_cast<float>(GameUtils::JsonParser::Parser("value", unit).get_double());
-		float duration = static_cast<float>(GameUtils::JsonParser::Parser("duration", unit).get_double());
-		int32 code = static_cast<int32>(GameUtils::JsonParser::Parser("code", unit).get_int64());
-		float coolTime = static_cast<float>(GameUtils::JsonParser::Parser("coolTime", unit).get_double());
-		int32 weaponCode = static_cast<int32>(GameUtils::JsonParser::Parser("weaponCode", unit).get_int64());
+		int32 type = static_cast<int32>(GameUtils::JsonParser::Parser("type", unit).get<int32>());
+		float value = static_cast<float>(GameUtils::JsonParser::Parser("value", unit).get<float>());
+		float duration = static_cast<float>(GameUtils::JsonParser::Parser("duration", unit).get<float>());
+		int32 code = static_cast<int32>(GameUtils::JsonParser::Parser("code", unit).get<int32>());
+		float coolTime = static_cast<float>(GameUtils::JsonParser::Parser("coolTime", unit).get<float>());
+		int32 weaponCode = static_cast<int32>(GameUtils::JsonParser::Parser("weaponCode", unit).get<int32>());
 
 		GSkill->GetSkill().emplace(code, Skill(type, value, duration, code, coolTime, weaponCode));
 	}
 }
 
-void GameInit::SetItemEquip(boost::json::value& itemJson)
+void GameInit::SetItemEquip(nlohmann::json& itemJson)
 {
-	for (auto& equip : itemJson.as_array())
+	for (auto& equip : itemJson)
 	{
-		int32 code = static_cast<int32>(GameUtils::JsonParser::Parser("code", equip).get_int64());
-		int32 type = static_cast<int32>(GameUtils::JsonParser::Parser("type", equip).get_int64());
-		int32 gold = static_cast<int32>(GameUtils::JsonParser::Parser("gold", equip).get_int64());
-		int32 attack = static_cast<int32>(GameUtils::JsonParser::Parser("attack", equip).get_int64());
-		int32 speed = static_cast<int32>(GameUtils::JsonParser::Parser("speed", equip).get_int64());
+		int32 code = static_cast<int32>(GameUtils::JsonParser::Parser("code", equip).get<int32>());
+		int32 type = static_cast<int32>(GameUtils::JsonParser::Parser("type", equip).get<int32>());
+		int32 gold = static_cast<int32>(GameUtils::JsonParser::Parser("gold", equip).get<int32>());
+		int32 attack = static_cast<int32>(GameUtils::JsonParser::Parser("attack", equip).get<int32>());
+		int32 speed = static_cast<int32>(GameUtils::JsonParser::Parser("speed", equip).get<int32>());
 
 		GEquipItem->AddItem(code, type, gold, attack, speed);
 	}
 }
 
-void GameInit::SetItemEtc(boost::json::value& itemJson)
+void GameInit::SetItemEtc(nlohmann::json& itemJson)
 {
-	for (auto& etc : itemJson.as_array())
+	for (auto& etc : itemJson)
 	{
-		int32 code = static_cast<int32>(GameUtils::JsonParser::Parser("code", etc).get_int64());
-		int32 type = static_cast<int32>(GameUtils::JsonParser::Parser("type", etc).get_int64());
-		int32 gold = static_cast<int32>(GameUtils::JsonParser::Parser("gold", etc).get_int64());
-		int32 maxCnt = static_cast<int32>(GameUtils::JsonParser::Parser("maxCnt", etc).get_int64());
+		int32 code = static_cast<int32>(GameUtils::JsonParser::Parser("code", etc).get<int32>());
+		int32 type = static_cast<int32>(GameUtils::JsonParser::Parser("type", etc).get<int32>());
+		int32 gold = static_cast<int32>(GameUtils::JsonParser::Parser("gold", etc).get<int32>());
+		int32 maxCnt = static_cast<int32>(GameUtils::JsonParser::Parser("maxCnt", etc).get<int32>());
 
 		GEtcItem->AddItem(code, type, gold, maxCnt);
 	}
 }
 
-void GameInit::SetDropItem(boost::json::value& dropJson)
+void GameInit::SetDropItem(nlohmann::json& dropJson)
 {
-	for (auto& drop : dropJson.as_array())
+	for (auto& drop : dropJson)
 	{
-		int32 monsterCode = static_cast<int32>(GameUtils::JsonParser::Parser("monsterCode", drop).get_int64());
-		boost::json::value dropEquipList = GameUtils::JsonParser::Parser("dropEquipList", drop);
-		for (auto& item : dropEquipList.as_array())
+		int32 monsterCode = static_cast<int32>(GameUtils::JsonParser::Parser("monsterCode", drop).get<int32>());
+		nlohmann::json dropEquipList = GameUtils::JsonParser::Parser("dropEquipList", drop);
+		for (auto& item : dropEquipList)
 		{
-			int32 itemCode = static_cast<int32>(GameUtils::JsonParser::Parser("itemCode", item).get_int64());
+			int32 itemCode = static_cast<int32>(GameUtils::JsonParser::Parser("itemCode", item).get<int32>());
 			GDropItem->AddDropEquipItem(monsterCode, itemCode);
 		}
-		int32 gold = static_cast<int32>(GameUtils::JsonParser::Parser("gold", drop).get_int64());
-		boost::json::value dropList = GameUtils::JsonParser::Parser("dropList", drop);
-		for (auto& item : dropList.as_array())
+		int32 gold = static_cast<int32>(GameUtils::JsonParser::Parser("gold", drop).get<int32>());
+		nlohmann::json dropList = GameUtils::JsonParser::Parser("dropList", drop);
+		for (auto& item : dropList)
 		{
-			int32 itemCode = static_cast<int32>(GameUtils::JsonParser::Parser("itemCode", item).get_int64());
-			int32 cnt = static_cast<int32>(GameUtils::JsonParser::Parser("cnt", item).get_int64());
+			int32 itemCode = static_cast<int32>(GameUtils::JsonParser::Parser("itemCode", item).get<int32>());
+			int32 cnt = static_cast<int32>(GameUtils::JsonParser::Parser("cnt", item).get<int32>());
 			GDropItem->AddDropItem(monsterCode, itemCode, cnt);
 		}
 		GDropItem->AddGold(monsterCode, gold);

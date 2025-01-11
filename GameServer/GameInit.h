@@ -1,17 +1,17 @@
 ﻿#pragma once
-#include <boost/json.hpp>
+#include "pch.h"
 
 class GameInit
 {
 public:
     GameInit();
-    void SetMap(boost::json::value& mapJson, boost::json::value& mapUnitJson);
-    void SetPlayer(boost::json::value& unitJson);
-    void SetMonster(boost::json::value& unitJson);
-    void SetWeapon(boost::json::value& unitJson);
-    void SetLv(boost::json::value& lvJson);
-    void SetSkill(boost::json::value& unitJson);
-    void SetItemEquip(boost::json::value& itemJson);
-    void SetItemEtc(boost::json::value& itemJson);
-    void SetDropItem(boost::json::value& dropJson);
+    void SetMap(nlohmann::json& mapJson, nlohmann::json& mapUnitJson);
+    void SetPlayer(nlohmann::json& unitJson);
+    void SetMonster(nlohmann::json& unitJson);
+    void SetWeapon(nlohmann::json& unitJson);
+    void SetLv(nlohmann::json& lvJson);
+    void SetSkill(nlohmann::json& unitJson);
+    void SetItemEquip(nlohmann::json& itemJson);
+    void SetItemEtc(nlohmann::json& itemJson);
+    void SetDropItem(nlohmann::json& dropJson);
 };

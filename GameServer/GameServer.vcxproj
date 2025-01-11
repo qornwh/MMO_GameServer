@@ -88,7 +88,7 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)binary\$(Configuration)\</OutDir>
     <IncludePath>$(SolutionDir)CoreLibIOCP\;$(SolutionDir)GameEngine\;$(IncludePath);$(SolutionDir)protobuf\include</IncludePath>
-    <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);C:\boost\boost_1_83_0</ExternalIncludePath>
+    <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</ExternalIncludePath>
     <LibraryPath>$(SolutionDir)Libraries\Libs\;$(LibraryPath);$(SolutionDir)protobuf\lib\win64\Debug</LibraryPath>
     <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
   </PropertyGroup>
@@ -96,7 +96,7 @@
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)binary\$(Configuration)\</OutDir>
     <IncludePath>$(SolutionDir)CoreLibIOCP\;$(SolutionDir)GameEngine\;$(IncludePath);$(SolutionDir)protobuf\include</IncludePath>
-    <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);C:\boost\boost_1_83_0</ExternalIncludePath>
+    <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</ExternalIncludePath>
     <LibraryPath>$(SolutionDir)Libraries\Libs\;$(LibraryPath);$(SolutionDir)protobuf\lib\win64\Release</LibraryPath>
     <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
   </PropertyGroup>
@@ -143,7 +143,8 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;..\protobuf\lib\win64\$(Configuration)\libprotobufd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\boost\boost_1_83_0\stage\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
       <Command>"../protobuf/bin/protoc.exe" -I=./ --cpp_out=./ ./GameService.proto</Command>
@@ -167,7 +168,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;..\protobuf\lib\win64\$(Configuration)\libprotobuf.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\boost\boost_1_83_0\stage\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
       <Command>"../protobuf/bin/protoc.exe" -I=./ --cpp_out=./ ./GameService.proto</Command>

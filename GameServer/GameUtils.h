@@ -1,8 +1,8 @@
 ﻿#pragma once
 #include "pch.h"
-#include <boost/json.hpp>
 #include <WinNls.h>
 #include <Rpc.h>
+#include <nlohmann/json.hpp>
 #pragma comment(lib, "Rpcrt4.lib")
 
 #define UUIDSIZE 37
@@ -12,12 +12,12 @@ namespace GameUtils
     class JsonParser
     {
     public:
-        static boost::json::value GetStrParser(String& jsonStr)
+        static nlohmann::json GetStrParser(String& jsonStr)
         {
-            return boost::json::parse(jsonStr);
+            return nlohmann::json::parse(jsonStr);
         }
 
-        static boost::json::value Parser(String key, const boost::json::value& json)
+        static nlohmann::json Parser(String key, const nlohmann::json& json)
         {
             // 그냥 바로 크래시 낸다 !!!
             CrashFunc(!json.at(key).is_null());
