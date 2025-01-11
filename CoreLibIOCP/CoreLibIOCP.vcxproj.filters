@@ -99,6 +99,12 @@
     <ClInclude Include="RecvBuffer.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="nlohmann\json.hpp">
+      <Filter>Json</Filter>
+    </ClInclude>
+    <ClInclude Include="nlohmann\json_fwd.hpp">
+      <Filter>Json</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Core">
@@ -118,6 +124,9 @@
     </Filter>
     <Filter Include="Socket">
       <UniqueIdentifier>{9bcfec98-e83f-47da-b65f-09f9755d4845}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Json">
+      <UniqueIdentifier>{e3351708-a215-4d21-873c-9cec55b549f8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

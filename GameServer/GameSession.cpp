@@ -424,6 +424,9 @@ void GameSession::LoginHandler(BYTE* buffer, PacketHeader* header, int32 offset)
                     }
                     logPkt.set_result(1);
                     _logId.append(readPkt.id());
+
+                    User user(_accountCode, wId);
+                    GUserAccess->AddUserList(user);
                     std::cout << "Login Access ID: " << readPkt.id().c_str() << std::endl;
                 }
                 else
@@ -445,8 +448,6 @@ void GameSession::LoginHandler(BYTE* buffer, PacketHeader* header, int32 offset)
             {
                 std::cout << "Create Account ID: " << readPkt.id().c_str() << std::endl;
                 logPkt.set_result(2);
-                User user(_accountCode, wId);
-                GUserAccess->AddUserList(user);
             }
             else
             {

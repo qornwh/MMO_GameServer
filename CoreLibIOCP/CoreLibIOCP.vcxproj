@@ -44,6 +44,8 @@
     <ClInclude Include="DBConn.h" />
     <ClInclude Include="DBConnectPool.h" />
     <ClInclude Include="DBOdbc.h" />
+    <ClInclude Include="nlohmann\json.hpp" />
+    <ClInclude Include="nlohmann\json_fwd.hpp" />
     <ClInclude Include="OverlappedSocket.h" />
     <ClInclude Include="OverlappedTask.h" />
     <ClInclude Include="PacketHeader.h" />
