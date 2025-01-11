@@ -10,6 +10,9 @@
 
 #include "GameUserAccess.h"
 #include "SocketConfig.h"
+
+#include "cpr/cpr.h"
+
 #pragma comment(lib, "Dbghelp.lib")
 
 long WINAPI ExceptionCallBack(EXCEPTION_POINTERS* exception_pointers)

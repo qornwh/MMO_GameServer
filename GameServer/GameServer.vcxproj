@@ -87,9 +87,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)binary\$(Configuration)\</OutDir>
-    <IncludePath>$(SolutionDir)CoreLibIOCP\;$(SolutionDir)GameEngine\;$(IncludePath);$(SolutionDir)protobuf\include</IncludePath>
+    <IncludePath>$(SolutionDir)CoreLibIOCP\;$(SolutionDir)GameEngine\;$(IncludePath);$(SolutionDir)protobuf\include;$(SolutionDir)cpr\include;$(SolutionDir)cpr\curl-src\include;$(SolutionDir)cpr\cpr_generated_includes</IncludePath>
     <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</ExternalIncludePath>
-    <LibraryPath>$(SolutionDir)Libraries\Libs\;$(LibraryPath);$(SolutionDir)protobuf\lib\win64\Debug</LibraryPath>
+    <LibraryPath>$(SolutionDir)Libraries\Libs\;$(LibraryPath);$(SolutionDir)protobuf\lib\win64\Debug;$(SolutionDir)cpr\lib\Debug</LibraryPath>
     <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -142,7 +142,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;..\protobuf\lib\win64\$(Configuration)\libprotobufd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;..\protobuf\lib\win64\$(Configuration)\libprotobufd.lib;..\cpr\lib\$(Configuration)\cpr.lib;..\cpr\lib\$(Configuration)\libcurl-d.lib;..\cpr\lib\$(Configuration)\zlibstaticd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
     </Link>
