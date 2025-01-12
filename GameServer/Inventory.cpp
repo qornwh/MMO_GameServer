@@ -418,8 +418,8 @@ void Inventory::SaveDB()
         }
     }
 
-    SessionDB sessionDB;
-    sessionDB.SavePlayerDB(_playerCode, _gold);
+    SessionDB sdb;
+    sdb.SavePlayerDB(_playerCode, _gold);
 }
 
 void Inventory::ResetUpdateItems()

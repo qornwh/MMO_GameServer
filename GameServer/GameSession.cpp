@@ -424,6 +424,8 @@ void GameSession::LoginHandler(BYTE* buffer, PacketHeader* header, int32 offset)
                 }
 
                 _accountCode = accountCode;
+                _jobCode = curCharaterType;
+                _weaponCode = curWeaponType;
                 _logId.append(readPkt.id());
                 WCHAR wId[10] = {};
                 GameUtils::Utils::CharToWchar(readPkt.id().c_str(), wId);
@@ -507,11 +509,11 @@ void GameSession::BuyCharaterHandler(BYTE* buffer, PacketHeader* header, int32 o
         buyCharacterJson["useCash"] = readPkt.usecash();
         buyCharacterJson["characterType"] = readPkt.charatertype();
         buyCharacterJson["characterName"] = readPkt.name();
-        std::string buyWeaponJsonStr = buyCharacterJson.dump();
+        std::string buyCharacterJsonStr = buyCharacterJson.dump();
 
         cpr::Response res = cpr::Post(
             cpr::Url{ "http://localhost:3000/buyCharacter" },
-            cpr::Body{ buyWeaponJsonStr },
+            cpr::Body{ buyCharacterJsonStr },
             cpr::Header{ { "Content-Type", "application/json" } });
 
         if (res.status_code == 200)
@@ -526,7 +528,7 @@ void GameSession::BuyCharaterHandler(BYTE* buffer, PacketHeader* header, int32 o
 
                 res = cpr::Post(
                     cpr::Url{ "http://localhost:3000/getPlayer" },
-                    cpr::Body{ buyWeaponJsonStr },
+                    cpr::Body{ buyCharacterJsonStr },
                     cpr::Header{ { "Content-Type", "application/json" } });
 
                 nlohmann::json characterJson = GameUtils::JsonParser::GetStrParser(res.text);
@@ -592,75 +594,86 @@ void GameSession::LoadHandler(BYTE* buffer, PacketHeader* header, int32 offset)
 
     if (GamePacketHandler::ParsePacketHandler(readPkt, buffer, header->size - offset, offset))
     {
-        SessionDB sdb;
-        bool result = sdb.PlayerDB(_accountCode, _jobCode);
-        auto& position = readPkt.position();
-        if (result)
+        nlohmann::json characterJson;
+        characterJson["accountCode"] = _accountCode;
+        characterJson["characterType"] = _jobCode;
+        std::string characterJsonStr = characterJson.dump();
+
+        cpr::Response res = cpr::Post(
+            cpr::Url{ "http://localhost:3000/getPlayer" },
+            cpr::Body{ characterJsonStr },
+            cpr::Header{ { "Content-Type", "application/json" } });
+
+        if (res.status_code == 200)
         {
-            int32 jobCode = 0;
-            int32 mapCode = 0;
-            int32 gold = 0;
-            int32 lv = 0;
-            int32 exp = 0;
-            WCHAR name[10] = {0,};
-            char nameC[20] = {0,};
-            String nameStr;
-            nameStr.reserve(20);
+            nlohmann::json bodyData = GameUtils::JsonParser::GetStrParser(res.text);
+            int32 ret = bodyData["ret"].get<int32>();
 
-            sdb.GetPlayerDBInfo(_playerCode, name, jobCode, mapCode, gold, lv, exp);
-            sdb.ResetDBOrm();
-
-            CreatePlayerInfo(jobCode, _weaponCode, lv);
-            nameStr = GameUtils::Utils::WcharToChar(name, nameC);
-            GetPlayer()->SetName(nameStr);
-            GetPlayer()->SetPosition(position.x(), position.y());
-            GetPlayer()->SetRotate(position.yaw());
-            GetPlayer()->SetExp(exp);
-            GetPlayer()->SetInventory(gold);
-            GetPlayer()->SetFriend();
-            GetPlayer()->SetMail();
-
-            // 나를 확인용 메시지 전달.
-            if (GetService() != nullptr)
+            if (ret > 0)
             {
-                protocol::SPlayerData sendPkt;
-                protocol::Unit* unit = new protocol::Unit();
-                unit->set_name(_player->GetName());
-                unit->set_code(_player->GetCode());
-                unit->set_uuid(_player->GetUUid());
-                unit->set_hp(_player->GetHp());
-                unit->set_lv(_player->GetLv());
-                unit->set_weaponcode(_player->GetWeapon());
-                sendPkt.set_allocated_player(unit);
-                sendPkt.set_exp(exp);
+                nlohmann::json characterJson = GameUtils::JsonParser::GetStrParser(res.text);
+                ret = characterJson["ret"].get<int32>();
 
-                SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::S_PLAYERDATA);
-                AsyncWrite(sendBuffer);
-            }
+                nlohmann::json characterData = GameUtils::JsonParser::Parser("character", characterJson)[0];
+                int32 jobCode = characterData.at("jobCode").get<int32>();
+                int32 mapCode = characterData.at("mapCode").get<int32>();
+                int32 gold = characterData.at("gold").get<int32>();
+                int32 lv = characterData.at("lv").get<int32>();
+                int32 exp = characterData.at("exp").get<int32>();
+                String nameStr = characterData.at("name").get<String>();
 
-            // 친구 전달
-            {
-                protocol::SFriendSystem sendPkt;
+                auto& position = readPkt.position();
+                CreatePlayerInfo(jobCode, _weaponCode, lv);
+                GetPlayer()->SetName(nameStr);
+                GetPlayer()->SetPosition(position.x(), position.y());
+                GetPlayer()->SetRotate(position.yaw());
+                GetPlayer()->SetExp(exp);
+                GetPlayer()->SetInventory(gold);
+                GetPlayer()->SetFriend();
+                GetPlayer()->SetMail();
 
-                for (auto myFriend : GetPlayer()->GetFriend().GetFriendList())
+                // 나를 확인용 메시지 전달.
+                if (GetService() != nullptr)
                 {
-                    auto it = GUserAccess->GetPlayerList().find(myFriend.first);
-                    if (it != GUserAccess->GetPlayerList().end())
-                    {
-                        char friendNamdC[20] = {0,};
-                        String friendNameCStr = GameUtils::Utils::WcharToChar(it->second.name, friendNamdC);
-                        int32 friendCode = myFriend.first;
-                        int32 friendAccess = myFriend.second;
+                    protocol::SPlayerData sendPkt;
+                    protocol::Unit* unit = new protocol::Unit();
+                    unit->set_name(_player->GetName());
+                    unit->set_code(_player->GetCode());
+                    unit->set_uuid(_player->GetUUid());
+                    unit->set_hp(_player->GetHp());
+                    unit->set_lv(_player->GetLv());
+                    unit->set_weaponcode(_player->GetWeapon());
+                    sendPkt.set_allocated_player(unit);
+                    sendPkt.set_exp(exp);
 
-                        protocol::Friend* addFriend = sendPkt.add_friend_();
-                        addFriend->set_playercode(friendCode);
-                        addFriend->set_playername(friendNameCStr);
-                        addFriend->set_access(friendAccess);
-                        addFriend->set_add(true);
-                    }
+                    SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::S_PLAYERDATA);
+                    AsyncWrite(sendBuffer);
                 }
-                SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::S_FRIENDSYSTEM);
-                AsyncWrite(sendBuffer);
+
+                // 친구 전달
+                {
+                    protocol::SFriendSystem sendPkt;
+
+                    for (auto myFriend : GetPlayer()->GetFriend().GetFriendList())
+                    {
+                        auto it = GUserAccess->GetPlayerList().find(myFriend.first);
+                        if (it != GUserAccess->GetPlayerList().end())
+                        {
+                            char friendNamdC[20] = { 0, };
+                            String friendNameCStr = GameUtils::Utils::WcharToChar(it->second.name, friendNamdC);
+                            int32 friendCode = myFriend.first;
+                            int32 friendAccess = myFriend.second;
+
+                            protocol::Friend* addFriend = sendPkt.add_friend_();
+                            addFriend->set_playercode(friendCode);
+                            addFriend->set_playername(friendNameCStr);
+                            addFriend->set_access(friendAccess);
+                            addFriend->set_add(true);
+                        }
+                    }
+                    SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::S_FRIENDSYSTEM);
+                    AsyncWrite(sendBuffer);
+                }
             }
         }
     }
