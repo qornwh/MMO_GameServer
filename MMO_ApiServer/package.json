@@ -1,0 +1,18 @@
+{
+  "name": "GameApiServer",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "node src/index.js",
+    "format": "prettier --write \"**/*.js\"",
+    "all": "node format && node start"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "mssql": "^11.0.1"
+  },
+  "devDependencies": {
+    "prettier": "^3.4.2"
+  }
+}

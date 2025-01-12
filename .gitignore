@@ -17,6 +17,7 @@ protobuf/
 cpr/
 CoreLib/Debug/
 CoreLib/x64/
+node_modules/
 
 ### C++ ###
 # Prerequisites
