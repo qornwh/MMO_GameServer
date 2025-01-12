@@ -11,6 +11,7 @@
 #endif
 
 #include "CorePch.h"
+#include "cpr/cpr.h"
 
 using GameSessionRef = std::shared_ptr<class GameSession>;
 using GameServiceRef = std::shared_ptr<class GameService>;

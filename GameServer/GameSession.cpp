@@ -367,96 +367,75 @@ void GameSession::LoginHandler(BYTE* buffer, PacketHeader* header, int32 offset)
     protocol::Login readPkt;
     if (GamePacketHandler::ParsePacketHandler(readPkt, buffer, header->size - offset, offset))
     {
-        protocol::LoginAccess logPkt;
-        WCHAR wId[10] = {};
-        WCHAR wPwd[10] = {};
-        GameUtils::Utils::CharToWchar(readPkt.id().c_str(), wId);
-        GameUtils::Utils::CharToWchar(readPkt.pwd().c_str(), wPwd);
+        nlohmann::json loginJson;
+        loginJson["id"] = readPkt.id().c_str();
+        loginJson["pwd"] = readPkt.pwd().c_str();
+        std::string loginJsonStr = loginJson.dump();
 
-        SessionDB sdb;
-        int32 curCharaterCode = 0;
-        int32 curWeaponCode = 0;
-        int32 cash = 0;
-        int32 weaponOne = 0;
-        int32 weaponTwo = 0;
-        int32 weaponThr = 0;
-        bool isAccount = sdb.LoginDB(wId, _accountCode, curCharaterCode, curWeaponCode, cash);
-        if (isAccount)
+        cpr::Response res = cpr::Post(
+            cpr::Url{ "http://localhost:3000/login" },
+            cpr::Body{ loginJsonStr },
+            cpr::Header{ { "Content-Type", "application/json" } });
+
+        if (res.status_code == 200)
         {
-            bool loginCheck = sdb.LoginCheck(wPwd);
-            if (loginCheck)
+            protocol::LoginAccess loginPkt;
+            nlohmann::json bodyData = GameUtils::JsonParser::GetStrParser(res.text);
+            int32 ret = bodyData["ret"].get<int32>();
+            
+            if (ret == 1)
             {
-                if (GUserAccess->AccessUser(_accountCode, shared_from_this()))
+                int32 accountCode = bodyData["accountCode"].get<int32>();
+                int32 curCharaterType = bodyData["curPlayerType"].get<int32>();
+                int32 curWeaponType = bodyData["curWeaponType"].get<int32>();
+                int32 cash = bodyData["cash"].get<int32>();
+                int32 weaponOne = bodyData["weaponOne"].get<int32>();
+                int32 weaponTwo = bodyData["weaponTwo"].get<int32>();
+                int32 weaponThr = bodyData["weaponThr"].get<int32>();
+
+                loginPkt.set_curcharatertype(curCharaterType);
+                loginPkt.set_curweapontype(curWeaponType);
+                loginPkt.set_cash(cash);
+                loginPkt.add_weaponlist(weaponOne);
+                loginPkt.add_weaponlist(weaponTwo);
+                loginPkt.add_weaponlist(weaponThr);
+
+                nlohmann::json characterJson;
+                characterJson["accountCode"] = accountCode;
+                std::string characterJsonStr = characterJson.dump();
+
+                res = cpr::Post(
+                    cpr::Url{ "http://localhost:3000/getPlayers" },
+                    cpr::Body{ characterJsonStr },
+                    cpr::Header{ { "Content-Type", "application/json" } });
+
+                nlohmann::json characterData = GameUtils::JsonParser::GetStrParser(res.text);
+                if (characterData["ret"].get<int>() > 0)
                 {
-                    sdb.GetAccount(_accountCode, cash, curCharaterCode, curWeaponCode, weaponOne, weaponTwo, weaponThr);
-                    logPkt.set_curcharatertype(curCharaterCode);
-                    logPkt.set_curweapontype(curWeaponCode);
-                    logPkt.set_cash(cash);
-                    logPkt.add_weaponlist(weaponOne);
-                    logPkt.add_weaponlist(weaponTwo);
-                    logPkt.add_weaponlist(weaponThr);
-                    _jobCode = curCharaterCode;
-                    _weaponCode = curWeaponCode;
-                    // 로그인 성공
-                    if (sdb.PlayerDB(_accountCode))
+                    nlohmann::json characters = GameUtils::JsonParser::Parser("characters", characterData);
+                    for (auto& charaterData : characters)
                     {
-                        int32 playerCode = 0;
-                        int32 jobCode = 0;
-                        int32 mapCode = 0;
-                        int32 gold = 0;
-                        int32 lv = 0;
-                        int32 exp = 0;
-                        WCHAR name[10] = {0,};
-                        char nameC[20] = {0,};
-                        String nameStr;
-                        nameStr.reserve(20);
-
-                        while (sdb.GetPlayerDBInfo(playerCode, name, jobCode, mapCode, gold, lv, exp) == true)
-                        {
-                            protocol::Charater* charater = logPkt.add_charater();
-                            charater->set_code(jobCode);
-                            charater->set_uuid(_sessionId);
-                            charater->set_lv(lv);
-                            nameStr = GameUtils::Utils::WcharToChar(name, nameC);
-                            charater->set_name(nameStr);
-                            memset(name, 0, 10);
-                        }
+                        protocol::Charater* charater = loginPkt.add_charater();
+                        charater->set_code(charaterData["jobCode"].get<int32>());
+                        charater->set_uuid(_sessionId);
+                        charater->set_lv(charaterData["lv"].get<int32>());
+                        charater->set_name(charaterData["name"].get<String>());
                     }
-                    logPkt.set_result(1);
-                    _logId.append(readPkt.id());
+                }
 
-                    User user(_accountCode, wId);
-                    GUserAccess->AddUserList(user);
-                    std::cout << "Login Access ID: " << readPkt.id().c_str() << std::endl;
-                }
-                else
-                {
-                    logPkt.set_result(3);
-                    std::cout << "Already connected to this Account : " << _accountCode << std::endl;
-                }
+                _accountCode = accountCode;
+                _logId.append(readPkt.id());
+                WCHAR wId[10] = {};
+                GameUtils::Utils::CharToWchar(readPkt.id().c_str(), wId);
+                User user(_accountCode, wId);
+                GUserAccess->AddUserList(user);
+                std::cout << "Login Access ID: " << readPkt.id().c_str() << std::endl;
             }
-            else
-            {
-                logPkt.set_result(0);
-            }
+
+            loginPkt.set_result(ret);
+            SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(loginPkt, protocol::MessageCode::LOGINACCESS);
+            AsyncWrite(sendBuffer);
         }
-        else
-        {
-            // 계정 생성
-            bool result = sdb.CreateAccount(wId, wPwd, 10000);
-            if (result)
-            {
-                std::cout << "Create Account ID: " << readPkt.id().c_str() << std::endl;
-                logPkt.set_result(2);
-            }
-            else
-            {
-                std::cout << "Create Failed Account ID: " << readPkt.id().c_str() << std::endl;
-                logPkt.set_result(4);
-            }
-        }
-        SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(logPkt, protocol::MessageCode::LOGINACCESS);
-        AsyncWrite(sendBuffer);
     }
 }
 
@@ -465,80 +444,54 @@ void GameSession::UpdateAccountHandler(BYTE* buffer, PacketHeader* header, int32
     protocol::CUpdateAccount readPkt;
     if (GamePacketHandler::ParsePacketHandler(readPkt, buffer, header->size - offset, offset))
     {
-        SessionDB sdb;
         protocol::SCurrentInfo pkt;
-        int32 charaterType = 0;
-        int32 weaponType = 0;
-        int32 cash = 0;
-        int32 weaponOne = 0;
-        int32 weaponTwo = 0;
-        int32 weaponThr = 0;
-        sdb.GetAccount(_accountCode, cash, charaterType, weaponType, weaponOne, weaponTwo, weaponThr);
+        nlohmann::json loginJson;
+        loginJson["accountCode"] = _accountCode;
+        loginJson["characterType"] = readPkt.charatertype();
+        loginJson["weaponType"] = readPkt.weapontype();
+        std::string loginJsonStr = loginJson.dump();
 
-        if (charaterType != readPkt.charatertype())
+        cpr::Response res = cpr::Post(
+            cpr::Url{ "http://localhost:3000/updateAccount" },
+            cpr::Body{ loginJsonStr },
+            cpr::Header{ { "Content-Type", "application/json" } });
+        
+        if (res.status_code == 200)
         {
-            if (sdb.PlayerDB(_accountCode, readPkt.charatertype()))
-            {
-                int32 playerCode = 0;
-                int32 jobCode = 0;
-                int32 mapCode = 0;
-                int32 gold = 0;
-                WCHAR name[10] = {0,};
-                int32 lv = 0;
-                int32 exp = 0;
-                char nameC[20] = {0,};
-                String nameStr;
-                nameStr.reserve(20);
+            nlohmann::json bodyData = GameUtils::JsonParser::GetStrParser(res.text);
+            int32 ret = bodyData["ret"].get<int32>();
 
-                while (sdb.GetPlayerDBInfo(playerCode, name, jobCode, mapCode, gold, lv, exp))
+            if (ret > 0)
+            {
+                _jobCode = bodyData["curPlayerType"].get<int32>();
+                _weaponCode = bodyData["curWeaponType"].get<int32>();
+
+                res = cpr::Post(
+                    cpr::Url{ "http://localhost:3000/getPlayer" },
+                    cpr::Body{ loginJsonStr },
+                    cpr::Header{ { "Content-Type", "application/json" } });
+
+                nlohmann::json characterJson = GameUtils::JsonParser::GetStrParser(res.text);
+                ret = characterJson["ret"].get<int32>();
+                if (ret == 1)
                 {
-                    if (jobCode == readPkt.charatertype())
-                    {
-                        charaterType = jobCode;
-
-                        protocol::Charater* charater = new protocol::Charater();
-                        charater->set_code(jobCode);
-                        charater->set_uuid(_sessionId);
-                        nameStr = GameUtils::Utils::WcharToChar(name, nameC);
-                        charater->set_name(nameStr);
-                        charater->set_lv(lv);
-                        pkt.set_allocated_charater(charater);
-                        pkt.set_exp(exp);
-                    }
+                    nlohmann::json characterData = GameUtils::JsonParser::Parser("character", characterJson)[0];
+                    protocol::Charater* charater = new protocol::Charater();
+                    charater->set_code(characterData.at("jobCode").get<int32>());
+                    charater->set_uuid(_sessionId);
+                    charater->set_name(characterData.at("name").get<String>());
+                    charater->set_lv(characterData.at("lv").get<int32>());
+                    pkt.set_allocated_charater(charater);
+                    pkt.set_exp(characterData.at("exp").get<int32>());
                 }
+
+                pkt.set_charatertype(_jobCode);
+                pkt.set_weapontype(_weaponCode);
+                pkt.set_cash(bodyData["cash"].get<int32>());
+                SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(pkt, protocol::MessageCode::S_CURRENTINFO);
+                AsyncWrite(sendBuffer);
             }
         }
-        if (weaponType != readPkt.weapontype())
-        {
-            if (readPkt.weapontype() == 1 && weaponOne == 1)
-            {
-                weaponType = 1;
-            }
-            else if (readPkt.weapontype() == 2 && weaponTwo == 1)
-            {
-                weaponType = 2;
-            }
-            else if (readPkt.weapontype() == 3 && weaponThr == 1)
-            {
-                weaponType = 3;
-            }
-        }
-        if (cash >= readPkt.usecash())
-        {
-            cash -= readPkt.usecash();
-        }
-
-        pkt.set_charatertype(charaterType);
-        pkt.set_weapontype(weaponType);
-        pkt.set_cash(cash);
-
-        _jobCode = charaterType;
-        _weaponCode = weaponType;
-
-        sdb.UpdateAccount(_accountCode, charaterType, weaponType, cash, weaponOne, weaponTwo, weaponThr);
-
-        SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(pkt, protocol::MessageCode::S_CURRENTINFO);
-        AsyncWrite(sendBuffer);
     }
 }
 
@@ -547,89 +500,48 @@ void GameSession::BuyCharaterHandler(BYTE* buffer, PacketHeader* header, int32 o
     protocol::CBuyCharater readPkt;
     if (GamePacketHandler::ParsePacketHandler(readPkt, buffer, header->size - offset, offset))
     {
-        SessionDB sdb;
         protocol::SBuyResult pkt;
-        int32 charaterType = 0;
-        int32 weaponType = 0;
-        int32 cash = 0;
-        int32 weaponOne = 0;
-        int32 weaponTwo = 0;
-        int32 weaponThr = 0;
-        sdb.GetAccount(_accountCode, cash, charaterType, weaponType, weaponOne, weaponTwo, weaponThr);
+        pkt.set_result(-1);
+        nlohmann::json buyCharacterJson;
+        buyCharacterJson["accountCode"] = _accountCode;
+        buyCharacterJson["useCash"] = readPkt.usecash();
+        buyCharacterJson["characterType"] = readPkt.charatertype();
+        buyCharacterJson["characterName"] = readPkt.name();
+        std::string buyWeaponJsonStr = buyCharacterJson.dump();
 
-        if (cash >= readPkt.usecash())
+        cpr::Response res = cpr::Post(
+            cpr::Url{ "http://localhost:3000/buyCharacter" },
+            cpr::Body{ buyWeaponJsonStr },
+            cpr::Header{ { "Content-Type", "application/json" } });
+
+        if (res.status_code == 200)
         {
-            int32 buyCharaterType = readPkt.charatertype();
-            WCHAR wId[10] = {};
-            WCHAR* newName = GameUtils::Utils::CharToWchar(readPkt.name().c_str(), wId);
-            pkt.set_result(1);
+            nlohmann::json bodyData = GameUtils::JsonParser::GetStrParser(res.text);
+            int32 ret = bodyData["ret"].get<int32>();
 
-            // 해당 타입 캐릭터 있는지 체크!!
-            if (sdb.PlayerDB(_accountCode, buyCharaterType))
+            if (ret == 1)
             {
-                int32 playerCode = 0;
-                int32 jobCode = 0;
-                int32 mapCode = 0;
-                int32 gold = 0;
-                int32 lv = 0;
-                int32 exp = 0;
-                WCHAR name[10] = {0,};
+                pkt.set_result(1);
+                pkt.set_cash(bodyData["cash"].get<int32>());
 
-                bool flag = true;
-                while (sdb.GetPlayerDBInfo(playerCode, name, jobCode, mapCode, gold, lv, exp) == true)
-                {
-                    flag = false;
-                }
+                res = cpr::Post(
+                    cpr::Url{ "http://localhost:3000/getPlayer" },
+                    cpr::Body{ buyWeaponJsonStr },
+                    cpr::Header{ { "Content-Type", "application/json" } });
 
-                if (flag)
+                nlohmann::json characterJson = GameUtils::JsonParser::GetStrParser(res.text);
+                ret = characterJson["ret"].get<int32>();
+                if (ret == 1)
                 {
-                    if (sdb.InsertCharater(playerCode, _accountCode, buyCharaterType, newName))
-                    {
-                        cash -= readPkt.usecash();
-                        pkt.set_result(1);
-                        sdb.UpdateAccount(_accountCode, charaterType, weaponType, cash, weaponOne, weaponTwo, weaponThr);
-                        Player player(playerCode, jobCode, _accountCode, newName);
-                        GUserAccess->AddPlayerList(player);
-                        GEvent->CreateCharacterMail(playerCode);
-                    }
-                }
-                else
-                {
-                    pkt.set_result(-1);
-                }
-            }
-
-            if (pkt.result() > 0 && sdb.PlayerDB(_accountCode))
-            {
-                int32 playerCode = 0;
-                int32 jobCode = 0;
-                int32 mapCode = 0;
-                int32 gold = 0;
-                int32 lv = 0;
-                int32 exp = 0;
-                WCHAR name[10] = {0,};
-                char nameC[20] = {0,};
-                String nameStr;
-                nameStr.reserve(20);
-
-                while (sdb.GetPlayerDBInfo(playerCode, name, jobCode, mapCode, gold, lv, exp) == true)
-                {
+                    nlohmann::json characterData = GameUtils::JsonParser::Parser("character", characterJson)[0];
                     protocol::Charater* charater = pkt.add_charater();
-                    charater->set_code(jobCode);
+                    charater->set_code(characterData.at("jobCode").get<int32>());
                     charater->set_uuid(_sessionId);
-                    charater->set_lv(lv);
-                    nameStr = GameUtils::Utils::WcharToChar(name, nameC);
-                    charater->set_name(nameStr);
-                    memset(name, 0, 10);
+                    charater->set_name(characterData.at("name").get<String>());
+                    charater->set_lv(characterData.at("lv").get<int32>());
                 }
             }
         }
-        else
-        {
-            pkt.set_result(0);
-        }
-        pkt.set_cash(cash);
-
         SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(pkt, protocol::MessageCode::S_BUYRESULT);
         AsyncWrite(sendBuffer);
     }
@@ -640,74 +552,37 @@ void GameSession::BuyWeaponHandler(BYTE* buffer, PacketHeader* header, int32 off
     protocol::CBuyWeapon readPkt;
     if (GamePacketHandler::ParsePacketHandler(readPkt, buffer, header->size - offset, offset))
     {
-        SessionDB sdb;
         protocol::SBuyResult pkt;
-        int32 charaterType = 0;
-        int32 weaponType = 0;
-        int32 cash = 0;
-        int32 weaponOne = 0;
-        int32 weaponTwo = 0;
-        int32 weaponThr = 0;
-        sdb.GetAccount(_accountCode, cash, charaterType, weaponType, weaponOne, weaponTwo, weaponThr);
+        pkt.set_result(-1);
+        nlohmann::json buyWeaponJson;
+        buyWeaponJson["accountCode"] = _accountCode;
+        buyWeaponJson["useCash"] = readPkt.usecash();
+        buyWeaponJson["weaponType"] = readPkt.weapontype();
+        std::string buyWeaponJsonStr = buyWeaponJson.dump();
 
-        if (cash >= readPkt.usecash())
+        cpr::Response res = cpr::Post(
+            cpr::Url{ "http://localhost:3000/buyWeapon" },
+            cpr::Body{ buyWeaponJsonStr },
+            cpr::Header{ { "Content-Type", "application/json" } });
+
+        if (res.status_code == 200)
         {
-            int32 buyWeaponType = readPkt.weapontype();
-            pkt.set_result(1);
+            nlohmann::json bodyData = GameUtils::JsonParser::GetStrParser(res.text);
+            int32 ret = bodyData["ret"].get<int32>();
 
-            if (buyWeaponType == 1 && weaponOne == 0)
-                weaponOne = 1;
-            else if (buyWeaponType == 2 && weaponTwo == 0)
-                weaponTwo = 1;
-            else if (buyWeaponType == 3 && weaponThr == 0)
-                weaponThr = 1;
-            else
-                pkt.set_result(-1);
-
-            if (pkt.result() > 0)
+            if (ret > 0)
             {
-                cash -= readPkt.usecash();
-                sdb.UpdateAccount(_accountCode, charaterType, weaponType, cash, weaponOne, weaponTwo, weaponThr);
-                pkt.set_curcharatertype(charaterType);
-                pkt.set_curweapontype(weaponType);
-                pkt.add_weaponlist(weaponOne);
-                pkt.add_weaponlist(weaponTwo);
-                pkt.add_weaponlist(weaponThr);
-
-                if (sdb.PlayerDB(_accountCode))
-                {
-                    int32 playerCode = 0;
-                    int32 jobCode = 0;
-                    int32 mapCode = 0;
-                    int32 gold = 0;
-                    int32 lv = 0;
-                    int32 exp = 0;
-                    WCHAR name[10] = {0,};
-                    char nameC[20] = {0,};
-                    String nameStr;
-                    nameStr.reserve(20);
-
-                    while (sdb.GetPlayerDBInfo(playerCode, name, jobCode, mapCode, gold, lv, exp) == true)
-                    {
-                        protocol::Charater* charater = pkt.add_charater();
-                        charater->set_code(jobCode);
-                        charater->set_uuid(_sessionId);
-                        charater->set_lv(lv);
-                        nameStr = GameUtils::Utils::WcharToChar(name, nameC);
-                        charater->set_name(nameStr);
-                        memset(name, 0, 10);
-                    }
-                }
+                pkt.set_result(1);
+                pkt.set_curcharatertype(bodyData["curPlayerType"].get<int32>());
+                pkt.set_curweapontype(bodyData["curWeaponType"].get<int32>());
+                pkt.set_cash(bodyData["cash"].get<int32>());
+                pkt.add_weaponlist(bodyData["weaponOne"].get<int32>());
+                pkt.add_weaponlist(bodyData["weaponTwo"].get<int32>());
+                pkt.add_weaponlist(bodyData["weaponThr"].get<int32>());
             }
+            SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(pkt, protocol::MessageCode::S_BUYRESULT);
+            AsyncWrite(sendBuffer);
         }
-        else
-        {
-            pkt.set_result(0);
-        }
-        pkt.set_cash(cash);
-
-        SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(pkt, protocol::MessageCode::S_BUYRESULT);
-        AsyncWrite(sendBuffer);
     }
 }
 
