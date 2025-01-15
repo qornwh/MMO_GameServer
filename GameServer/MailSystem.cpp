@@ -1,6 +1,6 @@
 ﻿#include "MailSystem.h"
 
-#include "GameObjectInfo.h"
+#include "GamePlayerInfo.h"
 #include "MailDB.h"
 
 Mail::Mail(int32 code, int32 read, int32 gold, int32 socket1, int32 socket1Type, int32 socket2, int32 socket2Type, wchar_t* title, wchar_t* message)

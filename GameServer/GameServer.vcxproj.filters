@@ -89,6 +89,12 @@
     <ClCompile Include="MailDB.cpp">
       <Filter>DB</Filter>
     </ClCompile>
+    <ClCompile Include="GameMosterInfo.cpp">
+      <Filter>Unit</Filter>
+    </ClCompile>
+    <ClCompile Include="GamePlayerInfo.cpp">
+      <Filter>Unit</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObjectInfo.h">
@@ -180,6 +186,12 @@
     </ClInclude>
     <ClInclude Include="MailDB.h">
       <Filter>DB</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMosterInfo.h">
+      <Filter>Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="GamePlayerInfo.h">
+      <Filter>Unit</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

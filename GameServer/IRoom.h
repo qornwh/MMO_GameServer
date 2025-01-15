@@ -4,6 +4,8 @@
 #include "GameRoomManager.h"
 #include "GameSession.h"
 #include "GameObjectInfo.h"
+#include "GameMosterInfo.h"
+#include "GamePlayerInfo.h"
 #include "OverlappedTask.h"
 
 class IRoom : public std::enable_shared_from_this<IRoom>

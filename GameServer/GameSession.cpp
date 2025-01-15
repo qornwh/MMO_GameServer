@@ -9,6 +9,8 @@
 #include "GamePacketHandler.h"
 #include "GameRoomManager.h"
 #include "GameObjectInfo.h"
+#include "GameMosterInfo.h"
+#include "GamePlayerInfo.h"
 #include "GameUserAccess.h"
 #include "IRoom.h"
 #include "SessionDB.h"
