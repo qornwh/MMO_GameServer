@@ -19,3 +19,18 @@ void Collider::SetRotate(float rot)
 {
     _rotate = rot;
 }
+
+bool Collider::Trigger(CapsuleCollider& targetCollider)
+{
+    return false;
+}
+
+bool Collider::Trigger(CapsuleCollider& targetCollider, Vector2& targetPosition1, Vector2& targetPosition2)
+{
+    return false;
+}
+
+bool Collider::Trigger(RectangleCollider& targetCollider, Vector2& targetPosition, Vector2& position)
+{
+    return false;
+}

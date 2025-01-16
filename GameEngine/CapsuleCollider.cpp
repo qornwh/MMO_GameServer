@@ -12,6 +12,16 @@ CapsuleCollider::~CapsuleCollider()
 {
 }
 
+void CapsuleCollider::SetRadius(float radius)
+{
+	_radius = radius;
+}
+
+void CapsuleCollider::SetHeight(float height)
+{
+	_height = height;
+}
+
 bool CapsuleCollider::Trigger(CapsuleCollider& targetCollider)
 {
 	Vector2& position = GetPosition();

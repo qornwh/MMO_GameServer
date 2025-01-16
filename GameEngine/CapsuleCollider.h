@@ -9,10 +9,15 @@ public:
     CapsuleCollider(float  x, float y, float radius, float height);
     ~CapsuleCollider();
 
+    void SetRadius(float radius);
     float GetRadius() { return _radius; }
-    bool Trigger(CapsuleCollider& targetCollider);
-    bool Trigger(CapsuleCollider& targetCollider, Vector2& targetPosition1, Vector2& targetPosition2);
-    bool Trigger(RectangleCollider& targetCollider, Vector2& targetPosition, Vector2& position);
+
+    void SetHeight(float height);
+    float GetHeight() { return _height; }
+
+    bool Trigger(CapsuleCollider& targetCollider) override;
+    bool Trigger(CapsuleCollider& targetCollider, Vector2& targetPosition1, Vector2& targetPosition2) override;
+    bool Trigger(RectangleCollider& targetCollider, Vector2& targetPosition, Vector2& position) override;
 
 private:
     float _radius = 0.f;

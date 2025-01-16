@@ -3,6 +3,9 @@
 
 // 충돌은 2d로만 구현함
 
+class CapsuleCollider;
+class RectangleCollider;
+
 class Collider
 {
 public:
@@ -14,6 +17,10 @@ public:
 
     void SetRotate(float rot);
     float GetRotate() { return _rotate; }
+
+    virtual bool Trigger(CapsuleCollider& targetCollider);
+    virtual bool Trigger(CapsuleCollider& targetCollider, Vector2& targetPosition1, Vector2& targetPosition2);
+    virtual bool Trigger(RectangleCollider& targetCollider, Vector2& targetPosition, Vector2& position);
 
     static float CircleToCircleDistance(Vector2& a, Vector2& b)
     {
