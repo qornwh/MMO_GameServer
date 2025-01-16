@@ -30,6 +30,11 @@ struct Vector2
         return Vector2(X - ref.X, Y - ref.Y);
     }
 
+    static float Hypot(Vector2 a)
+    {
+        return hypot(a.X, a.Y);
+    }
+
     static float DotProduct(Vector2 a, Vector2 b)
     {
         return a.X * b.X + a.Y * b.Y;
@@ -76,5 +81,11 @@ struct Vector2
             return angleRad;
         
         return angleRad * (-1);
+    }
+
+    // 2차원 Counter Clock Wise
+    static float CCW(Vector2& a, Vector2& b, Vector2& c)
+    {
+        return (b.X - a.X) * (c.Y - a.Y) - (c.X - a.X) * (b.Y - a.Y);
     }
 };

@@ -180,11 +180,6 @@ void GameMosterInfo::Move()
             MoveTarget(targetPlayer);
             return;
         }
-        else
-        {
-            // 몬스터 구간 넘어가면 타겟팅 초기화 한다.
-            _targetUUid = -1;
-        }
     }
 
     if (_yawCounter.Add() == 0)
@@ -223,15 +218,6 @@ void GameMosterInfo::MoveTarget(GamePlayerInfoRef target)
             curPos.Y = curPos.Y + (GameEngine::MathUtils::GetSin(GetCollider().GetRotate()) * dist);
         }
     }
-}
-
-bool GameMosterInfo::CheckAttackTarget(GamePlayerInfoRef target)
-{
-    if (GetCollider().IsTrigger(target->GetCollider()))
-    {
-        return true;
-    }
-    return false;
 }
 
 void GameMosterInfo::TakeDamage(int32 Damage)

@@ -361,6 +361,11 @@ void GameSession::HandlePacket(BYTE* buffer, PacketHeader* header)
             SendMailHandler(buffer, header, static_cast<int32>(sizeof(PacketHeader)));
         }
         break;
+    case protocol::MessageCode::C_ATTACKS:
+        {
+            TestAttackHandler(buffer, header, static_cast<int32>(sizeof(PacketHeader)));
+        }
+        break;
     }
 }
 
@@ -1076,5 +1081,16 @@ void GameSession::SendMailHandler(BYTE* buffer, PacketHeader* header, int32 offs
         }
         SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPtk, protocol::MessageCode::S_SENDMAIL);
         AsyncWrite(sendBuffer);
+    }
+}
+
+void GameSession::TestAttackHandler(BYTE* buffer, PacketHeader* header, int32 offset)
+{
+    protocol::UserAttack pkt;
+
+    if (GamePacketHandler::ParsePacketHandler(pkt, buffer, header->size - offset, offset))
+    {
+
+
     }
 }

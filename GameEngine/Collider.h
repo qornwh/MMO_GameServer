@@ -1,25 +1,13 @@
 ﻿#pragma once
-#include "Shape.h"
+#include "Vector2.h"
 
-// 교차 구현 2d로만 구현
-
-// 분리축을 사용한다. 사각형만을 사용한다.
-// A, B 2개의 사용한다고 치면. A를 중점(0, 0)으로, B를 A에 맞게 좌표변환부터 시작한다.
-// 그려면 각 A, B 중점 centerA, centerB의 스칼라를 구하고.
-// A는 A.x/2, A.y/2축 평행하므로 처럼 값이 되고
-// b는 축이랑 제일 가까운 정점을 가져와서 중점이랑 내적한다.
-// 후 x, y축 둘다. A B중점이랑 내적된크기보다 크면 교차된것으로 친다.  
+// 충돌은 2d로만 구현함
 
 class Collider
 {
 public:
-    Collider(float radius);
-    Collider(float width, float height);
-
-    ~Collider();
-
-    bool IsTrigger(Collider& other);
-    Shape& GetShape() { return *_shape; }
+    Collider(float x = 0.f, float y = 0.f, float rotate = 0.f);
+    virtual ~Collider();
 
     void SetPosition(float x, float y);
     Vector2& GetPosition() { return _position; }
@@ -27,12 +15,59 @@ public:
     void SetRotate(float rot);
     float GetRotate() { return _rotate; }
 
-    void ResetCollider(float radius);
-    void ResetCollider(float width, float height);
+    static float CircleToCircleDistance(Vector2& a, Vector2& b)
+    {
+        return hypotf(b.X - a.X, b.Y - a.Y);
+    }
+
+    static float CapsuleToCircleDistance(Vector2& a, Vector2& b, Vector2& p)
+    {
+        Vector2 ab = b - a;
+        Vector2 pa = p - a;
+
+        float dot = Vector2::DotProduct(pa, ab);
+        float len2sqrt = Vector2::Hypot(ab);
+
+        float t = dot / len2sqrt;
+
+        if (t < 0.f)
+        {
+            // 점 a와 가까워짐
+            return Vector2::Hypot(p - a);
+        }
+        else if (t > 1.f)
+        {
+            // 점 b와 가까워짐
+            return Vector2::Hypot(p - b);
+        }
+        else
+        {
+            // 점 p는 선분ab사이를 벗어나지 않음
+            // 비율 t만큼 a를 이동시킨 수선의 발 h이다
+            Vector2 h{a.X + t * ab.X, a.Y + t * ab.Y};
+
+            return Vector2::Hypot(p - h);
+        }
+    }
+
+    static float CapsuleToCapsuleDistance(Vector2& a, Vector2& b, Vector2& p, Vector2& q)
+    {
+        float cross_ab = Vector2::CCW(a, b, p) * Vector2::CCW(a, b, q);
+        float cross_pq = Vector2::CCW(p, q, a) * Vector2::CCW(p, q, b);
+
+        // 두 선분이 교차됨
+        if (cross_pq * cross_ab <= 0 && cross_ab == 0 && cross_pq == 0)
+            return 0.f;
+
+        // 두 선분이 교차하지 않음 + 두 선분이 같은방향으로 감 , 선분과 점사이의 거리 필요(CapsuleToCircleDistance)
+        float d = CapsuleToCircleDistance(a, b, p);
+        d = min(d, CapsuleToCircleDistance(a, b, q));
+        d = min(d, CapsuleToCircleDistance(p, q, a));
+        d = min(d, CapsuleToCircleDistance(p, q, b));
+        return d;
+    }
 
 private:
-    Shape* _shape;
-
     Vector2 _position{0.f, 0.f};
     float _rotate = 0.f;
 };

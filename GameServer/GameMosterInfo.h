@@ -12,7 +12,6 @@ public:
     void Move() override;
     void Spawn();
     virtual void MoveTarget(GamePlayerInfoRef target);
-    bool CheckAttackTarget(GamePlayerInfoRef target);
     void TakeDamage(int32 Damage) override;
     void SetObjecteState(ObjectState state) override;
     void GetStartPosition(int32& x, int32& y);
@@ -39,7 +38,7 @@ private:
 
 protected:
     GameUtils::TickCounter _yawCounter{ 4 };
-    GameUtils::TickCounter _moveCounter{ 10 };
+    GameUtils::TickCounter _moveCounter{ 1 };
     GameUtils::TickCounter _idleCounter{ 3 };
     GameUtils::TickCounter _hitCounter{ 3 };
     GameUtils::TickCounter _dieCounter{ 30 };

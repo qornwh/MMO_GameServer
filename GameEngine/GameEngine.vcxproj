@@ -143,14 +143,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CapsuleCollider.cpp" />
     <ClCompile Include="Collider.cpp" />
+    <ClInclude Include="CapsuleCollider.h" />
     <ClInclude Include="GameEngine.h" />
-    <ClCompile Include="Shape.cpp" />
+    <ClCompile Include="RectangleCollider.cpp" />
     <ClCompile Include="Vector2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Collider.h" />
-    <ClInclude Include="Shape.h" />
+    <ClInclude Include="RectangleCollider.h" />
     <ClInclude Include="Vector2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

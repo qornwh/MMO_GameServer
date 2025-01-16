@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+using namespace std;
+
 namespace GameEngine
 {
     class MathUtils
