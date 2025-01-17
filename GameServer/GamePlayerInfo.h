@@ -2,15 +2,18 @@
 #include "GameObjectInfo.h"
 #include "Inventory.h"
 #include "MailSystem.h"
+#include "GameAttackInfo.h"
 
 class GamePlayerInfo : public GameObjectInfo
 {
-#pragma region field
 public:
     GamePlayerInfo(GameSessionRef gameSession, int32 playerCode, int32 uuid, int32 jobCode, int32 weaponCode, int32 lv);
     ~GamePlayerInfo() override;
     void Update() override;
-    void Attack(GameObjectInfoRef target, Vector<int32>& attackList);
+    void AttackObject(bool isCreate, int32 attackNumber, float x, float y, float yaw);
+    void AttackObjectMove(int32 attackNumber, float x, float y, float yaw);
+    void AttackObjectCollision(int32 attackNumber, Vector<int32> attackList);
+
     void SetTarget(int32 uuid);
     int32 GetTarget() { return _targetCode; }
     GameSessionRef GetGameSession() { return _gameSession.lock(); }
@@ -33,11 +36,12 @@ private:
     int32 _playerCode;
     int32 _weaponCode;
     int32 _exp;
-    std::weak_ptr<GameSession> _gameSession;
-#pragma endregion field
     Inventory _inventory;
     FriendSystem _friendSystem;
     MailSystem _mailSystem;
+
+    Map<int32, std::shared_ptr<GameAttackInfo>> _attackObjs;
+    std::weak_ptr<GameSession> _gameSession;
 
     //´õ¹Ì¿ë
 public:

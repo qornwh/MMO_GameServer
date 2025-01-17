@@ -38,14 +38,14 @@
       {
         "code": 1,
         "attack": 15.0,
-        "moveSpeed": 30.0,
+        "moveSpeed": 0.0,
         "hp": 1000,
         "exp": 5
       },
       {
         "code": 2,
         "attack": 20.0,
-        "moveSpeed": 30.0,
+        "moveSpeed": 0.0,
         "hp": 1500,
         "exp": 10
       }
@@ -233,32 +233,37 @@
   ],
   "skills": [
     {
+      "type": 0,
       "skillCode": 0,
       "attackRate": 100,
       "attackCount": 1,
       "rangeWidth": 5,
-      "rangeHeight": 5
+      "rangeHeight": 5,
+      "coolTime": 0.0
     },
     {
+      "type": 1,
       "skillCode": 101,
       "attackRate": 100,
-      "attackCount": 1,
+      "attackCount": 6,
       "rangeWidth": 5,
       "rangeHeight": 5,
       "coolTime": 3000.0
     },
     {
+      "type": 1,
       "skillCode": 102,
       "attackRate": 100,
-      "attackCount": 1,
+      "attackCount": 6,
       "rangeWidth": 5,
       "rangeHeight": 5,
       "coolTime": 3000.0
     },
     {
+      "type": 1,
       "skillCode": 103,
       "attackRate": 100,
-      "attackCount": 1,
+      "attackCount": 6,
       "rangeWidth": 5,
       "rangeHeight": 5,
       "coolTime": 3000.0

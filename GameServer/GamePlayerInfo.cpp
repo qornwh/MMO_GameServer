@@ -14,6 +14,9 @@ GamePlayerInfo::GamePlayerInfo(GameSessionRef gameSession, int32 playerCode, int
     _weaponCode = weaponCode;
     _playerCode = playerCode;
     _lv = lv;
+
+    _collider.SetRadius(40.f);
+    _collider.SetHeight(40.f);
 }
 
 GamePlayerInfo::~GamePlayerInfo()
@@ -33,8 +36,65 @@ void GamePlayerInfo::Update()
         return;
 }
 
-void GamePlayerInfo::Attack(GameObjectInfoRef target, Vector<int32>& attackList)
+void GamePlayerInfo::AttackObject(bool isCreate, int32 attackNumber, float x, float y, float yaw)
 {
+    if (isCreate)
+    {
+        if (_attackObjs.find(attackNumber) == _attackObjs.end())
+        {
+            _attackObjs.emplace(attackNumber, std::make_shared<GameAttackInfo>(GetGameRoom(), attackNumber));
+
+        }
+
+        auto it = _attackObjs.find(attackNumber);
+        auto attackInfoRef = it->second;
+        attackInfoRef->StartAttack();
+        attackInfoRef->SetPosition(x, y);
+        attackInfoRef->SetRotate(yaw);
+        attackInfoRef->SetPresentPosition(attackInfoRef->GetPosition());
+    }
+    else
+    {
+        auto it = _attackObjs.find(attackNumber);
+        if (it != _attackObjs.end())
+        {
+            auto attackInfoRef = it->second;
+            attackInfoRef->EndAttack();
+        }
+    }
+}
+
+void GamePlayerInfo::AttackObjectMove(int32 attackNumber, float x, float y, float yaw)
+{
+    if (_attackObjs.find(attackNumber) != _attackObjs.end())
+    {
+        auto attackInfoRef = _attackObjs.find(attackNumber)->second;
+        attackInfoRef->SetPresentPosition(attackInfoRef->GetPosition());
+        attackInfoRef->SetPosition(x, y);
+    }
+}
+
+void GamePlayerInfo::AttackObjectCollision(int32 attackNumber, Vector<int32> attackList)
+{
+    if (_attackObjs.find(attackNumber) != _attackObjs.end())
+    {
+        auto attackInfoRef = _attackObjs.find(attackNumber)->second;
+
+        for (int32 monsterNumber : attackList)
+        {
+            GameMosterInfoRef monsnter = GetGameRoom()->GetMonster(monsterNumber);
+            if (monsnter != nullptr)
+            {
+                bool result = monsnter->GetCollider().Trigger(attackInfoRef->GetCollider(), attackInfoRef->GetPresentPosition(), attackInfoRef->GetPosition());
+
+                if (result)
+                {
+                    // 공격 성공
+                    cout << "attack OCK KK  " << '\n';
+                }
+            }
+        }
+    }
 }
 
 void GamePlayerInfo::SetTarget(int32 uuid)

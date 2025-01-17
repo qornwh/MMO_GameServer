@@ -190,6 +190,7 @@
     <ClInclude Include="DropGenerater.h" />
     <ClInclude Include="FriendDB.h" />
     <ClInclude Include="FriendSystem.h" />
+    <ClInclude Include="GameAttackInfo.h" />
     <ClInclude Include="GameEvent.h" />
     <ClInclude Include="GameExpLv.h" />
     <ClInclude Include="GameCharater.h" />
@@ -223,6 +224,7 @@
     <ClCompile Include="DropGenerater.cpp" />
     <ClCompile Include="FriendDB.cpp" />
     <ClCompile Include="FriendSystem.cpp" />
+    <ClCompile Include="GameAttackInfo.cpp" />
     <ClCompile Include="GameEvent.cpp" />
     <ClCompile Include="GameExpLv.cpp" />
     <ClCompile Include="GameCharater.cpp" />

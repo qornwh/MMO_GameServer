@@ -292,11 +292,6 @@ void GameSession::HandlePacket(BYTE* buffer, PacketHeader* header)
             MoveHandler(buffer, header, static_cast<int32>(sizeof(PacketHeader)));
         }
         break;
-    case protocol::MessageCode::C_ATTACK:
-        {
-            AttackHandler(buffer, header, static_cast<int32>(sizeof(PacketHeader)));
-        }
-        break;
     case protocol::MessageCode::S_UNITDEMAGE:
         {
             DamegaHandler(buffer, header, static_cast<int32>(sizeof(PacketHeader)));
@@ -361,6 +356,11 @@ void GameSession::HandlePacket(BYTE* buffer, PacketHeader* header)
             SendMailHandler(buffer, header, static_cast<int32>(sizeof(PacketHeader)));
         }
         break;
+    case protocol::MessageCode::C_ATTACK:
+        {
+            AttackHandler(buffer, header, static_cast<int32>(sizeof(PacketHeader)));
+        }
+    break;
     case protocol::MessageCode::C_ATTACKS:
         {
             TestAttackHandler(buffer, header, static_cast<int32>(sizeof(PacketHeader)));
@@ -627,8 +627,10 @@ void GameSession::LoadHandler(BYTE* buffer, PacketHeader* header, int32 offset)
                 int32 gold = characterData.at("gold").get<int32>();
                 int32 lv = characterData.at("lv").get<int32>();
                 int32 exp = characterData.at("exp").get<int32>();
+                int32 playerCode = characterData.at("playerCode").get<int32>();
                 String nameStr = characterData.at("name").get<String>();
 
+                _playerCode = playerCode;
                 auto& position = readPkt.position();
                 CreatePlayerInfo(jobCode, _weaponCode, lv);
                 GetPlayer()->SetName(nameStr);
@@ -709,32 +711,6 @@ void GameSession::MoveHandler(BYTE* buffer, PacketHeader* header, int32 offset)
         
         if (GRoomManger->getRoom(GetRoomId()) != nullptr)
         {
-            GRoomManger->getRoom(GetRoomId())->BroadCastAnother(sendBuffer, GetPlayer()->GetUUid());
-        }
-    }
-}
-
-void GameSession::AttackHandler(BYTE* buffer, PacketHeader* header, int32 offset)
-{
-    protocol::CAttack pkt;
-    if (GRoomManger->getRoom(GetRoomId()) != nullptr)
-    {
-        if (GamePacketHandler::ParsePacketHandler(pkt, buffer, header->size - offset, offset))
-        {
-            int32 SkillCode = pkt.skill_code();
-            int32 TargetUUid = pkt.target_uuid();
-
-            auto& position = pkt.position();
-            GetPlayer()->SetPosition(position.z(), position.x());
-            GetPlayer()->SetRotate(position.yaw());
-            GetPlayer()->SetTarget(TargetUUid);
-            if (SkillCode == 0)
-                GetPlayer()->SetObjecteState(ObjectState::ATTACK);
-            else
-                GetPlayer()->SetObjecteState(ObjectState::SKILL1);
-            pkt.set_uuid(GetPlayer()->GetUUid());
-
-            SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(pkt, protocol::MessageCode::C_ATTACK);
             GRoomManger->getRoom(GetRoomId())->BroadCastAnother(sendBuffer, GetPlayer()->GetUUid());
         }
     }
@@ -1084,13 +1060,44 @@ void GameSession::SendMailHandler(BYTE* buffer, PacketHeader* header, int32 offs
     }
 }
 
+void GameSession::AttackHandler(BYTE* buffer, PacketHeader* header, int32 offset)
+{
+    protocol::CAttack pkt;
+    if (GRoomManger->getRoom(GetRoomId()) != nullptr)
+    {
+        if (GamePacketHandler::ParsePacketHandler(pkt, buffer, header->size - offset, offset))
+        {
+            int32 skillCode = pkt.skillcode();
+            int32 attackNumber = pkt.attacknumber();
+            auto& position = pkt.position();
+
+            if (skillCode == 0)
+                GetPlayer()->SetObjecteState(ObjectState::ATTACK);
+            else
+                GetPlayer()->SetObjecteState(ObjectState::SKILL1);
+            pkt.set_uuid(GetPlayer()->GetUUid());
+
+            SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(pkt, protocol::MessageCode::C_ATTACK);
+            GRoomManger->getRoom(GetRoomId())->AttackObject(std::static_pointer_cast<GameSession>(shared_from_this()), attackNumber, skillCode, position.x(), position.y(), position.yaw());
+            GRoomManger->getRoom(GetRoomId())->BroadCastAnother(sendBuffer, GetPlayer()->GetUUid());
+        }
+    }
+}
+
 void GameSession::TestAttackHandler(BYTE* buffer, PacketHeader* header, int32 offset)
 {
     protocol::UserAttack pkt;
-
-    if (GamePacketHandler::ParsePacketHandler(pkt, buffer, header->size - offset, offset))
+    if (GRoomManger->getRoom(GetRoomId()) != nullptr && GamePacketHandler::ParsePacketHandler(pkt, buffer, header->size - offset, offset))
     {
+        int32 attackNumber = pkt.attacknumber();
+        int32 skillCode = pkt.skillcode();
 
+        int32 targetSize = pkt.targetcodes().size();
+        Vector<int32> targets(targetSize);
+        for (int i = 0; i < targetSize; ++i)
+            targets[i] = pkt.targetcodes().Get(i);
+        auto& position = pkt.position();
 
+        GRoomManger->getRoom(GetRoomId())->AttackObjectMove(std::static_pointer_cast<GameSession>(shared_from_this()), attackNumber, skillCode, targets, position.x(), position.y(), position.yaw());
     }
 }

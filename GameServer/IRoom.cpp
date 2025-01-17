@@ -322,6 +322,36 @@ void GameRoom::BroadCastAnother(SendBufferRef sendBuffer, int32 uuid)
     PostQueuedCompletionStatus(_taskIo, dwNumberOfBytesTransferred, dwCompletionKey, reinterpret_cast<LPOVERLAPPED>(overlapped));
 }
 
+void GameRoom::AttackObject(GameSessionRef session, int32 attackNumber, int32 skillCode, float x, float y, float yaw)
+{
+    DWORD dwNumberOfBytesTransferred = 0;
+    ULONG_PTR dwCompletionKey = _taskId.fetch_add(1);
+    OverlappedTask* overlapped = new OverlappedTask();
+    overlapped->f = [this, session, attackNumber, skillCode, x, y, yaw]
+    {
+        GamePlayerInfoRef info = session->GetPlayer();
+        info->AttackObject(true, attackNumber, x, y, yaw);
+    };
+    PostQueuedCompletionStatus(_taskIo, dwNumberOfBytesTransferred, dwCompletionKey, reinterpret_cast<LPOVERLAPPED>(overlapped));
+
+}
+
+void GameRoom::AttackObjectMove(GameSessionRef session, int32 attackNumber, int32 skillCode, Vector<int32> targets, float x, float y, float yaw)
+{
+    DWORD dwNumberOfBytesTransferred = 0;
+    ULONG_PTR dwCompletionKey = _taskId.fetch_add(1);
+    OverlappedTask* overlapped = new OverlappedTask();
+    overlapped->f = [this, session, attackNumber, skillCode, targets, x, y, yaw]
+    {
+        GamePlayerInfoRef info = session->GetPlayer();
+        info->AttackObjectMove(attackNumber, x, y, yaw);
+
+        if (targets.size() > 0)
+            info->AttackObjectCollision(attackNumber, targets);
+    };
+    PostQueuedCompletionStatus(_taskIo, dwNumberOfBytesTransferred, dwCompletionKey, reinterpret_cast<LPOVERLAPPED>(overlapped));
+}
+
 void GameRoom::EnterDummySession(SessionRef session)
 {
     GameSessionRef gameSession = std::static_pointer_cast<GameSession>(session);

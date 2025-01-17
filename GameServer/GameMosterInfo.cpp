@@ -7,6 +7,9 @@ GameMosterInfo::GameMosterInfo(GameRoomRef gameRoom, int32 uuid, int32 code, int
 _startX(startX), _startY(startY), _genYaw(0, 360), _dropGenSystem(code)
 {
     _lv = lv;
+
+    _collider.SetRadius(40.f);
+    _collider.SetHeight(40.f);
 }
 
 GameMosterInfo::~GameMosterInfo()

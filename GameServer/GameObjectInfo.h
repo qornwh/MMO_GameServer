@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <random>
 #include "GameUtils.h"
-#include "Collider.h"
+#include "CapsuleCollider.h"
 #include "DropGenerater.h"
 #include "GameDrop.h"
 #include "FriendSystem.h"
@@ -54,8 +54,11 @@ public:
     void SetLv(int32 lv);
     int32 GetLv() { return _lv; }
     void SetPosition(float x, float y);
+    Vector2& GetPosition() { return _collider.GetPosition(); }
     void SetRotate(float yaw);
-    Collider& GetCollider() { return _collider; }
+    float GetRotate() { return _collider.GetRotate(); }
+
+    CapsuleCollider& GetCollider() { return _collider; }
     virtual void SetObjecteState(ObjectState state);
     ObjectState GetObjectState() { return _state; }
     void SetGameRoom(GameRoomRef gameRoom);
@@ -70,7 +73,7 @@ protected:
     int32 _hp = 0;
     int32 _lv = 0;
 
-    Collider _collider;
+    CapsuleCollider _collider;
     ObjectState _state = ObjectState::IDLE;
     std::weak_ptr<GameRoom> _gameRoomRef;
 };

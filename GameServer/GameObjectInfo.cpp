@@ -8,8 +8,7 @@
 #include "GameSession.h"
 #include "IRoom.h"
 
-GameObjectInfo::GameObjectInfo(GameRoomRef gameRoom, int32 uuid, int32 code): _gameRoomRef(gameRoom), _uuid(uuid), _hp(0), _maxHp(0), _damage(0), _code(code),
-                                                                              _lv(0), _collider(20.f)
+GameObjectInfo::GameObjectInfo(GameRoomRef gameRoom, int32 uuid, int32 code): _gameRoomRef(gameRoom), _uuid(uuid), _hp(0), _maxHp(0), _damage(0), _code(code), _lv(0), _collider(0.f, 0.f)
 {
 }
 

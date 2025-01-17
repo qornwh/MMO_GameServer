@@ -168,13 +168,6 @@ message Attack {
     int32 target_uuid = 3;
 }
 
-message CAttack {
-    int32 uuid = 1;
-    int32 skill_code = 2;
-    int32 target_uuid = 3;
-    Position position = 4;
-}
-
 message Demage {
     int32 uuid = 1;
     int32 demage = 2;
@@ -357,6 +350,13 @@ message SSendMail {
     int32 gold = 2;
     repeated ItemEquip itemEquips = 3; // 메시지보내고 소모된 아이템들
     repeated ItemEquip etcItems = 4; // 메시지보내고 소모된 아이템들
+}
+
+message CAttack {
+    int32 attackNumber = 1;
+    int32 uuid = 2;
+    int32 skillCode = 3;
+    Position position = 4;
 }
 
 message UserAttack {

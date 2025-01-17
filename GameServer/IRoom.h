@@ -117,6 +117,8 @@ public:
     GameMapInfoRef CreateMapInfo(int32 type);
     void CreateMonster(int32 type, int32 count);
     void BroadCastAnother(SendBufferRef sendBuffer, int32 uuid);
+    void AttackObject(GameSessionRef session, int32 attackNumber, int32 skillCode, float x = 0, float y = 0, float yaw = 0);
+    void AttackObjectMove(GameSessionRef session, int32 attackNumber, int32 skillCode, Vector<int32> targets, float x = 0, float y = 0, float yaw = 0);
 
     GameMosterInfoRef GetMonster(int32 Code)
     {
