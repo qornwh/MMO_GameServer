@@ -37,7 +37,7 @@ private:
     DropGenSystem _dropGenSystem;
 
 protected:
-    GameUtils::TickCounter _yawCounter{ 4 };
+    GameUtils::TickCounter _yawCounter{ 40 };
     GameUtils::TickCounter _moveCounter{ 1 };
     GameUtils::TickCounter _idleCounter{ 3 };
     GameUtils::TickCounter _hitCounter{ 3 };
