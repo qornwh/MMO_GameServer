@@ -35,26 +35,30 @@ public:
         float dot = Vector2::DotProduct(pa, ab);
         float len2sqrt = Vector2::Hypot(ab);
 
-        float t = dot / len2sqrt;
+        if (len2sqrt > 0)
+        {
+            float t = dot / len2sqrt;
 
-        if (t < 0.f)
-        {
-            // 점 a와 가까워짐
-            return Vector2::Hypot(p - a);
-        }
-        else if (t > 1.f)
-        {
-            // 점 b와 가까워짐
-            return Vector2::Hypot(p - b);
-        }
-        else
-        {
-            // 점 p는 선분ab사이를 벗어나지 않음
-            // 비율 t만큼 a를 이동시킨 수선의 발 h이다
-            Vector2 h{a.X + t * ab.X, a.Y + t * ab.Y};
+            if (t < 0.f)
+            {
+                // 점 a와 가까워짐
+                return Vector2::Sqrt(p - a);
+            }
+            else if (t > 1.f)
+            {
+                // 점 b와 가까워짐
+                return Vector2::Sqrt(p - b);
+            }
+            else
+            {
+                // 점 p는 선분ab사이를 벗어나지 않음
+                // 비율 t만큼 a를 이동시킨 수선의 발 h이다
+                Vector2 h{ a.X + t * ab.X, a.Y + t * ab.Y };
 
-            return Vector2::Hypot(p - h);
+                return Vector2::Sqrt(p - h);
+            }
         }
+        return Vector2::Sqrt(p - a);
     }
 
     static float CapsuleToCapsuleDistance(Vector2& a, Vector2& b, Vector2& p, Vector2& q)

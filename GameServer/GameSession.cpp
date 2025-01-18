@@ -51,6 +51,11 @@ std::shared_ptr<GamePlayerInfo> GameSession::GetPlayer()
     return _player;
 }
 
+void GameSession::SetRoomId(uint32 id)
+{
+    _roomId = id;
+}
+
 void GameSession::AddExp(int32 exp)
 {
     // IRoom에서 호출된다 lock 문제 x
@@ -363,7 +368,7 @@ void GameSession::HandlePacket(BYTE* buffer, PacketHeader* header)
     break;
     case protocol::MessageCode::C_ATTACKS:
         {
-            TestAttackHandler(buffer, header, static_cast<int32>(sizeof(PacketHeader)));
+            UserAttackHandler(buffer, header, static_cast<int32>(sizeof(PacketHeader)));
         }
         break;
     }
@@ -1084,7 +1089,7 @@ void GameSession::AttackHandler(BYTE* buffer, PacketHeader* header, int32 offset
     }
 }
 
-void GameSession::TestAttackHandler(BYTE* buffer, PacketHeader* header, int32 offset)
+void GameSession::UserAttackHandler(BYTE* buffer, PacketHeader* header, int32 offset)
 {
     protocol::UserAttack pkt;
     if (GRoomManger->getRoom(GetRoomId()) != nullptr && GamePacketHandler::ParsePacketHandler(pkt, buffer, header->size - offset, offset))

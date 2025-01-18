@@ -27,14 +27,14 @@ public:
     void UpdateMailHandler(BYTE* buffer, PacketHeader* header, int32 offset);
     void AllUpdateMailHandler(BYTE* buffer, PacketHeader* header, int32 offset);
     void SendMailHandler(BYTE* buffer, PacketHeader* header, int32 offset);
-    void TestAttackHandler(BYTE* buffer, PacketHeader* header, int32 offset);
+    void UserAttackHandler(BYTE* buffer, PacketHeader* header, int32 offset);
 
     void HandlePacket(BYTE* buffer, PacketHeader* header);
     int32 OnRecv(BYTE* buffer, int32 len) override;
     void CreatePlayerInfo(int32 jobCode, int32 weaponCode, int32 lv);
     std::shared_ptr<class GamePlayerInfo> GetPlayer();
     uint16 GetSessionId() { return _sessionId; }
-    void SetRoomId(uint32 id) { _roomId = id; }
+    void SetRoomId(uint32 id);
     int32 GetRoomId() { return _roomId; }
     void AddExp(int32 exp);
     void DropItem(std::shared_ptr<GameMosterInfo> monster);

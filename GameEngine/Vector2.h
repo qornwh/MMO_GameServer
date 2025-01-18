@@ -30,6 +30,11 @@ struct Vector2
         return Vector2(X - ref.X, Y - ref.Y);
     }
 
+    static float Sqrt(Vector2 a)
+    {
+        return sqrt(Hypot(a));
+    }
+
     static float Hypot(Vector2 a)
     {
         return hypot(a.X, a.Y);

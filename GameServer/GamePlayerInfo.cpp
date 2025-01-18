@@ -78,11 +78,12 @@ void GamePlayerInfo::AttackObjectCollision(int32 attackNumber, Vector<int32> att
 {
     if (_attackObjs.find(attackNumber) != _attackObjs.end())
     {
+        GameRoomRef room = GRoomManger->getRoom(_gameSession.lock()->GetRoomId());
         auto attackInfoRef = _attackObjs.find(attackNumber)->second;
 
         for (int32 monsterNumber : attackList)
         {
-            GameMosterInfoRef monsnter = GetGameRoom()->GetMonster(monsterNumber);
+            GameMosterInfoRef monsnter = room->GetMonster(monsterNumber);
             if (monsnter != nullptr)
             {
                 bool result = monsnter->GetCollider().Trigger(attackInfoRef->GetCollider(), attackInfoRef->GetPresentPosition(), attackInfoRef->GetPosition());
