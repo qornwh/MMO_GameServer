@@ -14,10 +14,8 @@ public:
 
     void SetPosition(float x, float y);
     Vector2& GetPosition() { return _position; }
-
     void SetRotate(float rot);
     float GetRotate() { return _rotate; }
-
     virtual bool Trigger(CapsuleCollider& targetCollider);
     virtual bool Trigger(CapsuleCollider& targetCollider, Vector2& targetPosition1, Vector2& targetPosition2);
     virtual bool Trigger(RectangleCollider& targetCollider, Vector2& targetPosition, Vector2& position);

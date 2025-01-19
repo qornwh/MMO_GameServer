@@ -10,7 +10,6 @@ public:
 	void StartAttack();
 	void EndAttack();
 	void Update();
-
 	void SetPresentPosition(Vector2& position);
 	Vector2& GetPresentPosition() { return _presentPosition; };
 

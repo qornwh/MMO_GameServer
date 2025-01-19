@@ -18,8 +18,8 @@ void GameRoom::EnterSession(SessionRef session)
         unit->set_code(player->GetCode());
         unit->set_weaponcode(player->GetWeapon());
         unit->set_uuid(player->GetUUid());
-        unit->set_hp(player->GetHp());
-        unit->set_lv(player->GetLv());
+        unit->set_hp(player->GetAbility().hp);
+        unit->set_lv(player->GetAbility().lv);
 
         protocol::Position* position = new protocol::Position;
         position->set_x(player->GetCollider().GetPosition().X);
@@ -54,8 +54,8 @@ void GameRoom::EnterSession(SessionRef session)
                     unit->set_name(info->GetName());
                     unit->set_code(info->GetCode());
                     unit->set_uuid(info->GetUUid());
-                    unit->set_hp(info->GetHp());
-                    unit->set_lv(info->GetLv());
+                    unit->set_hp(info->GetAbility().hp);
+                    unit->set_lv(info->GetAbility().lv);
                     unit->set_weaponcode(info->GetWeapon());
                     protocol::Position* position = new protocol::Position;
                     position->set_x(info->GetCollider().GetPosition().X);
@@ -77,8 +77,8 @@ void GameRoom::EnterSession(SessionRef session)
             protocol::Unit* unit = new protocol::Unit();
             unit->set_code(info->GetCode());
             unit->set_uuid(info->GetUUid());
-            unit->set_hp(info->GetHp());
-            unit->set_lv(info->GetLv());
+            unit->set_hp(info->GetAbility().hp);
+            unit->set_lv(info->GetAbility().lv);
             protocol::Position* position = new protocol::Position;
             position->set_x(info->GetCollider().GetPosition().X);
             position->set_y(info->GetCollider().GetPosition().Y);
@@ -206,77 +206,77 @@ void GameRoom::Work()
     }
 }
 
-void GameRoom::Attack(GameSessionRef session, bool isMonster, int32 demage, int32 uuid, float x, float y, float yaw)
-{
-    DWORD dwNumberOfBytesTransferred = 0;
-    ULONG_PTR dwCompletionKey = _taskId.fetch_add(1);
-    OverlappedTask* overlapped = new OverlappedTask();
-    overlapped->f = [this, session, isMonster, demage, uuid, x, y, yaw]
-    {
-        if (!isMonster)
-        {
-            session->GetPlayer()->TakeDamage(demage);
-            protocol::SUnitStates sendPkt;
-            protocol::UnitState* unitState = sendPkt.add_unit_state();
-            protocol::Unit* unit = new protocol::Unit();
-            unitState->set_is_monster(false);
-            unit->set_uuid(session->GetPlayer()->GetUUid());
-            if (session->GetPlayer()->GetHp() <= 0)
-            {
-                unit->set_state(ObjectState::DIE);
-                session->GetPlayer()->ReSpawn();
-            }
-            else
-            {
-                unit->set_state(ObjectState::HITED);
-            }
-            unit->set_hp(session->GetPlayer()->GetHp());
-            unitState->set_allocated_unit(unit);
-
-            SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::S_UNITSTATES);
-            BroadCast(sendBuffer);
-        }
-        else
-        {
-            if (_monsterMap[uuid]->GetObjectState() == ObjectState::DIE) return; // 이미 처리됨
-            _monsterMap[uuid]->SetTarget(session->GetPlayer()->GetUUid());
-            _monsterMap[uuid]->SetPosition(x, y);
-            _monsterMap[uuid]->SetRotate(yaw);
-            _monsterMap[uuid]->SetObjecteState(ObjectState::HITED);
-            _monsterMap[uuid]->TakeDamage(demage);
-            if (_monsterMap[uuid]->GetObjectState() == ObjectState::DIE)
-            {
-                // 경험치 증가
-                session->AddExp(_monsterMap[uuid]->GetExp());
-                // 아이템 드롭
-                session->DropItem(_monsterMap[uuid]);
-            }
-        }
-    };
-    PostQueuedCompletionStatus(_taskIo, dwNumberOfBytesTransferred, dwCompletionKey, reinterpret_cast<LPOVERLAPPED>(overlapped));
-}
-
-void GameRoom::Heal(GameSessionRef session, int32 heal, int32 uuid)
-{
-    DWORD dwNumberOfBytesTransferred = 0;
-    ULONG_PTR dwCompletionKey = _taskId.fetch_add(1);
-    OverlappedTask* overlapped = new OverlappedTask();
-    overlapped->f = [this, session, heal, uuid]
-    {
-        session->GetPlayer()->TakeHeal(heal);
-        protocol::SUnitStates sendPkt;
-        protocol::UnitState* unitState = sendPkt.add_unit_state();
-        protocol::Unit* unit = new protocol::Unit();
-        unitState->set_is_monster(false);
-        unit->set_uuid(uuid);
-        unit->set_state(ObjectState::HEAL);
-        unit->set_hp(session->GetPlayer()->GetHp());
-        unitState->set_allocated_unit(unit);
-        SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::S_UNITSTATES);
-        BroadCast(sendBuffer);
-    };
-    PostQueuedCompletionStatus(_taskIo, dwNumberOfBytesTransferred, dwCompletionKey, reinterpret_cast<LPOVERLAPPED>(overlapped));
-}
+//void GameRoom::Attack(GameSessionRef session, bool isMonster, int32 demage, int32 uuid, float x, float y, float yaw)
+//{
+//    DWORD dwNumberOfBytesTransferred = 0;
+//    ULONG_PTR dwCompletionKey = _taskId.fetch_add(1);
+//    OverlappedTask* overlapped = new OverlappedTask();
+//    overlapped->f = [this, session, isMonster, demage, uuid, x, y, yaw]
+//    {
+//        if (!isMonster)
+//        {
+//            session->GetPlayer()->TakeDamage(demage);
+//            protocol::SUnitStates sendPkt;
+//            protocol::UnitState* unitState = sendPkt.add_unit_state();
+//            protocol::Unit* unit = new protocol::Unit();
+//            unitState->set_is_monster(false);
+//            unit->set_uuid(session->GetPlayer()->GetUUid());
+//            if (session->GetPlayer()->GetHp() <= 0)
+//            {
+//                unit->set_state(ObjectStateType::DIE);
+//                session->GetPlayer()->ReSpawn();
+//            }
+//            else
+//            {
+//                unit->set_state(ObjectStateType::HITED);
+//            }
+//            unit->set_hp(session->GetPlayer()->GetHp());
+//            unitState->set_allocated_unit(unit);
+//
+//            SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::S_UNITSTATES);
+//            BroadCast(sendBuffer);
+//        }
+//        else
+//        {
+//            if (_monsterMap[uuid]->GetObjectState() == ObjectStateType::DIE) return; // 이미 처리됨
+//            _monsterMap[uuid]->SetTarget(session->GetPlayer()->GetUUid());
+//            _monsterMap[uuid]->SetPosition(x, y);
+//            _monsterMap[uuid]->SetRotate(yaw);
+//            _monsterMap[uuid]->SetObjecteState(ObjectStateType::HITED);
+//            _monsterMap[uuid]->TakeDamage(demage);
+//            if (_monsterMap[uuid]->GetObjectState() == ObjectStateType::DIE)
+//            {
+//                // 경험치 증가
+//                session->AddExp(_monsterMap[uuid]->GetExp());
+//                // 아이템 드롭
+//                session->DropItem(_monsterMap[uuid]);
+//            }
+//        }
+//    };
+//    PostQueuedCompletionStatus(_taskIo, dwNumberOfBytesTransferred, dwCompletionKey, reinterpret_cast<LPOVERLAPPED>(overlapped));
+//}
+//
+//void GameRoom::Heal(GameSessionRef session, int32 heal, int32 uuid)
+//{
+//    DWORD dwNumberOfBytesTransferred = 0;
+//    ULONG_PTR dwCompletionKey = _taskId.fetch_add(1);
+//    OverlappedTask* overlapped = new OverlappedTask();
+//    overlapped->f = [this, session, heal, uuid]
+//    {
+//        session->GetPlayer()->TakeHeal(heal);
+//        protocol::SUnitStates sendPkt;
+//        protocol::UnitState* unitState = sendPkt.add_unit_state();
+//        protocol::Unit* unit = new protocol::Unit();
+//        unitState->set_is_monster(false);
+//        unit->set_uuid(uuid);
+//        unit->set_state(ObjectStateType::HEAL);
+//        unit->set_hp(session->GetPlayer()->GetHp());
+//        unitState->set_allocated_unit(unit);
+//        SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::S_UNITSTATES);
+//        BroadCast(sendBuffer);
+//    };
+//    PostQueuedCompletionStatus(_taskIo, dwNumberOfBytesTransferred, dwCompletionKey, reinterpret_cast<LPOVERLAPPED>(overlapped));
+//}
 
 GameMapInfoRef GameRoom::CreateMapInfo(int32 type)
 {
@@ -347,7 +347,37 @@ void GameRoom::AttackObjectMove(GameSessionRef session, int32 attackNumber, int3
         info->AttackObjectMove(attackNumber, x, y, yaw);
 
         if (targets.size() > 0)
-            info->AttackObjectCollision(attackNumber, targets);
+        {
+            protocol::SUnitDemage sendPkt;
+            for (int32 target : targets)
+            {
+                bool result = info->AttackObjectCollisionAndDamage(attackNumber, target);
+
+                if (result)
+                {
+                    protocol::Demage* unit = sendPkt.add_demage();
+                    unit->set_uuid(target);
+                    unit->set_is_heal(false);
+                    unit->set_is_monster(true);
+                    unit->set_demage(info->GetAbility().attack);
+
+                    GameMosterInfoRef monsterInfo = GetMonster(target);
+                    if (monsterInfo->GetObjectState() == ObjectStateType::DIE)
+                    {
+                        // 경험치 증가
+                        session->AddExp(monsterInfo->GetAbility().exp);
+                        // 아이템 드롭
+                        session->DropItem(monsterInfo);
+                    }
+                }
+            }
+
+            if (sendPkt.demage_size() > 0)
+            {
+                SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::S_UNITDEMAGE);
+                BroadCast(sendBuffer);
+            }
+        }
     };
     PostQueuedCompletionStatus(_taskIo, dwNumberOfBytesTransferred, dwCompletionKey, reinterpret_cast<LPOVERLAPPED>(overlapped));
 }
@@ -363,8 +393,8 @@ void GameRoom::EnterDummySession(SessionRef session)
     unit->set_name(gameSession->GetPlayer()->GetName());
     unit->set_code(gameSession->GetPlayer()->GetCode());
     unit->set_uuid(gameSession->GetPlayer()->GetUUid());
-    unit->set_hp(gameSession->GetPlayer()->GetHp());
-    unit->set_lv(gameSession->GetPlayer()->GetLv());
+    unit->set_hp(100);
+    unit->set_lv(1);
 
     protocol::Position* position = new protocol::Position;
     position->set_x(gameSession->GetPlayer()->GetCollider().GetPosition().X);

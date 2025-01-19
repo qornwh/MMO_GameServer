@@ -98,6 +98,9 @@
     <ClCompile Include="GameAttackInfo.cpp">
       <Filter>Unit</Filter>
     </ClCompile>
+    <ClCompile Include="ObjectAbility.cpp">
+      <Filter>Unit</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObjectInfo.h">
@@ -197,6 +200,9 @@
       <Filter>Unit</Filter>
     </ClInclude>
     <ClInclude Include="GameAttackInfo.h">
+      <Filter>Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectAbility.h">
       <Filter>Unit</Filter>
     </ClInclude>
   </ItemGroup>

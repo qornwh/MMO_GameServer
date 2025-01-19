@@ -23,29 +23,29 @@
     "weapons": [
       {
         "code": 1,
-        "attackSpeed": 10.0
+        "attackSpeed": 1.0
       },
       {
         "code": 2,
-        "attackSpeed": 13.0
+        "attackSpeed": 1.5
       },
       {
         "code": 3,
-        "attackSpeed": 15.0
+        "attackSpeed": 2.0
       }
     ],
     "monsters": [
       {
         "code": 1,
         "attack": 15.0,
-        "moveSpeed": 250.0,
+        "moveSpeed": 50.0,
         "hp": 1000,
         "exp": 5
       },
       {
         "code": 2,
         "attack": 20.0,
-        "moveSpeed": 200.0,
+        "moveSpeed": 50.0,
         "hp": 1500,
         "exp": 10
       }

@@ -1,9 +1,9 @@
 #pragma once
 #include "GameObjectInfo.h"
+#include "ObjectAbility.h"
 
 class GameMosterInfo : public GameObjectInfo
 {
-#pragma region field
 public:
     GameMosterInfo(GameRoomRef gameRoom, int32 uuid, int32 code, int32 lv, int32 startX, int32 startY);
     ~GameMosterInfo() override;
@@ -12,12 +12,12 @@ public:
     void Move() override;
     void Spawn();
     virtual void MoveTarget(GamePlayerInfoRef target);
-    void TakeDamage(int32 Damage) override;
-    void SetObjecteState(ObjectState state) override;
+    int32 TakeDamage(int32 target, int32 Damage);
+    void SetObjecteState(ObjectStateType state) override;
     void GetStartPosition(int32& x, int32& y);
     void SetTarget(int32 uuid);
     int32 GetTarget() { return _targetUUid; }
-    int32 GetExp() { return _exp; }
+    ObjectAbility& GetAbility() { return _ability; }
     DropGenSystem& GetDropSystem() { return _dropGenSystem; }
 
     virtual int32 AddAttackCounter(int32 count = 1);
@@ -29,11 +29,10 @@ public:
 private:
     int32 _startX;
     int32 _startY;
-    float _moveSpeed = 0.f;
     int32 _targetUUid = -1;
-    int32 _exp = 0;
     std::uniform_int_distribution<> _genYaw;
-#pragma endregion field
+
+    ObjectAbility _ability;
     DropGenSystem _dropGenSystem;
 
 protected:

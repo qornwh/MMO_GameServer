@@ -17,7 +17,6 @@ public:
     void ChatHandler(BYTE* buffer, PacketHeader* header, int32 offset);
     void AttackHandler(BYTE* buffer, PacketHeader* header, int32 offset);
     void ChangeRoomHandler(BYTE* buffer, PacketHeader* header, int32 offset);
-    void DamegaHandler(BYTE* buffer, PacketHeader* header, int32 offset);
     void PlayerAimHandler(BYTE* buffer, PacketHeader* header, int32 offset);
     void PlayerJumpHandler(BYTE* buffer, PacketHeader* header, int32 offset);
     void SellItemsHandler(BYTE* buffer, PacketHeader* header, int32 offset);

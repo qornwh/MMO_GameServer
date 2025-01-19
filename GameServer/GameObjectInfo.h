@@ -10,7 +10,7 @@
 
 static std::mt19937_64 rng{};
 
-enum ObjectState
+enum ObjectStateType
 {
     IDLE = 0,
     DIE = 1,
@@ -40,27 +40,22 @@ public:
     
     virtual void Update() {}
     virtual void Move() {}
-    virtual void TakeDamage(int32 Damage);
-    virtual void TakeHeal(int32 heal);
+    //virtual void TakeDamage(int32 Damage);
+    //virtual void TakeHeal(int32 heal);
 
     void SetName(const std::string& name);
     std::string& GetName() { return _name; }
     int32 GetUUid() { return _uuid; }
-    int32 GetMaxHp() { return _maxHp; }
-    void SetHp(int32 hp);
-    int32 GetHp() { return _hp; }
     void SetCode(int32 code);
     int32 GetCode() { return _code; }
-    void SetLv(int32 lv);
-    int32 GetLv() { return _lv; }
     void SetPosition(float x, float y);
     Vector2& GetPosition() { return _collider.GetPosition(); }
     void SetRotate(float yaw);
     float GetRotate() { return _collider.GetRotate(); }
 
     CapsuleCollider& GetCollider() { return _collider; }
-    virtual void SetObjecteState(ObjectState state);
-    ObjectState GetObjectState() { return _state; }
+    virtual void SetObjecteState(ObjectStateType state);
+    ObjectStateType GetObjectState() { return _state; }
     void SetGameRoom(GameRoomRef gameRoom);
     GameRoomRef GetGameRoom() { return _gameRoomRef.lock(); }
 
@@ -69,12 +64,9 @@ protected:
     int32 _uuid;
     int32 _damage;
     int32 _code;
-    int32 _maxHp = 0;
-    int32 _hp = 0;
-    int32 _lv = 0;
 
     CapsuleCollider _collider;
-    ObjectState _state = ObjectState::IDLE;
+    ObjectStateType _state = ObjectStateType::IDLE;
     std::weak_ptr<GameRoom> _gameRoomRef;
 };
 

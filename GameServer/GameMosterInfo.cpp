@@ -6,10 +6,10 @@
 GameMosterInfo::GameMosterInfo(GameRoomRef gameRoom, int32 uuid, int32 code, int32 lv, int32 startX, int32 startY) : GameObjectInfo(gameRoom, uuid, code),
 _startX(startX), _startY(startY), _genYaw(0, 360), _dropGenSystem(code)
 {
-    _lv = lv;
-
     _collider.SetRadius(40.f);
     _collider.SetHeight(40.f);
+
+    _ability.lv = lv;
 }
 
 GameMosterInfo::~GameMosterInfo()
@@ -19,15 +19,14 @@ GameMosterInfo::~GameMosterInfo()
 void GameMosterInfo::Spawn()
 {
     SetPosition(static_cast<float>(_startX), static_cast<float>(_startY));
-    SetObjecteState(ObjectState::IDLE);
+    SetObjecteState(ObjectStateType::IDLE);
     _dropGenSystem.InitGen();
 
-    auto it = GMonster->GetCharater().find(_code);
+    auto it = GMonster->GetCharater().find(GetCode());
     CrashFunc(it != GMonster->GetCharater().end());
-    _maxHp = it->second._hp;
-    _hp = _maxHp;
-    _moveSpeed = it->second._moveSpeed;
-    _exp = it->second._exp;
+    _ability.maxHp = it->second._hp;
+    _ability.hp = _ability.maxHp;
+    _ability.speed = it->second._moveSpeed;
 }
 
 void GameMosterInfo::Update()
@@ -37,7 +36,7 @@ void GameMosterInfo::Update()
 
     switch (GetObjectState())
     {
-    case ObjectState::IDLE:
+    case ObjectStateType::IDLE:
     {
         if (AddIdleCounter() == 0)
         {
@@ -47,9 +46,9 @@ void GameMosterInfo::Update()
             protocol::Unit* monster = new protocol::Unit();
             monster->set_state(GetObjectState());
             monster->set_uuid(GetUUid());
-            monster->set_hp(GetHp());
             monster->set_code(GetCode());
-            monster->set_lv(GetLv());
+            monster->set_hp(_ability.hp);
+            monster->set_lv(_ability.lv);
             protocol::Position* position = new protocol::Position();
             position->set_x(GetCollider().GetPosition().X);
             position->set_y(GetCollider().GetPosition().X);
@@ -60,7 +59,7 @@ void GameMosterInfo::Update()
         }
     }
     break;
-    case ObjectState::MOVE:
+    case ObjectStateType::MOVE:
     {
         if (AddMoveCounter() == 0)
         {
@@ -68,7 +67,7 @@ void GameMosterInfo::Update()
             protocol::UnitState* childPkt = room->GetUnitPacket().add_unit_state();
             childPkt->set_is_monster(true);
             protocol::Unit* monster = new protocol::Unit();
-            monster->set_state(ObjectState::MOVE);
+            monster->set_state(ObjectStateType::MOVE);
             monster->set_uuid(GetUUid());
             protocol::Position* position = new protocol::Position();
             position->set_x(GetCollider().GetPosition().X);
@@ -80,7 +79,7 @@ void GameMosterInfo::Update()
         }
     }
     break;
-    case ObjectState::ATTACK:
+    case ObjectStateType::ATTACK:
     {
         if (AddAttackCounter() == 0)
         {
@@ -97,7 +96,7 @@ void GameMosterInfo::Update()
         }
     }
     break;
-    case ObjectState::HITED:
+    case ObjectStateType::HITED:
     {
         if (AddHitCounter() == 0)
         {
@@ -105,7 +104,7 @@ void GameMosterInfo::Update()
             childPkt->set_is_monster(true);
             protocol::Unit* unit = new protocol::Unit();
             unit->set_uuid(GetUUid());
-            unit->set_hp(GetHp());
+            unit->set_hp(_ability.hp);
             unit->set_state(GetObjectState());
             protocol::Position* position = new protocol::Position();
             position->set_x(GetCollider().GetPosition().X);
@@ -117,14 +116,14 @@ void GameMosterInfo::Update()
         }
     }
     break;
-    case ObjectState::DIE:
+    case ObjectStateType::DIE:
     {
         if (AddDieCounter() == 0)
         {
             protocol::UnitState* childPkt = room->GetUnitPacket().add_unit_state();
             childPkt->set_is_monster(true);
             protocol::Unit* unit = new protocol::Unit();
-            unit->set_state(ObjectState::DIE);
+            unit->set_state(ObjectStateType::DIE);
             unit->set_uuid(GetUUid());
             childPkt->set_allocated_unit(unit);
         }
@@ -135,25 +134,25 @@ void GameMosterInfo::Update()
     }
 }
 
-void GameMosterInfo::SetObjecteState(ObjectState state)
+void GameMosterInfo::SetObjecteState(ObjectStateType state)
 {
     GameObjectInfo::SetObjecteState(state);
 
     switch (_state)
     {
-    case ObjectState::IDLE:
+    case ObjectStateType::IDLE:
         _idleCounter.ResetTic();
         break;
-    case ObjectState::DIE:
+    case ObjectStateType::DIE:
         _dieCounter.ResetTic();
         break;
-    case ObjectState::HITED:
+    case ObjectStateType::HITED:
         _hitCounter.ResetTic();
         break;
-    case ObjectState::MOVE:
+    case ObjectStateType::MOVE:
         _moveCounter.ResetTic();
         break;
-    case ObjectState::ATTACK:
+    case ObjectStateType::ATTACK:
         _attackCounter.ResetTic();
         break;
     default:
@@ -190,8 +189,8 @@ void GameMosterInfo::Move()
         SetRotate(static_cast<float>(_genYaw(rng)));
     }
 
-    float moveX = GetCollider().GetPosition().X + GameEngine::MathUtils::GetSin(GetCollider().GetRotate()) * _moveSpeed;
-    float moveY = GetCollider().GetPosition().Y + GameEngine::MathUtils::GetCos(GetCollider().GetRotate()) * _moveSpeed;
+    float moveX = GetCollider().GetPosition().X + GameEngine::MathUtils::GetSin(GetCollider().GetRotate()) * _ability.speed;
+    float moveY = GetCollider().GetPosition().Y + GameEngine::MathUtils::GetCos(GetCollider().GetRotate()) * _ability.speed;
     GetGameRoom()->GetGameMap()->GetMonsterMapInfo()->InSetRect(moveX, moveY);
     SetPosition(moveX, moveY);
 }
@@ -205,15 +204,15 @@ void GameMosterInfo::MoveTarget(GamePlayerInfoRef target)
     if (dist < 1000.f)
     {
         // 몬스터의 공격상태로 변경시킨다
-        SetObjecteState(ObjectState::ATTACK);
+        SetObjecteState(ObjectStateType::ATTACK);
     }
     else
     {
         Vector2& curPos = GetCollider().GetPosition();
-        if (dist > _moveSpeed)
+        if (dist > _ability.speed)
         {
-            curPos.X = curPos.X + (GameEngine::MathUtils::GetCos(GetCollider().GetRotate()) * _moveSpeed);
-            curPos.Y = curPos.Y + (GameEngine::MathUtils::GetSin(GetCollider().GetRotate()) * _moveSpeed);
+            curPos.X = curPos.X + (GameEngine::MathUtils::GetCos(GetCollider().GetRotate()) * _ability.speed);
+            curPos.Y = curPos.Y + (GameEngine::MathUtils::GetSin(GetCollider().GetRotate()) * _ability.speed);
         }
         else
         {
@@ -223,21 +222,27 @@ void GameMosterInfo::MoveTarget(GamePlayerInfoRef target)
     }
 }
 
-void GameMosterInfo::TakeDamage(int32 Damage)
+int32 GameMosterInfo::TakeDamage(int32 target, int32 Damage)
 {
-    GameObjectInfo::TakeDamage(Damage);
+    _ability.hp -= Damage;
 
-    if (_hp <= 0)
+    if (_ability.hp <= 0)
     {
-        SetObjecteState(ObjectState::DIE);
+        _ability.hp = 0;
+        SetObjecteState(ObjectStateType::DIE);
     }
+    else
+    {
+        SetObjecteState(ObjectStateType::HITED);
+    }
+    return _ability.hp;
 }
 
 int32 GameMosterInfo::AddAttackCounter(int32 count)
 {
     int32 value = _attackCounter.Add(count);
     if (value == _attackCounter.GetTickValue() - 1)
-        SetObjecteState(ObjectState::MOVE);
+        SetObjecteState(ObjectStateType::MOVE);
     return value;
 }
 
@@ -245,7 +250,7 @@ int32 GameMosterInfo::AddIdleCounter(int32 count)
 {
     int32 value = _idleCounter.Add(count);
     if (value == _idleCounter.GetTickValue() - 1)
-        SetObjecteState(ObjectState::MOVE);
+        SetObjecteState(ObjectStateType::MOVE);
     return value;
 }
 
@@ -253,7 +258,7 @@ int32 GameMosterInfo::AddHitCounter(int32 count)
 {
     int32 value = _hitCounter.Add(count);
     if (value == _hitCounter.GetTickValue() - 1)
-        SetObjecteState(ObjectState::MOVE);
+        SetObjecteState(ObjectStateType::MOVE);
     return value;
 }
 

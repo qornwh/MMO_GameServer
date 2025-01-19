@@ -62,13 +62,13 @@ void GameSession::AddExp(int32 exp)
     if (GetPlayer()->AddExp(exp))
     {
         SessionDB sdb;
-        sdb.UpdateExp(_playerCode, GetPlayer()->GetExp(), GetPlayer()->GetLv());
+        sdb.UpdateExp(_playerCode, GetPlayer()->GetAbility().exp, GetPlayer()->GetAbility().lv);
 
         protocol::SExpLv pkt;
 
         pkt.set_uuid(GetPlayer()->GetUUid());
-        pkt.set_exp(GetPlayer()->GetExp());
-        pkt.set_lv(GetPlayer()->GetLv());
+        pkt.set_exp(GetPlayer()->GetAbility().exp);
+        pkt.set_lv(GetPlayer()->GetAbility().lv);
 
         SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(pkt, protocol::MessageCode::S_EXPLV);
         AsyncWrite(sendBuffer);
@@ -295,11 +295,6 @@ void GameSession::HandlePacket(BYTE* buffer, PacketHeader* header)
     case protocol::MessageCode::S_MOVE:
         {
             MoveHandler(buffer, header, static_cast<int32>(sizeof(PacketHeader)));
-        }
-        break;
-    case protocol::MessageCode::S_UNITDEMAGE:
-        {
-            DamegaHandler(buffer, header, static_cast<int32>(sizeof(PacketHeader)));
         }
         break;
     case protocol::MessageCode::S_CHAT:
@@ -645,6 +640,7 @@ void GameSession::LoadHandler(BYTE* buffer, PacketHeader* header, int32 offset)
                 GetPlayer()->SetInventory(gold);
                 GetPlayer()->SetFriend();
                 GetPlayer()->SetMail();
+                GetPlayer()->UpdateAblity();
 
                 // 나를 확인용 메시지 전달.
                 if (GetService() != nullptr)
@@ -654,8 +650,8 @@ void GameSession::LoadHandler(BYTE* buffer, PacketHeader* header, int32 offset)
                     unit->set_name(_player->GetName());
                     unit->set_code(_player->GetCode());
                     unit->set_uuid(_player->GetUUid());
-                    unit->set_hp(_player->GetHp());
-                    unit->set_lv(_player->GetLv());
+                    unit->set_hp(_player->GetAbility().hp);
+                    unit->set_lv(_player->GetAbility().lv);
                     unit->set_weaponcode(_player->GetWeapon());
                     sendPkt.set_allocated_player(unit);
                     sendPkt.set_exp(exp);
@@ -760,46 +756,6 @@ void GameSession::ChangeRoomHandler(BYTE* buffer, PacketHeader* header, int32 of
             GetPlayer()->SetPosition(-20, 0);
             GetPlayer()->SetRotate(0);
             GRoomManger->getRoom(nextRoomId)->EnterSession(std::static_pointer_cast<GameSession>(shared_from_this()));
-        }
-    }
-}
-
-void GameSession::DamegaHandler(BYTE* buffer, PacketHeader* header, int32 offset)
-{
-    protocol::SUnitDemage pkt;
-
-    if (GamePacketHandler::ParsePacketHandler(pkt, buffer, header->size - offset, offset))
-    {
-        // 피격시 일단 룸에서 데미지 패킷을 보내는게 아니라 여기서 일단 바로 보낸다.
-        // 피격 모션은 update에서 진행 
-        for (auto& demage : pkt.demage())
-        {
-            int32 demageVal = demage.demage();
-            int32 uuid = demage.uuid();
-            int32 isMonster = demage.is_monster();
-            bool isHeal = demage.is_heal();
-
-            if (isHeal)
-            {
-                GRoomManger->getRoom(_roomId)->Heal(std::static_pointer_cast<GameSession>(shared_from_this()), demageVal, uuid);
-            }
-            else
-            {
-                if (!isMonster)
-                {
-                    GRoomManger->getRoom(_roomId)->Attack(std::static_pointer_cast<GameSession>(shared_from_this()), isMonster, demageVal, uuid);
-                }
-                else
-                {
-                    GRoomManger->getRoom(_roomId)->Attack(std::static_pointer_cast<GameSession>(shared_from_this()), isMonster, demageVal, uuid,
-                                                          demage.position().x(), demage.position().y(), demage.position().yaw());
-                }
-            }
-            SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(pkt, protocol::MessageCode::S_UNITDEMAGE);
-            if (GRoomManger->getRoom(GetRoomId()) != nullptr)
-            {
-                GRoomManger->getRoom(GetRoomId())->BroadCastAnother(sendBuffer, GetPlayer()->GetUUid());
-            }
         }
     }
 }
@@ -1077,9 +1033,9 @@ void GameSession::AttackHandler(BYTE* buffer, PacketHeader* header, int32 offset
             auto& position = pkt.position();
 
             if (skillCode == 0)
-                GetPlayer()->SetObjecteState(ObjectState::ATTACK);
+                GetPlayer()->SetObjecteState(ObjectStateType::ATTACK);
             else
-                GetPlayer()->SetObjecteState(ObjectState::SKILL1);
+                GetPlayer()->SetObjecteState(ObjectStateType::SKILL1);
             pkt.set_uuid(GetPlayer()->GetUUid());
 
             SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(pkt, protocol::MessageCode::C_ATTACK);
