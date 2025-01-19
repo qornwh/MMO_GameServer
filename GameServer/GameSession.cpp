@@ -840,6 +840,7 @@ void GameSession::UpdateItemsHandler(BYTE* buffer, PacketHeader* header, int32 o
             protocol::CUpdateItems sendPkt;
             sendPkt.set_invenpos(invenPos);
             sendPkt.set_equippos(equipPos);
+            GetPlayer()->UpdateAblity();
 
             SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::C_UPDATEITEMS);
             AsyncWrite(sendBuffer);
