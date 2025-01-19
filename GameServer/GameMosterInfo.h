@@ -38,10 +38,10 @@ private:
 protected:
     GameUtils::TickCounter _yawCounter{ 40 };
     GameUtils::TickCounter _moveCounter{ 1 };
-    GameUtils::TickCounter _idleCounter{ 3 };
-    GameUtils::TickCounter _hitCounter{ 3 };
+    GameUtils::TickCounter _idleCounter{ 30 };
+    GameUtils::TickCounter _hitCounter{ 30 };
     GameUtils::TickCounter _dieCounter{ 30 };
-    GameUtils::TickCounter _attackCounter{ 10 };
-    GameUtils::TickCounter _readyAttackCounter{ 10 };
+    GameUtils::TickCounter _attackCounter{ 100 };
+    GameUtils::TickCounter _readyAttackCounter{ 100 };
 };
 
