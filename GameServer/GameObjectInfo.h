@@ -6,6 +6,7 @@
 #include "GameDrop.h"
 #include "FriendSystem.h"
 #include "GameCharater.h"
+#include "GameSkill.h"
 #include "GameService.pb.h"
 
 static std::mt19937_64 rng{};

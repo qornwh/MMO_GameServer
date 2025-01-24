@@ -201,10 +201,11 @@ void GameMosterInfo::MoveTarget(GamePlayerInfoRef target)
     SetRotate(theta);
 
     float dist = Vector2::Magnitude(_collider.GetPosition() - target->GetCollider().GetPosition());
-    if (dist < 1000.f)
+    if (dist < 150.f)
     {
         // 몬스터의 공격상태로 변경시킨다
-        SetObjecteState(ObjectStateType::ATTACK);
+        //SetObjecteState(ObjectStateType::ATTACK);
+        cout << "Monster Attack !!!" << '\n';
     }
     else
     {
@@ -233,6 +234,7 @@ int32 GameMosterInfo::TakeDamage(int32 target, int32 Damage)
     }
     else
     {
+        _targetUUid = target;
         SetObjecteState(ObjectStateType::HITED);
     }
     return _ability.hp;

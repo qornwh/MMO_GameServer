@@ -330,7 +330,7 @@ void GameRoom::AttackObject(GameSessionRef session, int32 attackNumber, int32 sk
     overlapped->f = [this, session, attackNumber, skillCode, x, y, yaw]
     {
         GamePlayerInfoRef info = session->GetPlayer();
-        info->AttackObject(true, attackNumber, x, y, yaw);
+        info->AttackObject(true, attackNumber, skillCode, x, y, yaw);
     };
     PostQueuedCompletionStatus(_taskIo, dwNumberOfBytesTransferred, dwCompletionKey, reinterpret_cast<LPOVERLAPPED>(overlapped));
 

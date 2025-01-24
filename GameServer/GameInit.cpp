@@ -160,8 +160,13 @@ void GameInit::SetSkill(nlohmann::json& unitJson)
 		int32 code = static_cast<int32>(GameUtils::JsonParser::Parser("code", unit).get<int32>());
 		float coolTime = static_cast<float>(GameUtils::JsonParser::Parser("coolTime", unit).get<float>());
 		int32 weaponCode = static_cast<int32>(GameUtils::JsonParser::Parser("weaponCode", unit).get<int32>());
+		int32 targetCount = static_cast<int32>(GameUtils::JsonParser::Parser("targetCount", unit).get<int32>());
+		bool isTargetting = static_cast<bool>(GameUtils::JsonParser::Parser("isTargetting", unit).get<bool>());
+		bool moveProjectile = static_cast<bool>(GameUtils::JsonParser::Parser("moveProjectile", unit).get<bool>());
+		int32 rangeRadius = static_cast<int32>(GameUtils::JsonParser::Parser("rangeRadius", unit).get<int32>());
+		int32 rangeHeight = static_cast<int32>(GameUtils::JsonParser::Parser("rangeHeight", unit).get<int32>());
 
-		GSkill->GetSkill().emplace(code, Skill(type, value, duration, code, coolTime, weaponCode));
+		GSkill->GetSkill().emplace(code, Skill(type, value, duration, code, coolTime, weaponCode, targetCount, isTargetting, moveProjectile, rangeRadius, rangeHeight));
 	}
 }
 

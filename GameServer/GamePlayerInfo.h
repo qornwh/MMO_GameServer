@@ -11,7 +11,7 @@ public:
     GamePlayerInfo(GameSessionRef gameSession, int32 playerCode, int32 uuid, int32 jobCode, int32 weaponCode, int32 lv);
     ~GamePlayerInfo() override;
     void Update() override;
-    void AttackObject(bool isCreate, int32 attackNumber, float x, float y, float yaw);
+    void AttackObject(bool isCreate, int32 attackNumber, int32 skillCode, float x, float y, float yaw);
     void AttackObjectMove(int32 attackNumber, float x, float y, float yaw);
     bool AttackObjectCollisionAndDamage(int32 attackNumber, int32 target);
 

@@ -36,7 +36,7 @@ void GamePlayerInfo::Update()
         return;
 }
 
-void GamePlayerInfo::AttackObject(bool isCreate, int32 attackNumber, float x, float y, float yaw)
+void GamePlayerInfo::AttackObject(bool isCreate, int32 attackNumber, int32 skillCode, float x, float y, float yaw)
 {
     if (isCreate)
     {
@@ -51,6 +51,14 @@ void GamePlayerInfo::AttackObject(bool isCreate, int32 attackNumber, float x, fl
         attackInfoRef->SetPosition(x, y);
         attackInfoRef->SetRotate(yaw);
         attackInfoRef->SetPresentPosition(attackInfoRef->GetPosition());
+
+        if (skillCode > 0)
+        {
+            auto it = GSkill->GetSkill().find(skillCode);
+            
+            attackInfoRef->GetCollider().SetRadius(it->second._rangeRadius);
+            attackInfoRef->GetCollider().SetHeight(it->second._rangeHeight);
+        }
     }
     else
     {

@@ -38,26 +38,31 @@
       {
         "code": 1,
         "attack": 15.0,
-        "moveSpeed": 50.0,
+        "moveSpeed": 20.0,
         "hp": 1000,
         "exp": 5
       },
       {
         "code": 2,
         "attack": 20.0,
-        "moveSpeed": 50.0,
+        "moveSpeed": 20.0,
         "hp": 1500,
         "exp": 10
       }
     ],
     "Skills": [
       {
-        "type" : 0,
+        "type": 0,
         "value": 300.0,
         "duration": 0.0,
         "code": 101,
         "coolTime": 3.0,
-        "weaponCode": 1
+        "weaponCode": 1,
+        "targetCount": 6,
+        "isTargetting": false,
+        "moveProjectile": false,
+        "rangeRadius": 10,
+        "rangeHeight": 400
       },
       {
         "type": 1,
@@ -65,39 +70,64 @@
         "duration": 0.0,
         "code": 102,
         "coolTime": 3.0,
-        "weaponCode": 1
+        "weaponCode": 1,
+        "targetCount": 0,
+        "isTargetting": false,
+        "moveProjectile": false,
+        "rangeRadius": 0,
+        "rangeHeight": 0
       },
       {
-        "type" : 0,
+        "type": 0,
         "value": 200.0,
         "duration": 0.0,
         "code": 201,
         "coolTime": 3.0,
-        "weaponCode": 2
+        "weaponCode": 2,
+        "targetCount": 6,
+        "isTargetting": false,
+        "moveProjectile": false,
+        "rangeRadius": 50,
+        "rangeHeight": 150
       },
       {
-        "type" : 2,
+        "type": 2,
         "value": 150.0,
         "duration": 3.0,
         "code": 202,
         "coolTime": 3.0,
-        "weaponCode": 2
+        "weaponCode": 2,
+        "targetCount": 0,
+        "isTargetting": false,
+        "moveProjectile": false,
+        "rangeRadius": 0,
+        "rangeHeight": 0
       },
       {
-        "type" : 0,
+        "type": 0,
         "value": 150.0,
         "duration": 0.0,
         "code": 301,
         "coolTime": 3.0,
-        "weaponCode": 3
+        "weaponCode": 3,
+        "targetCount": 6,
+        "isTargetting": false,
+        "moveProjectile": false,
+        "rangeRadius": 20,
+        "rangeHeight": 300
       },
       {
-        "type" : 3,
+        "type": 3,
         "value": 150.0,
         "duration": 0.0,
         "code": 302,
         "coolTime": 5.0,
-        "weaponCode": 3
+        "weaponCode": 3,
+        "targetCount": 0,
+        "isTargetting": false,
+        "moveProjectile": false,
+        "rangeRadius": 0,
+        "rangeHeight": 0
       }
     ]
   },
@@ -146,7 +176,7 @@
       "monsterList": [
         {
           "code" : 1,
-          "count" : 10
+          "count" : 1
         },
         {
           "code" : 2,

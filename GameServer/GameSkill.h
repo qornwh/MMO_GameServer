@@ -12,7 +12,7 @@ public:
         SPEEDBUF = 3
     };
 
-    Skill(int32 type, float value, float duration, int32 code, float coolTime, int32 weaponCode);
+    Skill(int32 type, float value, float duration, int32 code, float coolTime, int32 weaponCode, int32 targetCount, bool isTargetting, bool moveProjectile, int32 rangeRadius, int32 rangetHeight);
     Skill(const Skill& other);
 
     SkillType _type;
@@ -21,6 +21,11 @@ public:
     int32 _code;
     float _coolTime;
     int32 _weaponCode;
+    int32 _targetCount;
+    bool _isTargetting;
+    bool _moveProjectile;
+    int32 _rangeRadius;
+    int32 _rangeHeight;
 };
 
 class GameSkill : public std::enable_shared_from_this<GameSkill>
