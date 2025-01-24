@@ -43,7 +43,7 @@ protected:
     GameUtils::TickCounter _idleCounter{ 20 };
     GameUtils::TickCounter _hitCounter{ 15 };
     GameUtils::TickCounter _dieCounter{ 10 };
-    GameUtils::TickCounter _attackCounter{ 2 };
-    GameUtils::TickCounter _readyAttackCounter{ 3 };
+    GameUtils::TickCounter _attackCounter{ 5 };
+    GameUtils::TickCounter _readyAttackCounter{ 5 };
 };
 

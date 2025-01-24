@@ -331,19 +331,34 @@ void GameRoom::AttackPlayer(int32 uuid)
         bool result = monsterInfo->AttackObjectCollision();
         if (result)
         {
-            protocol::SUnitDemage sendPkt;
             auto targetPlayer = GetPlayer(monsterInfo->GetTarget());
             int32 damage = monsterInfo->GetAbility().attack;
             targetPlayer->TakeDamage(monsterInfo->GetUUid(), damage);
+            
+            {
+                protocol::SUnitDemage sendPkt;
+                protocol::Demage* unit = sendPkt.add_demage();
+                unit->set_uuid(targetPlayer->GetUUid());
+                unit->set_is_heal(false);
+                unit->set_is_monster(false);
+                unit->set_demage(damage);
 
-            protocol::Demage* unit = sendPkt.add_demage();
-            unit->set_uuid(monsterInfo->GetUUid());
-            unit->set_is_heal(false);
-            unit->set_is_monster(false);
-            unit->set_demage(damage);
+                SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::S_UNITDEMAGE);
+                BroadCast(sendBuffer);
+            }
 
-            SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::S_UNITDEMAGE);
-            BroadCast(sendBuffer);
+            {
+                protocol::SUnitStates sendPkt;
+                protocol::UnitState* unitState = sendPkt.add_unit_state();
+                protocol::Unit* unit = new protocol::Unit();
+                unitState->set_is_monster(false);
+                unit->set_uuid(targetPlayer->GetUUid());
+                unit->set_state(ObjectStateType::HITED);
+                unit->set_hp(targetPlayer->GetAbility().hp);
+                unitState->set_allocated_unit(unit);
+                SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(sendPkt, protocol::MessageCode::S_UNITSTATES);
+                BroadCast(sendBuffer);
+            }
         }
     };
     PostQueuedCompletionStatus(_taskIo, dwNumberOfBytesTransferred, dwCompletionKey, reinterpret_cast<LPOVERLAPPED>(overlapped));

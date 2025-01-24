@@ -28,6 +28,7 @@ void GameMosterInfo::Spawn()
     _ability.hp = _ability.maxHp;
     _ability.speed = it->second._moveSpeed;
     _ability.exp = it->second._exp;
+    _ability.attack = it->second._attack;
 }
 
 void GameMosterInfo::Update()
@@ -252,6 +253,7 @@ bool GameMosterInfo::AttackObjectCollision(int32 attackCode)
             float dist = Vector2::Magnitude(_collider.GetPosition() - targetPlayer->GetCollider().GetPosition());
             if (dist <= 250.f)
             {
+                cout << "Attack Monster !!!" << '\n';
                 return true;
             }
         }
