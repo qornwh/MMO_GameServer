@@ -242,7 +242,7 @@ bool Inventory::UseItemEquip(int32 invenPos)
     {
         EquipItem& item = _inventoryEquipItemList[invenPos];
         _emptyEquipInvenList.emplace(invenPos);
-        item.EmptyEquipItem();
+        item = EquipItem::EmptyEquipItem();
         return true;
     }
     return false;
@@ -336,7 +336,7 @@ bool Inventory::UseItemEtc(int32 invenPos, int32 count)
         item._count -= count;
         if (item._count == 0)
         {
-            item.EmptyEtcItem();
+            item = EtcItem::EmptyEtcItem();
             _emptyEtcInvenList.emplace(invenPos);
         }
         return true;
@@ -355,7 +355,7 @@ EtcItem& Inventory::AddItemEtc(EtcItem& etc)
             if (invenItem._itemCode == etc._itemCode)
             {
                 invenItem._count += etc._count;
-                return etc;
+                return invenItem;
             }
         }
 

@@ -5,7 +5,7 @@
 static const wchar_t* insertMailQuery =
     L"INSERT INTO Mail (playerCode, title, message, gold, readCheck, socket1, socket1Type, socket2, socket2Type) OUTPUT inserted.mailCode VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 static const wchar_t* insertMailEquipQuery =
-    L"INSERT INTO MailEquipItem (mailCode, uniqueId, playerCode, itemCode, equipType, attack, speed, position) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    L"INSERT INTO MailEquipItem (mailCode, uniqueId, playerCode, itemCode, equipType, attack, speed, position) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 static const wchar_t* insertMailEtcQuery =
     L"INSERT INTO MailEtcItem (mailCode, playerCode, itemCode, itemType, itemCount, position) VALUES (?, ?, ?, ?, ?, ?)";
 

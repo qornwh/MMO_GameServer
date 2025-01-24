@@ -42,8 +42,7 @@ int32 GameSession::OnRecv(BYTE* buffer, int32 len)
 
 void GameSession::CreatePlayerInfo(int32 jobCode, int32 weaponCode, int32 lv)
 {
-    _player = std::make_shared<GamePlayerInfo>(std::reinterpret_pointer_cast<GameSession>(shared_from_this()), _playerCode, _sessionId, jobCode, weaponCode,
-                                               lv);
+    _player = std::make_shared<GamePlayerInfo>(std::reinterpret_pointer_cast<GameSession>(shared_from_this()), _playerCode, _sessionId, jobCode, weaponCode, lv);
 }
 
 std::shared_ptr<GamePlayerInfo> GameSession::GetPlayer()

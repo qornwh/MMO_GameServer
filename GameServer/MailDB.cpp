@@ -185,6 +185,7 @@ void MailDB::InsertEquipItemMail(EquipItem& item, int32 mailCode, int32 playerCo
 {
     conn->Prepare(insertMailEquipQuery);
     _dbOdbc.BindParamInt(&mailCode);
+    _dbOdbc.BindParamChar(36, &item._uuid);
     _dbOdbc.BindParamInt(&playerCode);
     _dbOdbc.BindParamInt(&item._itemCode);
     _dbOdbc.BindParamInt(&item._equipType);
