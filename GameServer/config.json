@@ -53,6 +53,19 @@
     "Skills": [
       {
         "type": 0,
+        "value": 100.0,
+        "duration": 0.0,
+        "code": 0,
+        "coolTime": 0,
+        "weaponCode": 0,
+        "targetCount": 1,
+        "isTargetting": false,
+        "moveProjectile": true,
+        "rangeRadius": 10,
+        "rangeHeight": 10
+      },
+      {
+        "type": 0,
         "value": 300.0,
         "duration": 0.0,
         "code": 101,

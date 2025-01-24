@@ -63,13 +63,10 @@ void GameSession::AddExp(int32 exp)
     {
         SessionDB sdb;
         sdb.UpdateExp(_playerCode, GetPlayer()->GetAbility().exp, GetPlayer()->GetAbility().lv);
-
         protocol::SExpLv pkt;
-
         pkt.set_uuid(GetPlayer()->GetUUid());
         pkt.set_exp(GetPlayer()->GetAbility().exp);
         pkt.set_lv(GetPlayer()->GetAbility().lv);
-
         SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(pkt, protocol::MessageCode::S_EXPLV);
         AsyncWrite(sendBuffer);
     }
@@ -1039,8 +1036,20 @@ void GameSession::AttackHandler(BYTE* buffer, PacketHeader* header, int32 offset
                 GetPlayer()->SetObjecteState(ObjectStateType::SKILL1);
             pkt.set_uuid(GetPlayer()->GetUUid());
 
+            auto it = GSkill->GetSkill().find(skillCode);
+            if (it != GSkill->GetSkill().end())
+            {
+                int32 type = it->second._type;
+                if (type == Skill::ATTACK)
+                {
+                    GRoomManger->getRoom(GetRoomId())->AttackObject(std::static_pointer_cast<GameSession>(shared_from_this()), attackNumber, skillCode, position.x(), position.y(), position.yaw());
+                }
+                else if (type == Skill::HEAL)
+                {
+                    GRoomManger->getRoom(GetRoomId())->HealObject(std::static_pointer_cast<GameSession>(shared_from_this()), skillCode);
+                }
+            }
             SendBufferRef sendBuffer = GamePacketHandler::MakePacketHandler(pkt, protocol::MessageCode::C_ATTACK);
-            GRoomManger->getRoom(GetRoomId())->AttackObject(std::static_pointer_cast<GameSession>(shared_from_this()), attackNumber, skillCode, position.x(), position.y(), position.yaw());
             GRoomManger->getRoom(GetRoomId())->BroadCastAnother(sendBuffer, GetPlayer()->GetUUid());
         }
     }

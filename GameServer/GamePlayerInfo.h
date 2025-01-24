@@ -13,7 +13,7 @@ public:
     void Update() override;
     void AttackObject(bool isCreate, int32 attackNumber, int32 skillCode, float x, float y, float yaw);
     void AttackObjectMove(int32 attackNumber, float x, float y, float yaw);
-    bool AttackObjectCollisionAndDamage(int32 attackNumber, int32 target);
+    bool AttackObjectCollision(int32 attackNumber, int32 target);
 
     void UpdateAblity();
     void SetTarget(int32 uuid);
@@ -26,6 +26,8 @@ public:
     int32 GetWeapon() { return _weaponCode; }
     void ReSpawn();
 
+    int32 TakeHeal(int32 Heal);
+    int32 TakeDamage(int32 target, int32 Damage);
     bool AddExp(int32 exp);
     void SetExp(int32 exp);
     ObjectAbility& GetAbility() { return _ability; }

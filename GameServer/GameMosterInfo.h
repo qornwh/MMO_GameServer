@@ -11,7 +11,8 @@ public:
     void Update() override;
     void Move() override;
     void Spawn();
-    virtual void MoveTarget(GamePlayerInfoRef target);
+    void MoveTarget(GamePlayerInfoRef target);
+    bool AttackObjectCollision(int32 attackCode = 0);
     int32 TakeDamage(int32 target, int32 Damage);
     void SetObjecteState(ObjectStateType state) override;
     void GetStartPosition(int32& x, int32& y);
@@ -20,6 +21,7 @@ public:
     ObjectAbility& GetAbility() { return _ability; }
     DropGenSystem& GetDropSystem() { return _dropGenSystem; }
 
+    virtual int32 AddReadyAttackCounter(int32 count = 1);
     virtual int32 AddAttackCounter(int32 count = 1);
     virtual int32 AddIdleCounter(int32 count = 1);
     virtual int32 AddHitCounter(int32 count = 1);
@@ -38,10 +40,10 @@ private:
 protected:
     GameUtils::TickCounter _yawCounter{ 40 };
     GameUtils::TickCounter _moveCounter{ 1 };
-    GameUtils::TickCounter _idleCounter{ 30 };
-    GameUtils::TickCounter _hitCounter{ 30 };
-    GameUtils::TickCounter _dieCounter{ 30 };
-    GameUtils::TickCounter _attackCounter{ 100 };
-    GameUtils::TickCounter _readyAttackCounter{ 100 };
+    GameUtils::TickCounter _idleCounter{ 20 };
+    GameUtils::TickCounter _hitCounter{ 15 };
+    GameUtils::TickCounter _dieCounter{ 10 };
+    GameUtils::TickCounter _attackCounter{ 2 };
+    GameUtils::TickCounter _readyAttackCounter{ 3 };
 };
 

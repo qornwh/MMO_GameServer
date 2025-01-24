@@ -112,13 +112,13 @@ public:
     void StartGameRoom();
     void Tick();
     void Work();
-    //void Attack(GameSessionRef session, bool isMonster, int32 demage, int32 uuid, float x = 0, float y = 0, float yaw = 0);
-    //void Heal(GameSessionRef session, int32 heal, int32 uuid);
     GameMapInfoRef CreateMapInfo(int32 type);
     void CreateMonster(int32 type, int32 count);
     void BroadCastAnother(SendBufferRef sendBuffer, int32 uuid);
     void AttackObject(GameSessionRef session, int32 attackNumber, int32 skillCode, float x = 0, float y = 0, float yaw = 0);
     void AttackObjectMove(GameSessionRef session, int32 attackNumber, int32 skillCode, Vector<int32> targets, float x = 0, float y = 0, float yaw = 0);
+    void AttackPlayer(int32 uuid);
+    void HealObject(GameSessionRef session, int32 skillCode);
 
     GameMosterInfoRef GetMonster(int32 Code)
     {

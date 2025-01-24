@@ -27,6 +27,7 @@ void GameMosterInfo::Spawn()
     _ability.maxHp = it->second._hp;
     _ability.hp = _ability.maxHp;
     _ability.speed = it->second._moveSpeed;
+    _ability.exp = it->second._exp;
 }
 
 void GameMosterInfo::Update()
@@ -79,9 +80,9 @@ void GameMosterInfo::Update()
         }
     }
     break;
-    case ObjectStateType::ATTACK:
+    case ObjectStateType::READY_ATTACK:
     {
-        if (AddAttackCounter() == 0)
+        if (AddReadyAttackCounter() == 0)
         {
             protocol::UnitState* childPkt = room->GetUnitPacket().add_unit_state();
             childPkt->set_is_monster(true);
@@ -93,6 +94,20 @@ void GameMosterInfo::Update()
             attack->set_skill_code(0);
             attack->set_target_uuid(_targetUUid);
             childPkt->set_allocated_attack(attack);
+        }
+    }
+    break;
+    case ObjectStateType::ATTACK:
+    {
+        if (AddAttackCounter() == 0)
+        {
+            room->AttackPlayer(_uuid);
+            protocol::UnitState* childPkt = room->GetUnitPacket().add_unit_state();
+            childPkt->set_is_monster(true);
+            protocol::Unit* unit = new protocol::Unit();
+            unit->set_state(GetObjectState());
+            unit->set_uuid(GetUUid());
+            childPkt->set_allocated_unit(unit);
         }
     }
     break;
@@ -155,6 +170,9 @@ void GameMosterInfo::SetObjecteState(ObjectStateType state)
     case ObjectStateType::ATTACK:
         _attackCounter.ResetTic();
         break;
+    case ObjectStateType::READY_ATTACK:
+        _attackCounter.ResetTic();
+        break;
     default:
         break;
     }
@@ -204,8 +222,8 @@ void GameMosterInfo::MoveTarget(GamePlayerInfoRef target)
     if (dist < 150.f)
     {
         // 몬스터의 공격상태로 변경시킨다
-        //SetObjecteState(ObjectStateType::ATTACK);
-        cout << "Monster Attack !!!" << '\n';
+        SetObjecteState(ObjectStateType::READY_ATTACK);
+        cout << "Monster READY_ATTACK !!!" << '\n';
     }
     else
     {
@@ -223,6 +241,24 @@ void GameMosterInfo::MoveTarget(GamePlayerInfoRef target)
     }
 }
 
+bool GameMosterInfo::AttackObjectCollision(int32 attackCode)
+{
+    auto targetPlayer = GetGameRoom()->GetPlayer(_targetUUid);
+    if (_targetUUid > 0 && targetPlayer)
+    {
+        Vector2& pos = targetPlayer->GetCollider().GetPosition();
+        if (GetGameRoom()->GetGameMap()->GetMonsterMapInfo()->InRect(pos.X, pos.Y))
+        {
+            float dist = Vector2::Magnitude(_collider.GetPosition() - targetPlayer->GetCollider().GetPosition());
+            if (dist <= 250.f)
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 int32 GameMosterInfo::TakeDamage(int32 target, int32 Damage)
 {
     _ability.hp -= Damage;
@@ -238,6 +274,14 @@ int32 GameMosterInfo::TakeDamage(int32 target, int32 Damage)
         SetObjecteState(ObjectStateType::HITED);
     }
     return _ability.hp;
+}
+
+int32 GameMosterInfo::AddReadyAttackCounter(int32 count)
+{
+    int32 value = _readyAttackCounter.Add(count);
+    if (value == _readyAttackCounter.GetTickValue() - 1)
+        SetObjecteState(ObjectStateType::ATTACK);
+    return value;
 }
 
 int32 GameMosterInfo::AddAttackCounter(int32 count)

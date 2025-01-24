@@ -81,7 +81,7 @@ void GamePlayerInfo::AttackObjectMove(int32 attackNumber, float x, float y, floa
     }
 }
 
-bool GamePlayerInfo::AttackObjectCollisionAndDamage(int32 attackNumber, int32 target)
+bool GamePlayerInfo::AttackObjectCollision(int32 attackNumber, int32 target)
 {
     if (_attackObjs.find(attackNumber) != _attackObjs.end())
     {
@@ -97,7 +97,6 @@ bool GamePlayerInfo::AttackObjectCollisionAndDamage(int32 attackNumber, int32 ta
             {
                 // 공격 성공
                 cout << "attack OCK KK  " << '\n';
-                monster->TakeDamage(_uuid, _ability.attack);
                 return true;
             }
         }
@@ -148,6 +147,27 @@ void GamePlayerInfo::SetMail()
 void GamePlayerInfo::ReSpawn()
 {
     _ability.hp = _ability.maxHp;
+}
+
+int32 GamePlayerInfo::TakeHeal(int32 Heal)
+{
+    return int32();
+}
+
+int32 GamePlayerInfo::TakeDamage(int32 target, int32 Damage)
+{
+    _ability.hp -= Damage;
+
+    if (_ability.hp <= 0)
+    {
+        _ability.hp = 0;
+        SetObjecteState(ObjectStateType::DIE);
+    }
+    else
+    {
+        SetObjecteState(ObjectStateType::HITED);
+    }
+    return _ability.hp;
 }
 
 bool GamePlayerInfo::AddExp(int32 exp)
