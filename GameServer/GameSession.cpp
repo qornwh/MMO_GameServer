@@ -805,7 +805,7 @@ void GameSession::SellItemsHandler(BYTE* buffer, PacketHeader* header, int32 off
 
         for (auto& item : pkt.itemetcs())
         {
-            if (GetPlayer()->GetInventory().UseItemEtc(item.item_code(), item.item_count()))
+            if (GetPlayer()->GetInventory().UseItemEtc(item.invenpos(), item.item_count()))
             {
                 useGold += (GEtcItem->GetItem(item.item_code())->GetGold() * item.item_count());
                 auto accessItem = sendPkt.add_itemetcs();

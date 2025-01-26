@@ -158,7 +158,7 @@ EtcItem EtcItem::EmptyEtcItem()
 
 bool EtcItem::IsEmpty() const
 {
-    if (_itemCode == -1)
+    if (_itemCode == -1 || _itemCode <= 0)
         return true;
     return false;
 }
@@ -348,20 +348,21 @@ EtcItem& Inventory::AddItemEtc(EtcItem& etc)
 {
     WriteLockGuard writeLock(lock);
     // 드롭및 수령받을때
+    for (auto& invenItem : _inventoryEtcItemList)
+    {
+        if (invenItem._itemCode == etc._itemCode)
+        {
+            invenItem._count += etc._count;
+            return invenItem;
+        }
+    }
+
     if (_emptyEtcInvenList.size() > 0)
     {
-        for (auto& invenItem : _inventoryEtcItemList)
-        {
-            if (invenItem._itemCode == etc._itemCode)
-            {
-                invenItem._count += etc._count;
-                return invenItem;
-            }
-        }
-
         int position = _emptyEtcInvenList.top();
         _emptyEtcInvenList.pop();
         etc._invenPos = position;
+        _inventoryEtcItemList[position] = etc;
     }
     return etc;
 }
