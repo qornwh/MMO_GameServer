@@ -329,7 +329,6 @@ void MailSystem::SendMail(Mail& mail, int32 playerCode)
     // 나아닌 다른 플레이어에게 전달
     MailDB mailDB;
     mailDB.InsertMail(mail, playerCode);
-    // 접속중이면 메일왔다고 채팅 날리기 
 }
 
 void MailSystem::SendEquipItemMail(Mail& mail, int32 playerCode, EquipItem& item)
