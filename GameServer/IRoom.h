@@ -111,7 +111,7 @@ public:
     void OutSession(SessionRef session) override;
     void StartGameRoom();
     void Tick();
-    void Work();
+    void Update();
     GameMapInfoRef CreateMapInfo(int32 type);
     void CreateMonster(int32 type, int32 count);
     void BroadCastAnother(SendBufferRef sendBuffer, int32 uuid);

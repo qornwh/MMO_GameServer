@@ -179,7 +179,7 @@ void GameRoom::Tick()
             DWORD dwNumberOfBytesTransferred = 0;
             ULONG_PTR dwCompletionKey = _taskId.fetch_add(1);
             OverlappedTask* overlapped = new OverlappedTask();
-            overlapped->f = [this] { Work(); };
+            overlapped->f = [this] { Update(); };
             _timer = current;
             PostQueuedCompletionStatus(_taskIo, dwNumberOfBytesTransferred, dwCompletionKey, reinterpret_cast<LPOVERLAPPED>(overlapped));
         }
@@ -187,12 +187,10 @@ void GameRoom::Tick()
     }
 }
 
-void GameRoom::Work()
+void GameRoom::Update()
 {
-#pragma region Work
     const MapType mapType = _gameMapInfo->GetMonsterMapInfo()->GetMapType();
     const MapInfoRef monsterMap = _gameMapInfo->GetMonsterMapInfo();
-#pragma endregion
     for (auto& it : _monsterMap)
     {
         GameMosterInfoRef info = it.second;
