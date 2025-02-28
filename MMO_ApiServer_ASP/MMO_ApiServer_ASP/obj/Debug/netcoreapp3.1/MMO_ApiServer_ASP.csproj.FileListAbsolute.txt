@@ -1,0 +1,7 @@
+D:\GamePortfolio\MMO_GameServer\MMO_ApiServer_ASP\MMO_ApiServer_ASP\obj\Debug\netcoreapp3.1\MMO_ApiServer_ASP.csproj.AssemblyReference.cache
+D:\GamePortfolio\MMO_GameServer\MMO_ApiServer_ASP\MMO_ApiServer_ASP\obj\Debug\netcoreapp3.1\MMO_ApiServer_ASP.GeneratedMSBuildEditorConfig.editorconfig
+D:\GamePortfolio\MMO_GameServer\MMO_ApiServer_ASP\MMO_ApiServer_ASP\obj\Debug\netcoreapp3.1\MMO_ApiServer_ASP.AssemblyInfoInputs.cache
+D:\GamePortfolio\MMO_GameServer\MMO_ApiServer_ASP\MMO_ApiServer_ASP\obj\Debug\netcoreapp3.1\MMO_ApiServer_ASP.AssemblyInfo.cs
+D:\GamePortfolio\MMO_GameServer\MMO_ApiServer_ASP\MMO_ApiServer_ASP\obj\Debug\netcoreapp3.1\MMO_ApiServer_ASP.csproj.CoreCompileInputs.cache
+D:\GamePortfolio\MMO_GameServer\MMO_ApiServer_ASP\MMO_ApiServer_ASP\obj\Debug\netcoreapp3.1\MMO_ApiServer_ASP.MvcApplicationPartsAssemblyInfo.cs
+D:\GamePortfolio\MMO_GameServer\MMO_ApiServer_ASP\MMO_ApiServer_ASP\obj\Debug\netcoreapp3.1\MMO_ApiServer_ASP.MvcApplicationPartsAssemblyInfo.cache

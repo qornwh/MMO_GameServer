@@ -160,7 +160,7 @@ void Service::task()
         int errorCode = WSAGetLastError();
         if (errorCode != WAIT_TIMEOUT)
         {
-            if (errorCode == ERROR_NETNAME_DELETED)
+            if (errorCode == ERROR_NETNAME_DELETED || errorCode == WSAECONNRESET)
             {
                 // 이미 종료됨
                 return;

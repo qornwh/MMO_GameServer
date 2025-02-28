@@ -27,6 +27,7 @@ public:
 
     static float CapsuleToCircleDistance(Vector2& a, Vector2& b, Vector2& p)
     {
+        // 양 끝점이 캡슐의 가운데 직선
         Vector2 ab = b - a;
         Vector2 pa = p - a;
 
@@ -61,6 +62,7 @@ public:
 
     static float CapsuleToCapsuleDistance(Vector2& a, Vector2& b, Vector2& p, Vector2& q)
     {
+        // 양 끝점이 캡슐의 가운데 직선
         float cross_ab = Vector2::CCW(a, b, p) * Vector2::CCW(a, b, q);
         float cross_pq = Vector2::CCW(p, q, a) * Vector2::CCW(p, q, b);
 

@@ -118,13 +118,14 @@ CREATE TABLE MailEtcItem
 --    socket2Type int NOT NULL
 --)
 
-CREATE TABLE IpLog
-(
-    accountCode int NOT NULL,
-    ip varchar(10) NOT NULL,
-    currentTime smalldatetime NOT NULL default getdate()
-)
+-- CREATE TABLE IpLog
+-- (
+--     accountCode int NOT NULL,
+--     ip varchar(10) NOT NULL,
+--     currentTime smalldatetime NOT NULL default getdate()
+-- )
 
+CREATE INDEX acc ON Account (id ASC)
 
 -- defatult 더미 row
 INSERT INTO Account (id, pwd, cash, weaponOne, weaponTwo, weaponThr, curPlayerType, curWeaponType) VALUES

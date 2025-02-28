@@ -62,7 +62,7 @@
         "isTargetting": false,
         "moveProjectile": true,
         "rangeRadius": 10,
-        "rangeHeight": 10
+        "rangeHeight": 250
       },
       {
         "type": 0,

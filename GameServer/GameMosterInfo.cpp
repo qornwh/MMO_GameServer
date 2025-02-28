@@ -92,7 +92,7 @@ void GameMosterInfo::Update()
             unit->set_uuid(GetUUid());
             childPkt->set_allocated_unit(unit);
             protocol::Attack* attack = new protocol::Attack();
-            attack->set_skill_code(0);
+            attack->set_skill_code(1);
             attack->set_target_uuid(_targetUUid);
             childPkt->set_allocated_attack(attack);
         }
@@ -251,9 +251,8 @@ bool GameMosterInfo::AttackObjectCollision(int32 attackCode)
         if (GetGameRoom()->GetGameMap()->GetMonsterMapInfo()->InRect(pos.X, pos.Y))
         {
             float dist = Vector2::Magnitude(_collider.GetPosition() - targetPlayer->GetCollider().GetPosition());
-            if (dist <= 250.f)
+            if (dist <= 150.f)
             {
-                cout << "Attack Monster !!!" << '\n';
                 return true;
             }
         }
