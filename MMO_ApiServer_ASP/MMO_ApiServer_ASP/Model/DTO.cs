@@ -5,10 +5,14 @@
         public string? Id { get; set; }
         public string? Pwd { get; set; }
     }
+    public class AccountRequest
+    {
+        public int AccountCode { get; set; }
+    }
     public class PlayerRequest
     {
         public int AccountCode { get; set; }
-        public int Type { get; set; }
+        public int CharacterType { get; set; }
     }
     public class UpdateAccountRequest
     {
@@ -21,7 +25,7 @@
         public int AccountCode { get; set; }
         public int UseCash { get; set; }
         public int CharacterType { get; set; }
-        public string characterName { get; set; }
+        public string CharacterName { get; set; }
     }
     public class BuyWeaponRequest
     {

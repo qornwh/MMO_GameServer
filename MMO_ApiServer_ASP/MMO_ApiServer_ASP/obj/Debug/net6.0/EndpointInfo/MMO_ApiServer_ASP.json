@@ -100,20 +100,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "integer",
-                "format": "int32"
+                "$ref": "#/components/schemas/AccountRequest"
               }
             },
             "text/json": {
               "schema": {
-                "type": "integer",
-                "format": "int32"
+                "$ref": "#/components/schemas/AccountRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "type": "integer",
-                "format": "int32"
+                "$ref": "#/components/schemas/AccountRequest"
               }
             }
           }
@@ -160,20 +157,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "integer",
-                "format": "int32"
+                "$ref": "#/components/schemas/AccountRequest"
               }
             },
             "text/json": {
               "schema": {
-                "type": "integer",
-                "format": "int32"
+                "$ref": "#/components/schemas/AccountRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "type": "integer",
-                "format": "int32"
+                "$ref": "#/components/schemas/AccountRequest"
               }
             }
           }
@@ -442,6 +436,16 @@
   },
   "components": {
     "schemas": {
+      "AccountRequest": {
+        "type": "object",
+        "properties": {
+          "accountCode": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "BuyCharaterRequest": {
         "type": "object",
         "properties": {
@@ -527,7 +531,7 @@
             "type": "integer",
             "format": "int32"
           },
-          "type": {
+          "characterType": {
             "type": "integer",
             "format": "int32"
           }

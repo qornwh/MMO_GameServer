@@ -30,26 +30,26 @@ namespace MMO_ApiServer_ASP.Controllers
         public JsonObject LoginService([FromBody] LoginRequest result)
         {
             JsonObject obj = new JsonObject();
-            obj["ret"] = "0";
+            obj["ret"] = 0;
             _service.Login(result.Id, result.Pwd, obj);
             return obj;
         }
 
         [HttpPost("/getAccount")]
-        public JsonObject GetAccount([FromBody] int accountCode)
+        public JsonObject GetAccount([FromBody] AccountRequest result)
         {
             JsonObject obj = new JsonObject();
-            obj["ret"] = "0";
-            _service.GetAccount(accountCode, obj);
+            obj["ret"] = 0;
+            _service.GetAccount(result.AccountCode, obj);
             return obj;
         }
 
         [HttpPost("/getPlayers")]
-        public JsonObject GetPlayers([FromBody] int accountCode)
+        public JsonObject GetPlayers([FromBody] AccountRequest result)
         {
             JsonObject obj = new JsonObject();
-            obj["ret"] = "0";
-            _service.GetPlayers(accountCode, obj);
+            obj["ret"] = 0;
+            _service.GetPlayers(result.AccountCode, obj);
             return obj;
         }
 
@@ -57,8 +57,8 @@ namespace MMO_ApiServer_ASP.Controllers
         public JsonObject GetPlayer([FromBody] PlayerRequest result)
         {
             JsonObject obj = new JsonObject();
-            obj["ret"] = "0";
-            _service.GetPlayer(result.AccountCode, result.Type, obj);
+            obj["ret"] = 0;
+            _service.GetPlayer(result.AccountCode, result.CharacterType, obj);
             return obj;
         }
 
@@ -66,7 +66,7 @@ namespace MMO_ApiServer_ASP.Controllers
         public JsonObject UpdateAccount([FromBody] UpdateAccountRequest result)
         {
             JsonObject obj = new JsonObject();
-            obj["ret"] = "0";
+            obj["ret"] = 0;
             _service.UpdateAccount(result.AccountCode, result.CharacterType, result.WeaponType, obj);
             return obj;
         }
@@ -75,8 +75,8 @@ namespace MMO_ApiServer_ASP.Controllers
         public JsonObject BuyCharacter([FromBody] BuyCharaterRequest result)
         {
             JsonObject obj = new JsonObject();
-            obj["ret"] = "0";
-            _service.BuyCharacter(result.AccountCode, result.UseCash, result.CharacterType, result.characterName, obj);
+            obj["ret"] = 0;
+            _service.BuyCharacter(result.AccountCode, result.UseCash, result.CharacterType, result.CharacterName, obj);
             return obj;
         }
 
@@ -84,7 +84,7 @@ namespace MMO_ApiServer_ASP.Controllers
         public JsonObject BuyWeapon([FromBody] BuyWeaponRequest result)
         {
             JsonObject obj = new JsonObject();
-            obj["ret"] = "0";
+            obj["ret"] = 0;
             _service.BuyWeapon(result.AccountCode, result.UseCash, result.WeaponType, obj);
             return obj;
         }

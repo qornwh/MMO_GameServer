@@ -28,7 +28,7 @@ namespace MMO_ApiServer_ASP.Controllers.Service
                 Account account = results.FirstOrDefault();
                 if (account.pwd == pwd)
                 {
-                    obj["ret"] = "1";
+                    obj["ret"] = 1;
                     obj["cash"] = account.cash;
                     obj["weaponOne"] = account.weaponOne;
                     obj["weaponTwo"] = account.weaponTwo;
@@ -45,7 +45,7 @@ namespace MMO_ApiServer_ASP.Controllers.Service
                 int affectRows = Context.SaveChanges();
                 if (affectRows > 0)
                 {
-                    obj["ret"] = "2";
+                    obj["ret"] = 2;
                 }
             }
         }
@@ -56,7 +56,7 @@ namespace MMO_ApiServer_ASP.Controllers.Service
             if (results.Count() == 1)
             {
                 Account account = results.FirstOrDefault();
-                obj["ret"] = "1";
+                obj["ret"] = 1;
                 obj["cash"] = account.cash;
                 obj["weaponOne"] = account.weaponOne;
                 obj["weaponTwo"] = account.weaponTwo;
@@ -73,6 +73,7 @@ namespace MMO_ApiServer_ASP.Controllers.Service
 
             if (results.Count() > 0)
             {
+                obj["ret"] = 1;
                 JsonArray players = new JsonArray();
                 foreach (Player player in results)
                 {
@@ -92,7 +93,7 @@ namespace MMO_ApiServer_ASP.Controllers.Service
 
         public void GetPlayer(int accountCode, int type, JsonObject obj)
         {
-            IQueryable<Player> results = Context.Players.Where(a => a.accountCode == accountCode);
+            IQueryable<Player> results = Context.Players.Where(a => a.accountCode == accountCode && a.jobCode == type);
 
             if (results.Count() == 1)
             {
@@ -100,6 +101,7 @@ namespace MMO_ApiServer_ASP.Controllers.Service
                 Player player = results.FirstOrDefault();
                 if (player != null)
                 {
+                    obj["ret"] = 1;
                     JsonObject playerObj = new JsonObject();
                     playerObj["playerCode"] = player.playerCode;
                     playerObj["name"] = player.name;
@@ -120,12 +122,46 @@ namespace MMO_ApiServer_ASP.Controllers.Service
             if (results.Count() == 1)
             {
                 Account account = results.FirstOrDefault();
+
+                if (characterType > 0)
+                {
+                    IQueryable<Player> subResults = Context.Players.Where(a => a.accountCode == accountCode && a.jobCode == characterType);
+                    if (subResults.Count() == 0)
+                    {
+                        characterType = account.curPlayerType;
+                    }
+                }
+                else
+                {
+                    characterType = account.curPlayerType;
+                }
+
+                if (weaponType > 0)
+                {
+                    if (weaponType == 1 && account.weaponOne == 0)
+                    {
+                        weaponType = account.curWeaponType;
+                    }
+                    else if (weaponType == 2 && account.weaponTwo == 0)
+                    {
+                        weaponType = account.curWeaponType;
+                    }
+                    else if (weaponType == 3 && account.weaponThr == 0)
+                    {
+                        weaponType = account.curWeaponType;
+                    }
+                }
+                else
+                {
+                    weaponType = account.curWeaponType;
+                }
+
                 account.curPlayerType = characterType;
                 account.curWeaponType = weaponType;
                 Context.Update(account);
                 Context.SaveChanges();
 
-                obj["ret"] = "1";
+                obj["ret"] = 1;
                 obj["cash"] = account.cash;
                 obj["weaponOne"] = account.weaponOne;
                 obj["weaponTwo"] = account.weaponTwo;
@@ -157,7 +193,8 @@ namespace MMO_ApiServer_ASP.Controllers.Service
                     int affectRows = Context.SaveChanges();
                     if (affectRows >= 2)
                     {
-                        obj["ret"] = "1";
+                        obj["ret"] = 1;
+                        obj["cash"] = account.cash;
                     }   
                 }
             }
@@ -203,7 +240,14 @@ namespace MMO_ApiServer_ASP.Controllers.Service
                         int affectRows = Context.SaveChanges();
                         if (affectRows > 0)
                         {
-                            obj["ret"] = "1";
+                            obj["ret"] = 1;
+                            obj["cash"] = account.cash;
+                            obj["weaponOne"] = account.weaponOne;
+                            obj["weaponTwo"] = account.weaponTwo;
+                            obj["weaponThr"] = account.weaponThr;
+                            obj["curPlayerType"] = account.curPlayerType;
+                            obj["curWeaponType"] = account.curWeaponType;
+                            obj["accountCode"] = account.accountCode;
                         }
                     }
                 }

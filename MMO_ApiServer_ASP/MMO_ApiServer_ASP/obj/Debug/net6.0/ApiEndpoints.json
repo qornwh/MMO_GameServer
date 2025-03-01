@@ -80,8 +80,8 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "accountCode",
-        "Type": "System.Int32",
+        "Name": "result",
+        "Type": "MMO_ApiServer_ASP.Model.AccountRequest",
         "IsRequired": true
       }
     ],
@@ -132,8 +132,8 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "accountCode",
-        "Type": "System.Int32",
+        "Name": "result",
+        "Type": "MMO_ApiServer_ASP.Model.AccountRequest",
         "IsRequired": true
       }
     ],
