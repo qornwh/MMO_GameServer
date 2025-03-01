@@ -480,7 +480,7 @@ void GameSession::UpdateAccountHandler(BYTE* buffer, PacketHeader* header, int32
                 ret = characterJson["ret"].get<int32>();
                 if (ret == 1)
                 {
-                    nlohmann::json characterData = GameUtils::JsonParser::Parser("character", characterJson)[0];
+                    nlohmann::json characterData = GameUtils::JsonParser::Parser("characters", characterJson)[0];
                     protocol::Charater* charater = new protocol::Charater();
                     charater->set_code(characterData.at("jobCode").get<int32>());
                     charater->set_uuid(_sessionId);
@@ -538,7 +538,7 @@ void GameSession::BuyCharaterHandler(BYTE* buffer, PacketHeader* header, int32 o
                 ret = characterJson["ret"].get<int32>();
                 if (ret == 1)
                 {
-                    nlohmann::json characterData = GameUtils::JsonParser::Parser("character", characterJson)[0];
+                    nlohmann::json characterData = GameUtils::JsonParser::Parser("characters", characterJson)[0];
                     protocol::Charater* charater = pkt.add_charater();
                     charater->set_code(characterData.at("jobCode").get<int32>());
                     charater->set_uuid(_sessionId);
@@ -617,7 +617,7 @@ void GameSession::LoadHandler(BYTE* buffer, PacketHeader* header, int32 offset)
                 nlohmann::json characterJson = GameUtils::JsonParser::GetStrParser(res.text);
                 ret = characterJson["ret"].get<int32>();
 
-                nlohmann::json characterData = GameUtils::JsonParser::Parser("character", characterJson)[0];
+                nlohmann::json characterData = GameUtils::JsonParser::Parser("characters", characterJson)[0];
                 int32 jobCode = characterData.at("jobCode").get<int32>();
                 int32 mapCode = characterData.at("mapCode").get<int32>();
                 int32 gold = characterData.at("gold").get<int32>();
