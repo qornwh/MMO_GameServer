@@ -101,6 +101,15 @@
     <ClCompile Include="ObjectAbility.cpp">
       <Filter>Unit</Filter>
     </ClCompile>
+    <ClCompile Include="ResponsDTO.cpp">
+      <Filter>API\DTO</Filter>
+    </ClCompile>
+    <ClCompile Include="RequestDTO.cpp">
+      <Filter>API\DTO</Filter>
+    </ClCompile>
+    <ClCompile Include="ApiUtils.cpp">
+      <Filter>API</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObjectInfo.h">
@@ -205,6 +214,15 @@
     <ClInclude Include="ObjectAbility.h">
       <Filter>Unit</Filter>
     </ClInclude>
+    <ClInclude Include="ResponsDTO.h">
+      <Filter>API\DTO</Filter>
+    </ClInclude>
+    <ClInclude Include="RequestDTO.h">
+      <Filter>API\DTO</Filter>
+    </ClInclude>
+    <ClInclude Include="ApiUtils.h">
+      <Filter>API</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Unit">
@@ -254,6 +272,12 @@
     </Filter>
     <Filter Include="Contents\Inventory">
       <UniqueIdentifier>{c81b26c2-3875-475a-868c-10c2520c0738}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="API">
+      <UniqueIdentifier>{cbaeaa4f-4f8f-40c4-9d3a-6aea09c3e40a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="API\DTO">
+      <UniqueIdentifier>{13021b4c-17dd-400b-ac4f-99d97949d952}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
