@@ -7,7 +7,7 @@ namespace MMO_ApiServer_ASP.Context
 {
     public class ApplicationDbContext : IdentityDbContext
     {
-        public DbSet<Account> Accounts { get; set; }
+        public DbSet<Data> Accounts { get; set; }
         public DbSet<Player> Players { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
@@ -17,7 +17,7 @@ namespace MMO_ApiServer_ASP.Context
             base.OnModelCreating(modelBuilder);
 
             // 기존 테이블과 엔터티 매핑
-            modelBuilder.Entity<Account>().ToTable("Account");
+            modelBuilder.Entity<Data>().ToTable("Account");
             modelBuilder.Entity<Player>().ToTable("Player");
         }
     }

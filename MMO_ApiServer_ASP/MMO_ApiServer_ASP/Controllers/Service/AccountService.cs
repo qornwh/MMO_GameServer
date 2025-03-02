@@ -17,112 +17,125 @@ namespace MMO_ApiServer_ASP.Controllers.Service
             Context = context;
         }
 
-        public void Login(string id, string pwd, JsonObject obj)
+
+        public AccountResponse Login(string id, string pwd)
         {
-            Console.WriteLine($"LoginService {id} - {pwd}");
+            AccountResponse response = new AccountResponse { Ret = 0 };
 
-            IQueryable<Account> results = Context.Accounts.Where(a => a.id == id);
-
+            IQueryable<Data> results = Context.Accounts.Where(a => a.id == id);
             if (results.Count() == 1)
             {
-                Account account = results.FirstOrDefault();
+                Data account = results.FirstOrDefault();
                 if (account.pwd == pwd)
                 {
-                    obj["ret"] = 1;
-                    obj["cash"] = account.cash;
-                    obj["weaponOne"] = account.weaponOne;
-                    obj["weaponTwo"] = account.weaponTwo;
-                    obj["weaponThr"] = account.weaponThr;
-                    obj["curPlayerType"] = account.curPlayerType;
-                    obj["curWeaponType"] = account.curWeaponType;   
-                    obj["accountCode"] = account.accountCode;
+                    response.Ret = 1;
+                    response.Account = new AccountDTO
+                    {
+                        AccountCode = account.accountCode,
+                        Cash = account.cash,
+                        WeaponOne = account.weaponOne,
+                        WeaponTwo = account.weaponTwo,
+                        WeaponThr = account.weaponThr,
+                        CurPlayerType = account.curPlayerType,
+                        CurWeaponType = account.curWeaponType
+                    };
                 }
             }
             else
             {
-                Account account = new Account { id = id, pwd = pwd, cash = 10000, weaponOne = 0, weaponTwo = 0, weaponThr = 0, curPlayerType = 0, curWeaponType = 0 };
+                Data account = new Data { id = id, pwd = pwd, cash = 10000, weaponOne = 0, weaponTwo = 0, weaponThr = 0, curPlayerType = 0, curWeaponType = 0 };
                 Context.Add(account);
                 int affectRows = Context.SaveChanges();
                 if (affectRows > 0)
                 {
-                    obj["ret"] = 2;
+                    response.Ret = 2;
                 }
             }
+
+            return response;
         }
 
-        public void GetAccount(int accountCode, JsonObject obj)
+        public AccountResponse GetAccount(int accountCode)
         {
-            IQueryable<Account> results = Context.Accounts.Where(a => a.accountCode == accountCode);
+            AccountResponse response = new AccountResponse { Ret = 0 };
+            IQueryable<Data> results = Context.Accounts.Where(a => a.accountCode == accountCode);
             if (results.Count() == 1)
             {
-                Account account = results.FirstOrDefault();
-                obj["ret"] = 1;
-                obj["cash"] = account.cash;
-                obj["weaponOne"] = account.weaponOne;
-                obj["weaponTwo"] = account.weaponTwo;
-                obj["weaponThr"] = account.weaponThr;
-                obj["curPlayerType"] = account.curPlayerType;
-                obj["curWeaponType"] = account.curWeaponType;
-                obj["accountCode"] = account.accountCode;
+                Data account = results.FirstOrDefault();
+                response.Ret = 1;
+                response.Account = new AccountDTO
+                {
+                    AccountCode = account.accountCode,
+                    Cash = account.cash,
+                    WeaponOne = account.weaponOne,
+                    WeaponTwo = account.weaponTwo,
+                    WeaponThr = account.weaponThr,
+                    CurPlayerType = account.curPlayerType,
+                    CurWeaponType = account.curWeaponType
+                };
             }
+            return response;
         }
 
-        public void GetPlayers(int accountCode, JsonObject obj)
+        public PlayersRespons GetPlayers(int accountCode)
         {
+            PlayersRespons response = new PlayersRespons { Ret = 0 };
             IQueryable<Player> results = Context.Players.Where(a => a.accountCode == accountCode);
 
             if (results.Count() > 0)
             {
-                obj["ret"] = 1;
-                JsonArray players = new JsonArray();
+                response.Ret = 1;
+                response.Players = new List<PlayerDTO>();
                 foreach (Player player in results)
                 {
-                    JsonObject playerObj = new JsonObject();
-                    playerObj["playerCode"] = player.playerCode;
-                    playerObj["name"] = player.name;
-                    playerObj["jobCode"] = player.jobCode;
-                    playerObj["mapCode"] = player.mapCode;
-                    playerObj["lv"] = player.lv;
-                    playerObj["exp"] = player.exp;
-                    playerObj["gold"] = player.gold;
-                    players.Add(playerObj);
+                    response.Players.Add(new PlayerDTO
+                    {
+                        PlayerCode = player.playerCode,
+                        Name = player.name,
+                        JobCode = player.jobCode,
+                        MapCode = player.mapCode,
+                        Lv = player.lv,
+                        Exp = player.exp,
+                        Gold = player.gold
+                    });
                 }
-                obj["characters"] = players;
             }
+            return response;
         }
 
-        public void GetPlayer(int accountCode, int type, JsonObject obj)
+        public PlayerRespons GetPlayer(int accountCode, int type)
         {
+            PlayerRespons response = new PlayerRespons { Ret = 0 };
             IQueryable<Player> results = Context.Players.Where(a => a.accountCode == accountCode && a.jobCode == type);
 
             if (results.Count() == 1)
             {
-                JsonArray players = new JsonArray();
                 Player player = results.FirstOrDefault();
                 if (player != null)
                 {
-                    obj["ret"] = 1;
-                    JsonObject playerObj = new JsonObject();
-                    playerObj["playerCode"] = player.playerCode;
-                    playerObj["name"] = player.name;
-                    playerObj["jobCode"] = player.jobCode;
-                    playerObj["mapCode"] = player.mapCode;
-                    playerObj["lv"] = player.lv;
-                    playerObj["exp"] = player.exp;
-                    playerObj["gold"] = player.gold;
-                    players.Add(playerObj);
-                    obj["characters"] = players;
+                    response.Ret = 1;
+                    response.Player = new PlayerDTO
+                    {
+                        PlayerCode = player.playerCode,
+                        Name = player.name,
+                        JobCode = player.jobCode,
+                        MapCode = player.mapCode,
+                        Lv = player.lv,
+                        Exp = player.exp,
+                        Gold = player.gold
+                    };
                 }
             }
+            return response;
         }
 
-        public void UpdateAccount(int accountCode, int characterType, int weaponType, JsonObject obj)
+        public AccountResponse UpdateAccount(int accountCode, int characterType, int weaponType)
         {
-            IQueryable<Account> results = Context.Accounts.Where(a => a.accountCode == accountCode);
+            AccountResponse response = new AccountResponse { Ret = 0 };
+            IQueryable<Data> results = Context.Accounts.Where(a => a.accountCode == accountCode);
             if (results.Count() == 1)
             {
-                Account account = results.FirstOrDefault();
-
+                Data account = results.FirstOrDefault();
                 if (characterType > 0)
                 {
                     IQueryable<Player> subResults = Context.Players.Where(a => a.accountCode == accountCode && a.jobCode == characterType);
@@ -139,17 +152,11 @@ namespace MMO_ApiServer_ASP.Controllers.Service
                 if (weaponType > 0)
                 {
                     if (weaponType == 1 && account.weaponOne == 0)
-                    {
                         weaponType = account.curWeaponType;
-                    }
                     else if (weaponType == 2 && account.weaponTwo == 0)
-                    {
                         weaponType = account.curWeaponType;
-                    }
                     else if (weaponType == 3 && account.weaponThr == 0)
-                    {
                         weaponType = account.curWeaponType;
-                    }
                 }
                 else
                 {
@@ -161,51 +168,82 @@ namespace MMO_ApiServer_ASP.Controllers.Service
                 Context.Update(account);
                 Context.SaveChanges();
 
-                obj["ret"] = 1;
-                obj["cash"] = account.cash;
-                obj["weaponOne"] = account.weaponOne;
-                obj["weaponTwo"] = account.weaponTwo;
-                obj["weaponThr"] = account.weaponThr;
-                obj["curPlayerType"] = account.curPlayerType;
-                obj["curWeaponType"] = account.curWeaponType;
-                obj["accountCode"] = account.accountCode;
+                response.Ret = 1;
+                response.Account = new AccountDTO
+                {
+                    AccountCode = account.accountCode,
+                    Cash = account.cash,
+                    WeaponOne = account.weaponOne,
+                    WeaponTwo = account.weaponTwo,
+                    WeaponThr = account.weaponThr,
+                    CurPlayerType = account.curPlayerType,
+                    CurWeaponType = account.curWeaponType
+                };
             }
+            return response;
         }
 
-        public void BuyCharacter(int accountCode, int useCash, int characterType, string characterName, JsonObject obj)
+        public AccountResponse BuyCharacter(int accountCode, int useCash, int characterType, string characterName)
         {
-            IQueryable<Account> results = Context.Accounts.Where(a => a.accountCode == accountCode);
-            if (results.Count() == 1)
+            AccountResponse response = new AccountResponse { Ret = 0 };
+            using (var transaction = Context.Database.BeginTransaction()) // 트랜잭션 시작
             {
-                Account account = results.FirstOrDefault();
-                if (account.cash >= useCash)
+                try
                 {
-                    IQueryable<Player> subResults = Context.Players.Where(a => a.accountCode == accountCode && a.jobCode == characterType);
-                    if (subResults.Count() > 0)
+                    IQueryable<Data> results = Context.Accounts.Where(a => a.accountCode == accountCode);
+                    if (results.Count() == 1)
                     {
-                        return;
-                    }
+                        Data account = results.FirstOrDefault();
+                        if (account.cash >= useCash)
+                        {
+                            IQueryable<Player> subResults = Context.Players.Where(a => a.accountCode == accountCode && a.jobCode == characterType);
+                            if (subResults.Count() == 0)
+                            {
+                                Player player = new Player { accountCode = accountCode, name = characterName, jobCode = characterType, mapCode = 0, lv = 1, exp = 0, gold = 0 };
+                                account.cash -= useCash;
+                                Context.Add(player);
+                                Context.Update(account);
+                                int affectRows = Context.SaveChanges();
+                                if (affectRows >= 2)
+                                {
+                                    transaction.Commit(); // 트랜잭션 커밋 2개다 성공해야됨
 
-                    Player player = new Player { accountCode = accountCode, name = characterName, jobCode = characterType, mapCode = 0, lv = 1, exp = 0, gold = 0 };
-                    account.cash -= useCash;
-                    Context.Add(player);
-                    Context.Update(account);
-                    int affectRows = Context.SaveChanges();
-                    if (affectRows >= 2)
-                    {
-                        obj["ret"] = 1;
-                        obj["cash"] = account.cash;
-                    }   
+                                    response.Ret = 1;
+                                    response.Account = new AccountDTO
+                                    {
+                                        AccountCode = account.accountCode,
+                                        Cash = account.cash,
+                                        WeaponOne = account.weaponOne,
+                                        WeaponTwo = account.weaponTwo,
+                                        WeaponThr = account.weaponThr,
+                                        CurPlayerType = account.curPlayerType,
+                                        CurWeaponType = account.curWeaponType
+                                    };
+                                }
+                            }
+                            else
+                            {
+                                response.Ret = -1; // 이미 해당 타입의 캐릭터가 존재하는 경우
+                                transaction.Rollback();
+                            }
+                        }
+                    }
+                }
+                catch (System.Exception)
+                {
+                    transaction.Rollback();
                 }
             }
+            return response;
         }
 
-        public void BuyWeapon(int accountCode, int useCash, int weaponType, JsonObject obj)
+        public AccountResponse BuyWeapon(int accountCode, int useCash, int weaponType)
         {
-            IQueryable<Account> results = Context.Accounts.Where(a => a.accountCode == accountCode);
+            AccountResponse response = new AccountResponse { Ret = 0 };
+            IQueryable<Data> results = Context.Accounts.Where(a => a.accountCode == accountCode);
             if (results.Count() == 1)
             {
-                Account account = results.FirstOrDefault();
+                Data account = results.FirstOrDefault();
                 if (account.cash >= useCash)
                 {
                     bool flag = true;
@@ -240,18 +278,26 @@ namespace MMO_ApiServer_ASP.Controllers.Service
                         int affectRows = Context.SaveChanges();
                         if (affectRows > 0)
                         {
-                            obj["ret"] = 1;
-                            obj["cash"] = account.cash;
-                            obj["weaponOne"] = account.weaponOne;
-                            obj["weaponTwo"] = account.weaponTwo;
-                            obj["weaponThr"] = account.weaponThr;
-                            obj["curPlayerType"] = account.curPlayerType;
-                            obj["curWeaponType"] = account.curWeaponType;
-                            obj["accountCode"] = account.accountCode;
+                            response.Ret = 1;
+                            response.Account = new AccountDTO
+                            {
+                                AccountCode = account.accountCode,
+                                Cash = account.cash,
+                                WeaponOne = account.weaponOne,
+                                WeaponTwo = account.weaponTwo,
+                                WeaponThr = account.weaponThr,
+                                CurPlayerType = account.curPlayerType,
+                                CurWeaponType = account.curWeaponType
+                            };
                         }
+                    }
+                    else
+                    {
+                        response.Ret = -1; // 이미 해당 타입의 무기가 존재하는 경우
                     }
                 }
             }
+            return response;
         }
     }
 }

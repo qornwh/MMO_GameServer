@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MMO_ApiServer_ASP.Model
 {
-    public class Account
+    public class Data
     {
         [Key]
         [Column("accountCode")]

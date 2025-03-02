@@ -27,66 +27,45 @@ namespace MMO_ApiServer_ASP.Controllers
         }
 
         [HttpPost("/login")]
-        public JsonObject LoginService([FromBody] LoginRequest result)
+        public AccountResponse LoginService([FromBody] LoginRequest result)
         {
-            JsonObject obj = new JsonObject();
-            obj["ret"] = 0;
-            _service.Login(result.Id, result.Pwd, obj);
-            return obj;
+            return _service.Login(result.Id, result.Pwd);
         }
 
         [HttpPost("/getAccount")]
-        public JsonObject GetAccount([FromBody] AccountRequest result)
+        public AccountResponse GetAccount([FromBody] AccountRequest result)
         {
-            JsonObject obj = new JsonObject();
-            obj["ret"] = 0;
-            _service.GetAccount(result.AccountCode, obj);
-            return obj;
+            return _service.GetAccount(result.AccountCode);
         }
 
         [HttpPost("/getPlayers")]
-        public JsonObject GetPlayers([FromBody] AccountRequest result)
+        public PlayersRespons GetPlayers([FromBody] AccountRequest result)
         {
-            JsonObject obj = new JsonObject();
-            obj["ret"] = 0;
-            _service.GetPlayers(result.AccountCode, obj);
-            return obj;
+            return _service.GetPlayers(result.AccountCode);
         }
 
         [HttpPost("/getPlayer")]
-        public JsonObject GetPlayer([FromBody] PlayerRequest result)
+        public PlayerRespons GetPlayer([FromBody] PlayerRequest result)
         {
-            JsonObject obj = new JsonObject();
-            obj["ret"] = 0;
-            _service.GetPlayer(result.AccountCode, result.CharacterType, obj);
-            return obj;
+            return _service.GetPlayer(result.AccountCode, result.CharacterType);
         }
 
         [HttpPost("/updateAccount")]
-        public JsonObject UpdateAccount([FromBody] UpdateAccountRequest result)
+        public AccountResponse UpdateAccount([FromBody] UpdateAccountRequest result)
         {
-            JsonObject obj = new JsonObject();
-            obj["ret"] = 0;
-            _service.UpdateAccount(result.AccountCode, result.CharacterType, result.WeaponType, obj);
-            return obj;
+            return _service.UpdateAccount(result.AccountCode, result.CharacterType, result.WeaponType);
         }
 
         [HttpPost("/buyCharacter")]
-        public JsonObject BuyCharacter([FromBody] BuyCharaterRequest result)
+        public AccountResponse BuyCharacter([FromBody] BuyCharaterRequest result)
         {
-            JsonObject obj = new JsonObject();
-            obj["ret"] = 0;
-            _service.BuyCharacter(result.AccountCode, result.UseCash, result.CharacterType, result.CharacterName, obj);
-            return obj;
+            return _service.BuyCharacter(result.AccountCode, result.UseCash, result.CharacterType, result.CharacterName);
         }
 
         [HttpPost("/buyWeapon")]
-        public JsonObject BuyWeapon([FromBody] BuyWeaponRequest result)
+        public AccountResponse BuyWeapon([FromBody] BuyWeaponRequest result)
         {
-            JsonObject obj = new JsonObject();
-            obj["ret"] = 0;
-            _service.BuyWeapon(result.AccountCode, result.UseCash, result.WeaponType, obj);
-            return obj;
+            return _service.BuyWeapon(result.AccountCode, result.UseCash, result.WeaponType);
         }
     }
 }
